@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+
+    <styel>
+        
+    </styel>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-box">
+            <h1>회원가입</h1>
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for msg in messages %}
+                <li>{{ msg }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('mhi.signup_post') }}">
+                <input type="text" name="user_id" placeholder="아이디" required>
+                <input type="password" name="user_pw" placeholder="비밀번호" required>
+                <input type="text" name="user_name" placeholder="이름" required>
+
+                <select name="gender">
+                    <option value="">성별 선택</option>
+                    <option value="M">남자</option>
+                    <option value="F">여자</option>
+                </select>
+
+                <input type="date" name="birth" placeholder="생년월일">
+
+                <button type="submit" class="login-button">회원가입</button>
+            </form>
+
+
+        </div>
+    </div>
+</body>
+</html>

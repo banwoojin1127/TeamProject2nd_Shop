@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub - 결제내역</title>
+
+</head>
+{% include "includes/_style.html" %}
+<body>
+    <header>
+        {% include "includes/_header.html" %}
+        {% include "includes/_catenav.html" %}
+    </header>
+    <main>
+        <nav class="cart-tabs">
+            <ul>
+                <li><a href="{{ url_for('sky.cart_page') }}">장바구니</a></li>
+                <li><a href="{{ url_for('sky.history_page') }}" class="active">구매내역</a></li>
+                <li><a href="{{ url_for('sky.algo_page') }}">알고리즘</a></li>
+            </ul>
+        </nav>
+        
+        <h1 class="page-title">결제내역</h1>
+        <section class="cart-list">
+            <div class="cart-item">
+                <div class="cart-item-img-placeholder"></div>
+                <div class="cart-item-details">
+                    <p class="cart-item-name">상품명&nbsp
+                        <span class="cart-item-name-context">
+                            상추
+                        </span>
+                    </p>
+                    <div class="cart-item-tags">
+                        <p>#특징A #특징B #특징C</p>
+                    </div>
+                </div>
+                <div class="cart-item-detail-area">
+                    <p class="cart-item-detail-info">
+                        상품 상세 정보<br>
+                        <span class="cart-item-detail-context">상추입니다.</span>
+                    </p>
+                </div>
+                <div class="cart-item-price">
+                    <p>상품 가격<br><br>
+                        <span class="cart-item-price-context">
+                            18,000 원
+                        </span>
+                    </p>
+                </div>
+                <div>
+                    <button class="remove-btn">❌</button>
+                </div>
+            </div>
+            <div class="cart-item">
+                <div class="cart-item-img-placeholder"></div>
+                <div class="cart-item-details">
+                    <p class="cart-item-name">상품명&nbsp
+                        <span class="cart-item-name-context">
+                            상추
+                        </span>
+                    </p>
+                    <div class="cart-item-tags">
+                        <p>#특징A #특징B #특징C</p>
+                    </div>
+                </div>
+                <div class="cart-item-detail-area">
+                    <p class="cart-item-detail-info">
+                        상품 상세 정보<br>
+                        <span class="cart-item-detail-context">상추입니다.</span>
+                    </p>
+                </div>
+                <div class="cart-item-price">
+                    <p>상품 가격<br><br>
+                        <span class="cart-item-price-context">
+                            18,000 원
+                        </span>
+                    </p>
+                </div>
+                <div>
+                    <button class="remove-btn">❌</button>
+                </div>
+            </div>
+            <div class="cart-item">
+                <div class="cart-item-img-placeholder"></div>
+                <div class="cart-item-details">
+                    <p class="cart-item-name">상품명&nbsp
+                        <span class="cart-item-name-context">
+                            상추
+                        </span>
+                    </p>
+                    <div class="cart-item-tags">
+                        <p>#특징A #특징B #특징C</p>
+                    </div>
+                </div>
+                <div class="cart-item-detail-area">
+                    <p class="cart-item-detail-info">
+                        상품 상세 정보<br>
+                        <span class="cart-item-detail-context">상추입니다.</span>
+                    </p>
+                </div>
+                <div class="cart-item-price">
+                    <p>상품 가격<br><br>
+                        <span class="cart-item-price-context">
+                            18,000 원
+                        </span>
+                    </p>
+                </div>
+                <div>
+                    <button class="remove-btn">❌</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

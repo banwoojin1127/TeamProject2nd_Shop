@@ -1,0 +1,23 @@
+<nav class="main-nav">
+    <ul>
+        {% if session["parent"] %}
+        <li><a href="/0" {{ session["parent"]["fruit"] }}>과일</a></li>
+        <li><a href="/1" {{ session["parent"]["veget"] }}>채소</a></li>
+        <li><a href="/2" {{ session["parent"]["meat"] }}>고기</a></li>
+        <li><a href="/3" {{ session["parent"]["seaf"] }}>해산물</a></li>
+        <li><a href="/4" {{ session["parent"]["grnut"] }}>쌀/잡곡/견과</a></li>
+        <li><a href="/5" {{ session["parent"]["bread"] }}>빵</a></li>
+        <li><a href="/6" {{ session["parent"]["snack"] }}>과자</a></li>
+        <li><a href="/7" {{ session["parent"]["bever"] }}>음료</a></li>
+        {% else %}
+        <li><a href="/0">과일</a></li>
+        <li><a href="/1">채소</a></li>
+        <li><a href="/2">고기</a></li>
+        <li><a href="/3">해산물</a></li>
+        <li><a href="/4">쌀/잡곡/견과</a></li>
+        <li><a href="/5">빵</a></li>
+        <li><a href="/6">과자</a></li>
+        <li><a href="/7">음료</a></li>
+        {% endif %}
+    </ul>
+</nav>

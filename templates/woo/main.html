@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub - 메인 페이지</title>
+    {% include "includes/_style.html" %}
+</head>
+<body>
+    <header>
+        {% include "includes/_header.html" %}
+        {% include "includes/_catenav.html" %}
+    </header>
+
+    <main>
+        {% include "includes/_carousel.html" %}
+
+        <section class="category-thumbnails">
+            {% for n in [0, 1, 2, 3, 4, 5] %}
+            <a href="/{{ session['cate_no'] }}/{{ n }}">
+                <div class="thumbnail-item">
+                    <img src="{{ url_for('static', filename='exchange/곡류샘플.jpg') }}"
+                    style="width: 100%; height: 100%;">
+                </div>
+            </a>
+            {% endfor %}
+        </section>
+
+        {% if session["user"] %}
+        {% endif %}
+        <section class="wide-banners">
+            <div class="wide-banner-item large"></div>
+            <div class="wide-banner-item small"></div>
+        </section>
+
+        <section class="middle-banner-area">
+        </section>
+    </main>
+
+    </body>
+</html>

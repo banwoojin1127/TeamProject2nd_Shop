@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hüb mall 로그인</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/universal.css') }}">
+
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1 id="logoTitle">Hüb mall</h1>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for msg in messages %}
+                <li>{{ msg }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+
+            <!-- 수정됨: Blueprint에 맞는 url_for -->
+            <form method="POST" action="{{ url_for('mhi.login_post') }}">
+                <div class="combo-wrapper">
+                    <input id="comboInput" name="user_id" type="text" placeholder="아이디" autocomplete="off">
+                    <ul id="comboMenu"></ul>
+                </div>
+                <input type="password" id="pwInput" name="user_pw" placeholder="비밀번호">
+                <button type="submit" class="login-button">로그인</button>
+
+            </form>
+            <div class="login-links">
+
+
+                <a href="/signup" class="link-button">회원가입</a>
+                <span class="dicider">|</span>
+                <button type="button" class="link-button">아이디 찾기</button>
+                <span class="dicider">|</span>
+                <button type="button" class="link-button">비밀번호 찾기</button>
+            </div>
+        </div>
+
+
+    </div>
+    </div>
+    </div>
+
+    <script>
+        const comboInput = document.getElementById("comboInput");
+        const comboMenu = document.getElementById("comboMenu");
+        const pwInput = document.getElementById("pwInput");
+
+        let users = {};  // {user_id: password}
+
+        // 수정됨: Blueprint에 맞는 fetch 주소
+        fetch('{{ url_for("mhi.get_users") }}')
+            .then(res => res.json())
+            .then(data => {
+                users = data;
+                comboMenu.innerHTML = '';
+                Object.keys(users).forEach(id => {
+                    const li = document.createElement('li');
+                    li.textContent = id;
+                    li.addEventListener('click', () => {
+                        comboInput.value = id;
+                        pwInput.value = users[id];
+                        comboMenu.style.display = 'none';
+                    });
+                    comboMenu.appendChild(li);
+                });
+            });
+
+        comboInput.addEventListener("focus", () => { comboMenu.style.display = "block"; });
+        comboInput.addEventListener("input", () => {
+            const value = comboInput.value.toLowerCase();
+            comboMenu.querySelectorAll("li").forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(value) ? "block" : "none";
+            });
+        });
+        document.addEventListener("click", (e) => {
+            if (e.target !== comboInput && e.target.parentNode !== comboMenu) {
+                comboMenu.style.display = "none";
+            }
+        });
+
+        document.getElementById("logoTitle").addEventListener("click", () => {
+            location.reload();   // 새로고침
+        });
+    </script>
+
+</body>
+
+</html>

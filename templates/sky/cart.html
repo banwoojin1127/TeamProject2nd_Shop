@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub - 장바구니</title>
+    {% include "includes/_style.html" %}
+</head>
+<body>
+    <header>
+        {% include "includes/_header.html" %}
+        {% include "includes/_catenav.html" %}
+    </header>
+    <main>
+        <nav class="cart-tabs">
+            <ul>
+                <li><a href="{{ url_for('sky.cart_page') }}" class="active">장바구니</a><li>
+                <li><a href="{{ url_for('sky.history_page') }}">구매내역</a></li>
+                <li><a href="{{ url_for('sky.algo_page') }}">알고리즘</a></li>
+            </ul>
+        </nav>
+        
+        <h1 class="page-title">장바구니</h1>
+        
+        <section class="cart-list">
+            {% for item in datas %}            
+                <div id="cart" class="cart-item">
+                    <div class="cart-item-img-placeholder"></div>
+                    <div class="cart-item-details">
+                        <p class="cart-item-name">상품명&nbsp
+                            <span class="cart-item-name-context">
+                                {{ item.item_name }}
+                            </span>
+                        </p>
+                        <div class="cart-item-tags">
+                            <p>#특징A #특징B #특징C</p>
+                        </div>
+                    </div>
+                    <div class="cart-item-detail-area">
+                        <p class="cart-item-detail-info">
+                            상품 상세 정보<br>
+                            <span class="cart-item-detail-context">{{ item.item_name }}입니다.</span>
+                        </p>
+                    </div>
+                    <div class="cart-item-price">
+                        <p>상품 가격<br><br>
+                            <span class="cart-item-price-context">
+                                {{'{:,}'.format(item.item_price)}} 원
+                            </span>
+                        </p>
+                    </div>
+                    <div>
+                        <button class="remove-btn">❌</button>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="checkout-area">
+                <button class="payment-btn" onclick="payok()">결제</button>
+            </div>
+        </section>
+
+        <section class="recommended-items">
+            <h2 class="section-title">함께 구매하면 좋은 상품들이에요!</h2>
+            
+            <div class="recommended-container">
+                <div class="recommended-list">
+                    <div class="recommend-item" data-item_id="{{item_id}}" data-item_name="{{item_name}}" data-item_price="{{item_price}}">
+                        <div class="recommend-img-placeholder"></div>
+                        <div class="recommend-info">
+                            <h3 class="recommend-name">상품명 {{item_name}}</h3>
+                            <p class="recommend-price">{{item_price}} 원</p>
+                            <p class="recommend-tags">#특징A #특징B #특징C</p>
+                        </div>
+                        <button class="add-btn"
+                            onclick='add_btn(JSON.parse(`{
+                                "id": {{ item_id }},
+                                "name": "{{ item_name }}",
+                                "price": {{ item_price }}
+                            }`))'>
+                            담기
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="recommended-wide-banner">
+                    </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

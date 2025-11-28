@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub - 결제내역</title>
+</head>
+{% include "includes/_style.html" %}
+<body>
+    <header>
+        {% include "includes/_header.html" %}
+        {% include "includes/_catenav.html" %}
+    </header>
+
+    <main>
+        <nav class="cart-tabs">
+            <ul>
+                <li><a href="{{ url_for('sky.cart_page') }}">장바구니</a></li>
+                <li><a href="{{ url_for('sky.history_page') }}">구매내역</a></li>
+                <li><a href="{{ url_for('sky.algo_page') }}" class="active">알고리즘</a></li>
+            </ul>
+        </nav>
+        
+        <h1 class="page-title">알고리즘</h1>
+
+    </main>
+</body>
+</html>

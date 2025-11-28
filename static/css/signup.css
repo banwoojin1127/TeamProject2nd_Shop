@@ -1,0 +1,85 @@
+/* login.css 내용 시작 */
+
+/* 로그인 박스 중앙 정렬 */
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    margin-top: 200px;
+}
+
+.signup-box {
+    width: 400px;  
+    padding: 60px 40px;
+    border: 2px solid #4CAF50;
+    border-radius: 12px;
+    min-width: 400px;
+    box-sizing: border-box;
+}
+
+.signup-box h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 32px;
+    color: #4CAF50;
+    cursor: pointer;
+}
+
+/* 마우스 올렸을 때 */
+.signup-box h1:hover {
+    color: #43a047;
+    /* 살짝 진해짐 */
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+}
+
+
+/* input 공통 스타일 */
+.signup-box input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 18px;
+    outline: none;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+/* 로그인 버튼 */
+.login-button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    background-color: #D53538;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: #a5292b;
+}
+
+/* select 박스 스타일 */
+select[name="gender"] {
+    width: 100%;           /* 너비 조절 */
+    padding: 10px 12px;    /* 안쪽 여백 */
+    font-size: 16px;       /* 글자 크기 */
+    border: 1px solid #ccc; /* 테두리 색상 */
+    border-radius: 6px;    /* 둥근 테두리 */
+    background-color: #fff; /* 배경색 */
+    appearance: none;      /* 브라우저 기본 화살표 제거 */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+/* select 안의 option 스타일 */
+select[name="gender"] option {
+    padding: 10px;
+    font-size: 16px;
+}

@@ -1,0 +1,30 @@
+<div class="header-top">
+    <div class="logo">
+        <a href="/">
+            <img src="{{ url_for('static', filename='img/hub_logo.png') }}" alt="Hub" height="55">
+        </a>
+    </div>
+    <form action="/search" class="search-bar input-group" >
+        <input type="text" id="search" name="keyword" class="form-control" placeholder="상품을 검색해보세요"
+        aria-label="Recipient's username" aria-describedby="button-addon">
+        <button id="button-addon" aria-label="검색" type="submit">
+            <img src="{{ url_for('static', filename='img/search.png') }}"
+            style="width: 100%; height: 100%;" alt="검색">
+        </button>
+    </form>
+    <div class="user-menu">
+        {% if session["user"] %}
+        <span>{{ session["user"]["user_name"] }} 님</span>
+        <form action="/algo">
+            <input type="submit" class="mypage-link" value="마이페이지">
+        </form>
+        <form action="/logout" method="post">
+            <input type="submit" class="log-btn" value="로그아웃">
+        </form>
+        {% else %}
+        <form action="/login">
+            <input type="submit" class="log-btn" value="로그인">
+        </form>
+        {% endif %}
+    </div>
+</div>

@@ -1,0 +1,730 @@
+/*===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+특정 태그 (요소) 숨기기
+===== ===== ===== ===== ===== ===== ===== ===== ===== =====*/
+.hidden-space {
+  /* 1. 요소를 투명하게 만들어 보이지 않게 합니다. (영역은 차지) */
+  visibility: hidden;
+
+  /* 2. 마우스/터치 이벤트를 무시하여 상호작용을 막습니다. */
+  pointer-events: none;
+}
+/*===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+특정 태그의 기본 스타일 없애기 ( 웹서비스 전체 적용 )
+===== ===== ===== ===== ===== ===== ===== ===== ===== =====*/
+body, h1, h2, p, ul, li {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
+ul {
+    list-style: none;
+}
+
+/*===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+헤더 영역 스타일 ( include 예정 )
+===== ===== ===== ===== ===== ===== ===== ===== ===== =====*/
+header {
+    width: 100%;
+    border-bottom: 1px solid #eee;
+}
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1024px; /* 컨텐츠 최대 너비 설정 */
+    min-width: 1024px; /* 컨텐츠 최소 너비 설정 */
+    margin: 0 auto;
+    padding: 15px 20px;
+}
+
+/* !!!!! !!!!! 00. 웹서비스 로고를 텍스트 처리 해뒀기 때문에 수정 필요 !!!!! !!!!! */
+.logo {
+    font-size: 30px;
+    font-weight: bold;
+    color: #4CAF50; /* Hub 로고 색상 추정 */
+}
+
+/* ===== ===== 00. 상품 관련 검색 영역 ===== ===== */
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 2px solid #16D99B;
+    border-radius: 5px;
+    overflow: hidden;
+    flex-grow: 1; /* 검색창이 공간을 더 많이 차지하도록 */
+    height: 50px;
+    max-height: 50px;
+    margin: 15px;
+}
+.search-bar input#search {
+    border: none;
+    outline: none;
+    height: 100%;
+}
+.search-bar input#search:focus {
+    box-shadow: none;
+}
+.search-bar button {
+    background-color: white;
+    border: none;
+    padding: 8px;
+    width: 48px;
+    height: 100%;
+    cursor: pointer;
+    /* 아이콘 대신 간단하게 배경색만 지정 */
+    /* 실제로는 돋보기 아이콘이 들어가야 합니다. */
+}
+
+/* ===== ===== 00. 사용자/비사용자 정보 영역 ===== ===== */
+.user-menu {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 14px;
+    min-width: 300px;
+}
+.user-menu span {
+    margin-right: 15px;
+    color: #333;
+}
+/* 0-1. 마이페이지 버튼 */
+.mypage-link {
+    background-color: transparent;
+    margin-right: 10px;
+    color: #16D99B;
+    border: 1px solid #16D99B;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+/* 0-2. 로그인/아웃 버튼 */
+.log-btn {
+    background-color: #D53538;
+    color: white;
+    border: 1px solid #D53538;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ===== ===== 00. 네비게이션 ( 카테고리 ) 영역 ===== ===== */
+.main-nav {
+    border-top: 1px solid #eee;
+    padding: 10px 0;
+}
+.main-nav ul {
+    display: flex;
+    justify-content: space-around;
+    max-width: 1024px;
+    min-width: 1024px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.main-nav li a {
+    padding: 10px 15px;
+    display: block;
+    font-weight: 500;
+    color: #333;
+    border-bottom: 3px solid transparent; /* 기본 밑줄 투명 */
+}
+/* 활성화된 카테고리 스타일 */
+.main-nav li a.active {
+    color: #16D99B; /* 활성화된 폰트 색상 */
+    border-bottom: 3px solid #16D99B; /* 활성화된 밑줄 */
+    font-weight: bold;
+}
+
+/*===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+메인 컨텐츠 - 로그인
+===== ===== ===== ===== ===== ===== ===== ===== ===== =====*/
+/* 로그인 페이지 전체 컨테이너 */
+.login-container {
+    margin: 25vh auto 0 auto;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px; /* 로그인 박스의 최대 너비 설정 */
+}
+
+/* 로그인 양식 박스 */
+.login-box {
+    background-color: white;
+    padding: 60px 40px; /* 내부 여백 */
+    border: 2px solid #16D99B; /* 이미지의 테두리 색상 (민트색 계열) */
+    box-sizing: border-box;
+}
+
+/* 입력 필드 그룹 */
+.input-group {
+    margin-bottom: 15px;
+}
+
+/* 아이디 입력 필드 래퍼 (드롭다운 포함을 위해) */
+.id-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* 드롭다운 화살표 자리 (CSS만으로 구현 시 복잡하여 빈 공간으로 처리) */
+.dropdown-arrow {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    /* 실제로는 ::after 등을 이용해 화살표 아이콘을 넣습니다. */
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #333; /* 임시 화살표 */
+    pointer-events: none; /* 클릭 방지 */
+}
+
+/* 입력 필드 기본 스타일 */
+input[type="text"], 
+input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 16px;
+    /* 입력 필드의 높이가 이미지와 비슷하도록 조절 */
+}
+
+.id-input-wrapper input {
+    padding-right: 35px; /* 화살표 공간 확보 */
+}
+
+/* 로그인 버튼 */
+.login-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #D53538; /* 이미지의 빨간색 버튼 색상 */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.login-button:hover {
+    background-color: #a5292b;
+}
+
+/* 플레이스홀더 텍스트 색상 (선택 사항) */
+::placeholder {
+    color: #999;
+}
+
+/*===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+메인 컨텐츠 - 배너, 썸네일, 상품 묶음 그리드 (6열), 페이지 상단 이동 버블 버튼 스타일
+===== ===== ===== ===== ===== ===== ===== ===== ===== =====*/
+main {
+    max-width: 1024px;
+    min-width: 1024px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+/* ===== ===== 00. 페이지를 아주 간단하게 설명할 필요가 있을 때 ===== ===== */
+.page-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #333; /* 제목 아래 진한 구분선 */
+}
+
+/* ===== ===== 00. 메인 배너/슬라이더 ===== ===== */
+.main-banner {
+    position: relative;
+    width: 100%;
+    height: 300px; /* 높이 임의 지정 */
+    background-color: #f0f0f0; /* 배경색으로 영역 표시 */
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.prev-arrow, .next-arrow {
+    position: absolute;
+    height: 45%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 25px;
+    font-weight: bold;
+    z-index: 10;
+}
+.prev-arrow { left: 0; border-radius: 0 5px 5px 0; }
+.next-arrow { right: 0; border-radius: 5px 0 0 5px; }
+
+/* 카테고리 썸네일 (가운데 6개) */
+.category-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6열 그리드 */
+    gap: 10px;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+.thumbnail-item {
+    height: 150px; /* 높이 임의 지정 */
+    background-color: #f7f7f7;
+    border: 1px dashed #ddd; /* 이미지 플레이스홀더 스타일 */
+}
+
+/* 와이드 배너 */
+.wide-banners {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+.wide-banner-item {
+    background-color: #e0e0e0;
+    border: 1px dashed #ccc;
+    height: 250px; /* 높이 임의 지정 */
+}
+.wide-banner-item.large {
+    flex: 2; /* 큰 배너가 더 많은 공간 차지 */
+}
+.wide-banner-item.small {
+    flex: 1; /* 작은 배너 */
+}
+
+/* 하단 상품 그리드 */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4열 그리드 */
+    gap: 20px;
+}
+.product-item {
+    height: 200px; /* 상품 썸네일 높이 임의 지정 */
+    background-color: #f7f7f7;
+    border: 1px dashed #ddd; /* 이미지 플레이스홀더 스타일 */
+}
+/* 중간 와이드 배너 || !!!!! !!!!! 다만 이 영역은 그래프를 출력하는 자리로 수정 필요 !!!!! !!!!! */
+.middle-banner-area {
+    width: 100%;
+    height: 200px; /* 높이 임의 지정 */
+    background-color: #e0e0e0;
+    margin-bottom: 40px;
+    border: 1px dashed #ccc;
+}
+
+/* TOP 버튼 */
+.top-btn {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background-color: black;
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 99;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/*===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+메인 컨텐츠 - 검색 스타일
+===== ===== ===== ===== ===== ===== ===== ===== ===== =====*/
+/* 검색 결과 아이템 목록 */
+.search-items-list {
+    margin-bottom: 50px;
+}
+.search-item {
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee; /* 상품 구분선 */
+}
+/* 상품 이미지 플레이스홀더 */
+.search-item-img-placeholder {
+    width: 150px;
+    min-width: 150px;
+    height: 150px;
+    background-color: #f7f7f7;
+    border: 1px dashed #ddd;
+    margin-right: 30px;
+}
+/* 상품 상세 정보 영역 */
+.search-item-details {
+    flex-grow: 1; /* 중앙 상세 정보가 공간을 차지 */
+    padding-right: 20px;
+}
+.search-item-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.search-item-description {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+.search-item-tags {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.5;
+    text-align: left;
+}
+/* 상품 상세 정보 및 가격 영역 */
+.search-item-info-price {
+    width: 350px; /* 오른쪽 가격 영역 너비 고정 */
+    min-width: 350px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; /* 가격 영역을 아래로 정렬 */
+    padding-left: 20px;
+    border-left: 1px solid #eee;
+    height: 100%;
+}
+.search-item-detail-info {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+    /* 이미지와 같이 수직 정렬을 위해 top에 여백 부여 */
+    padding-top: 10px; 
+}
+.search-item-price-box {
+    text-align: right;
+    width: 100px; /* 가격 영역 너비 조정 */
+    padding-top: 10px;
+}
+.search-item-price-label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+}
+.search-item-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+/*===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+메인 컨텐츠 - 상품 상세보기 스타일
+===== ===== ===== ===== ===== ===== ===== ===== ===== =====*/
+/* 상품 상세 정보 섹션 (이미지 + 정보) */
+.detail-item-section {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 50px;
+}
+.detail-item-image {
+    flex: 1; /* 이미지 영역 */
+    height: 600px; /* 큰 이미지 높이 임의 지정 */
+    background-color: #f7f7f7;
+    border: 1px dashed #ddd;
+}
+.detail-item-info {
+    flex: 1; /* 정보 영역 */
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 요소들을 위, 중간, 아래로 배치 */
+}
+.product-title-area .product-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+.product-title-area .product-description {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+}
+.divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 30px 0;
+}
+.detail-description h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+.detail-description p {
+    font-size: 15px;
+    color: #333;
+}
+.action-area {
+    display: flex;
+    justify-content: flex-end; /* 버튼을 오른쪽으로 배치 */
+    margin: 30px 0;
+}
+.cart-btn {
+    background-color: #4CAF50; /* 장바구니 버튼 색상 */
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.tag-area {
+    font-size: 14px;
+    color: #888;
+    line-height: 1.8;
+}
+
+/* 관련 상품 섹션 */
+.related-items-section {
+    margin-bottom: 50px;
+}
+.related-items-section .section-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5열 그리드 */
+    gap: 20px;
+}
+.related-item {
+    height: 200px; /* 관련 상품 썸네일 높이 임의 지정 */
+    background-color: #f7f7f7;
+    border: 1px dashed #ddd;
+}
+
+/* 상세 설명 컨텐츠 영역 */
+.full-description-area {
+    width: 100%;
+    height: 500px; /* 상세 설명 이미지/컨텐츠 영역 높이 임의 지정 */
+    background-color: #e0e0e0;
+    border: 1px dashed #ccc;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+/*===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+메인 컨텐츠 - 장바구니
+===== ===== ===== ===== ===== ===== ===== ===== ===== =====*/
+/* 장바구니 탭 내비게이션 */
+.cart-tabs {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 40px;
+}
+.cart-tabs ul {
+    display: flex;
+}
+.cart-tabs li a {
+    display: block;
+    padding: 10px 20px;
+    color: #333;
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+}
+.cart-tabs li a.active {
+    color: #4CAF50;
+    border-bottom: 3px solid #4CAF50;
+}
+
+/* 장바구니 상품 목록 스타일 */
+.cart-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee; /* 상품 구분선 */
+    flex-wrap: wrap;  /* ← 이게 없으면 절대 줄바꿈 안 됨 */
+}
+
+.cart-item-img-placeholder {
+    width: 100px;
+    height: 100px;
+    background-color: #f7f7f7;
+    border: 1px dashed #ddd;
+    margin-right: 20px;
+}
+
+.cart-item-details {
+    display: flex;            /* Flexbox 사용 */
+    flex-direction: column;   /* 위 → 아래로 쌓기 */
+    box-sizing: border-box;
+    width: 270px; /* 상품명, 태그, 정보 영역이 공간을 차지 */
+    height: 95px;
+    margin-top : 3px;
+}
+
+.cart-item-name {
+    margin-top: 3px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.cart-item-name-context {
+    font-weight: 500;
+}
+
+.cart-item-tags {
+    font-size: 13px;
+    color: #888;
+    margin-top: auto;
+    vertical-align: text-bottom;
+    margin-left: 1px;
+}
+
+.cart-item-detail-area {
+    text-align: right;
+    position: relative;
+    padding-left: 20px;
+}
+
+.cart-item-detail-info {
+    width: 334px;
+    height: 95px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 3px;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+.cart-item-detail-context {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    text-align: left;
+    font-weight: normal;
+    font-weight: 500;
+}
+
+.cart-item-price {
+    margin-left: auto;
+    width: 180px;
+    height: 95px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-align: right;
+}
+
+.cart-item-price-context {
+    font-size: 20px;
+    font-weight: 600;
+    margin-right: 3px;
+}
+
+.remove-btn {
+    margin-left: 8px;
+    background: transparent;
+    border: none;
+    color: #999;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* 결제 버튼 영역 */
+.checkout-area {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 0;
+    margin-top: 10px;
+    border-top: 2px solid #333; /* 마지막 상품 구분선과 겹치지 않게 하기 위해 위쪽 경계를 추가했습니다. */
+}
+
+.payment-btn {
+    background-color: #D53538; /* 결제 버튼 색상 */
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* ------------------- */
+/* 추천 상품 섹션 */
+/* ------------------- */
+.recommended-items {
+    margin-top: 50px;
+}
+
+.section-title { /* 중복되는 클래스 지정이 있지만 값이 같아서 문제 없음 */
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.recommended-container {
+    display: flex;
+    gap: 30px;
+}
+
+.recommended-list {
+    flex: 1; /* 왼쪽 목록이 공간을 차지 */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.recommend-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #eee;
+}
+
+.recommend-img-placeholder {
+    width: 80px;
+    height: 80px;
+    background-color: #f7f7f7;
+    border: 1px dashed #ddd;
+    margin-right: 15px;
+}
+
+.recommend-info {
+    flex-grow: 1;
+}
+
+.recommend-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.recommend-price {
+    font-size: 14px;
+    color: #4CAF50;
+    margin: 5px 0;
+}
+
+.recommend-tags {
+    font-size: 12px;
+    color: #888;
+}
+
+.add-btn {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.recommended-wide-banner {
+    flex: 2; /* 오른쪽 배너가 더 많은 공간을 차지 */
+    height: 400px; /* 높이 임의 지정 */
+    background-color: #e0e0e0;
+    border: 1px dashed #ccc;
+}
+/*===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+===== ===== ===== ===== ===== ===== ===== ===== ===== =====*/
