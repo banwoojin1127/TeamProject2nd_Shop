@@ -90,20 +90,20 @@ def category(category_no = 0) :
     return render_template("woo/category.html", best_li = ie_best_cate_li, ie_li = ie_li)
 
 
-@woo_bp.route("/<int:category_no>/<int:item_no>")
-@woo_bp.route("/<int:category_no>/<int:item_no>/")
-def item(category_no = 0, item_no = 0) :
-    """
-    # 상품에 따라 상세 정보를 출력 해야합니다
-    """
-    cate_nav(category_no)
-    session["cate_no"] = category_no
-    session["item_no"] = item_no
-
-    dao = WooDAO()
-    ie = dao.load_i_info(item_no)
-
-    return render_template("woo/item.html", ie = ie)
+#@woo_bp.route("/<int:category_no>/<int:item_no>")
+#@woo_bp.route("/<int:category_no>/<int:item_no>/")
+#def item(category_no = 0, item_no = 0) :
+#    """
+#    # 상품에 따라 상세 정보를 출력 해야합니다
+#    """
+#    cate_nav(category_no)
+#    session["cate_no"] = category_no
+#    session["item_no"] = item_no
+#
+#    dao = WooDAO()
+#    ie = dao.load_i_info(item_no)
+#
+#    return render_template("woo/item.html", ie = ie)
 
 
 @woo_bp.route("/<int:category_no>/<int:item_no>/cart", methods = ["GET"])
@@ -162,7 +162,7 @@ def cate_nav(category_no) :
     """
     # 현재 페이지가 어떤 카테고리를 출력하는지
     # input
-    # category_no : 현재 카테고리 번호 | 0미만 7초과로 초기화
+    # category_no : 현재 카테고리 번호 | 0미만 7초과 한다면 초기화
     # return
     # str ( 카테고리 이름 )
     """

@@ -12,6 +12,8 @@ from flask import Flask
 from routes.woo import woo_bp
 from routes.sky import sky_bp
 from routes.mhi import mhi
+from routes.lsh import lsh_bp
+
 
 
 app = Flask(__name__)
@@ -21,6 +23,7 @@ app.secret_key = "ezen"
 app.register_blueprint(woo_bp)
 app.register_blueprint(sky_bp)
 app.register_blueprint(mhi)
+app.register_blueprint(lsh_bp)
 
 
 # 디버그 모드로 Flask 실행

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub - 상품 상세 정보</title>
+    {% include "includes/_style.html" %}
+</head>
+<body>
+    <header>
+        {% include "includes/_header.html" %}
+        {% include "includes/_catenav.html" %}
+    </header>
+
+    <main>
+        <section class="detail-item-section">
+            <div class="detail-item-image">
+                <img src="{{ url_for('static', filename='img/_item/' + ie['item_img']) }}"
+                style="width: 100%; height: 100%;">
+            </div>
+
+            <div class="detail-item-info">
+                <div class="product-title-area">
+                    <h1 class="product-name"> {{ ie["item_name"] }} </h1>
+                    <p class="product-description">
+                        #tag
+                    </p>
+                </div>
+                
+                <hr class="divider">
+
+                <div class="detail-description">
+                    <h2>상품 가격</h2>
+                    <p> {{ ie["item_price"] }} 원 </p>
+                </div>
+
+                <div class="action-area">
+                    {% if session["user"] %}
+                    <form action="/{{ session['cate_no'] }}/{{ session['item_no'] }}/cart" method="post">
+                        <button class="cart-btn">장바구니</button>
+                    </form>
+                    {% endif %}
+                </div>
+                
+                <div class="tag-area">
+                    <p>
+                        {{ ie["item_rate"] }} / ( {{ ie["item_reviewcnt"] }} )
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="related-items-section">
+            <h2 class="section-title">함께 보면 좋은 상품</h2>
+            <div class="related-grid">
+                {% if recs %}
+                    {% for rec in recs %}
+                    <a href="/{{ session['cate_no'] }}/{{ rec['item_id'] }}">
+                        <div class="related-item">
+                            <img src="{{ url_for('static', filename='img/_item/' + rec['item_img']) }}"
+                            style="width: 100%; height: 100%;">
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <p>추천 상품이 없습니다.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="full-description-area">
+            <div>
+                <img src="{{ url_for('static', filename='img/recommend_similarity_plot.png') }}"
+                style="width: 100%; height: 100%;">
+            </div>
+        </section>
+    </main>
+</body>
+</html>
