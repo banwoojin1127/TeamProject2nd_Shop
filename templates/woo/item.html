@@ -31,7 +31,7 @@
 
                 <div class="detail-description">
                     <h2>상품 가격</h2>
-                    <p> {{ ie["item_price"] }} 원 </p>
+                    <p> {{'{:,}'.format(ie["item_price"])}} 원 </p>
                 </div>
 
                 <div class="action-area">
