@@ -16,14 +16,18 @@
     <br>
     <main>
         <h1 class="page-title">"({{keyword}})"에 관한 결과</h1>
+        
         <section class="search-items-list">
+            {% if items %}
             <section class="cart-list">
+                {% for item in items %}
                 <div class="cart-item">
+                
                     <div class="cart-item-img-placeholder"></div>
                     <div class="cart-item-details">
                         <p class="cart-item-name">상품명&nbsp
                             <span class="cart-item-name-context">
-                                상추
+                                {{ item.item_name }}
                             </span>
                         </p>
                         <div class="cart-item-tags">
@@ -33,18 +37,22 @@
                     <div class="cart-item-detail-area">
                         <p class="cart-item-detail-info">
                             상품 상세 정보<br>
-                            <span class="cart-item-detail-context">상추입니다.</span>
+                            <span class="cart-item-detail-context">{{ item.item_name }}입니다.</span>
                         </p>
                     </div>
                     <div class="cart-item-price">
                         <p>상품 가격<br><br>
                             <span class="cart-item-price-context">
-                                18,000 원
+                                {{'{:,}'.format(item.item_price)}} 원
                             </span>
                         </p>
                     </div>
                 </div>
+                {% endfor %}
             </section>
+            {% else %}
+                <p>검색 결과가 없습니다.</p>
+            {% endif %}
         </section>
         <button class="top-btn">TOP</button>
     </main>

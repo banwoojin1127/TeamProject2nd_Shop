@@ -1,13 +1,8 @@
 # import sys
 # sys.path.append("D:\\Haneul\\Python\\project")
 
-from flask import Blueprint, render_template, request, redirect, session, flash, Flask
+from flask import Blueprint, render_template, request, redirect, session, flash
 from flask_dao.sky_dao import SkyDAO
-
-
-#Flask 생성
-app = Flask(__name__)
-app.secret_key = "ezen"
 
 #Blueprint 생성
 sky_bp = Blueprint("sky", __name__)
@@ -20,76 +15,108 @@ def get_user_id() :
 def get_item_id() :
     return session.get("item_id")
 
+#item_name 값 가져오기
 def get_item_name() :
     return session.get("item_name")
 
+#item_price 값 가져오기 
+def get_item_price() :
+    return session.get("item_price")
 
 # ------------------------------
 # 장바구니 - GET (화면)
 # ------------------------------
 @sky_bp.route("/cart", methods=["GET"])
 def cart_page() :
-    user_id = "excheck" #테스트 용 하드코딩
+    user_id = "777" #테스트 용 하드코딩
     #user_id = get_user_id()
+    
+    #로그인 세션에 저장
+    session["user_id"] = user_id
+
     #로그인 확인
     if not user_id :
         flash("로그인이 필요한 페이지입니다.")
         return redirect("/login")
+    
     #장바구니 - 상품출력
     dao = SkyDAO()
     items = dao.cart_check(user_id)
-    print(items)
+    dao.close()
     return render_template("sky/cart.html", datas=items)
-
+    
 
 # ------------------------------
 # 장바구니 - POST (결제)
 # ------------------------------
 @sky_bp.route("/cart", methods=["POST"])
 def payok() :
-    user_id = "excheck" #테스트 용 하드코딩
+    user_id = "777" #테스트 용 하드코딩
     #user_id = get_user_id()
 
     #로그인 확인
     if not user_id :
         flash("로그인이 필요한 페이지입니다.")
         return redirect("/login")
+    
+    dao = SkyDAO()
 
-    #추천 상품 담기
-    item_id = 1 #테스트 용 하드코딩
+    #장바구니 목록 가져오기
+    items_in_cart = dao.cart_check(user_id)
+
+    #결제처리
+    paid_items = []
+    for item in items_in_cart :
+        obj = dao.item_pay(user_id, item["item_id"])
+        #결제 > 결제내역으로 추가
+        if obj :
+            paid_items.append(obj)
+                #item["item_name"],
+                #item["item_price"]
+    # #결제완료 > 장바구니 초기화(비우기)
+    # dao.item_payok(user_id)
+    #session["키"] = 값
+    dao.close()
+    session["paid_items"] = paid_items #화면용 객체 저장
+    return redirect("/history")
+
+#추천 상품 담기
+@sky_bp.route("/cart/add/<int:item_id>", methods=["POST"])
+def add_to_cart(item_id):
+    user_id = "777" #테스트 용 하드코딩
     #item_id = request.json["itemId"]
+    #item_id = 17956 #테스트 용 하드코딩
     dao = SkyDAO()
     dao.item_add(user_id, item_id)
-
-    #장바구니에서 제거
-    items_in_cart = dao.cart_check(user_id) #장바구니에 있는 상품
-    remove = request.form.get("remove", False)
-    if remove : 
-        dao.item_remove(user_id, item_id)
-
-    #결제
-    for item in items_in_cart :
-        item_id = item["id"]
-        #결제 > 결제내역으로 추가
-        if item_id :
-            dao.item_pay(user_id, item_id)
-        #결제 > 장바구니 초기화(비우기)
-        dao.item_payok(user_id, item_id)
-        return redirect("/cart")
+    dao.close()
+    return redirect("/cart")
+    
+#장바구니에서 제거
+@sky_bp.route("/cart/remove/<int:item_id>", methods=["POST"])
+def remove_from_cart(item_id):
+    user_id = "777"
+    dao = SkyDAO()
+    dao.item_remove(user_id, item_id)
+    dao.close()
+    return redirect("/cart")
 
 # ------------------------------
 # 결제내역 - GET (화면)
 # ------------------------------
 @sky_bp.route("/history", methods=["GET"])
 def history_page() :
-    user_id = 777 #테스트 용 하드코딩
+    user_id = "777" #테스트 용 하드코딩
     #user_id = request.args.get("user_id")
     #로그인 확인
     if not user_id :
         flash("로그인이 필요한 페이지입니다.")
         return redirect("/login")
-    return render_template("sky/history.html")
-
+    
+    #결제 내역 출력
+    dao = SkyDAO()
+    items = dao.history_check(user_id)
+    dao.close()
+    return render_template("sky/history.html", datas=items)
 
 # ------------------------------
 # 검색 - GET (화면, 검색결과)
@@ -101,6 +128,7 @@ def search() :
     dao = SkyDAO()
     items = dao.item_search(keyword) if keyword else []
     #검색 결과가 없으면 결과없음
+    dao.close()
     return render_template("sky/search.html", items=items, keyword=keyword)
 
 
@@ -109,6 +137,12 @@ def search() :
 # ------------------------------
 @sky_bp.route("/algo", methods=["GET"])
 def algo_page() :
+    user_id = "777" #테스트 용 하드코딩
+    #user_id = request.args.get("user_id")
+    #로그인 확인
+    if not user_id :
+        flash("로그인이 필요한 페이지입니다.")
+        return redirect("/login")
     return render_template("sky/algorithm.html")
 
 """

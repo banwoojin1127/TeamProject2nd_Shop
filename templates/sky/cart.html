@@ -6,6 +6,15 @@
     <title>Hub - 장바구니</title>
     {% include "includes/_style.html" %}
 </head>
+
+<!-- 화면 > 로그인 > 화면에 상품 출력
+결제완료 > 장바구니 비우기 > 결제내역 화면으로 redirect해주기
+결제완료 > 결제내역 추가
+상품 담기 > 중복OK 로그인 체크
+상품 제거 > 체크박스로 해당 상품 컬럼 장바구니에서 제거
+
+장바구니가 비어있을때 결제버튼을 누르면 alert "결제할 상품이 없습니다."
+로그인체크 > 비로그인시 alert "로그인이 필요한 페이지입니다." -->
 <body>
     <header>
         {% include "includes/_header.html" %}
@@ -19,9 +28,9 @@
                 <li><a href="{{ url_for('sky.algo_page') }}">알고리즘</a></li>
             </ul>
         </nav>
-        
+
         <h1 class="page-title">장바구니</h1>
-        
+        {% if datas %}
         <section class="cart-list">
             {% for item in datas %}            
                 <div id="cart" class="cart-item">
@@ -50,43 +59,39 @@
                         </p>
                     </div>
                     <div>
-                        <button class="remove-btn">❌</button>
+                        <button class="remove-btn" action="{{ url_for('sky.remove_from_cart', item_id=item.item_id) }}" method="post"></button>❌</button>
                     </div>
                 </div>
             {% endfor %}
-
-            <div class="checkout-area">
-                <button class="payment-btn" onclick="payok()">결제</button>
-            </div>
+            <form action="{{ url_for('sky.payok') }}" method="post">
+                <div class="checkout-area">
+                    <button class="payment-btn" type="submit">결제</button>
+                </div>
+            </form>
+            {% else %}
+            <p>장바구니에 상품이 없습니다.</p>
+            {% endif %}
         </section>
-
         <section class="recommended-items">
             <h2 class="section-title">함께 구매하면 좋은 상품들이에요!</h2>
-            
+             {% for item in recommended_items %}
             <div class="recommended-container">
                 <div class="recommended-list">
-                    <div class="recommend-item" data-item_id="{{item_id}}" data-item_name="{{item_name}}" data-item_price="{{item_price}}">
-                        <div class="recommend-img-placeholder"></div>
-                        <div class="recommend-info">
-                            <h3 class="recommend-name">상품명 {{item_name}}</h3>
-                            <p class="recommend-price">{{item_price}} 원</p>
-                            <p class="recommend-tags">#특징A #특징B #특징C</p>
+                    <form action="/cart" method="post">
+                        <div class="recommend-item" data-item_id="{{item_id}}" data-item_name="{{item_name}}" data-item_price="{{item_price}}">
+                            <div class="recommend-img-placeholder"></div>
+                            <div class="recommend-info">
+                                <h3 class="recommend-name">상품명 {{item_name}}</h3>
+                                <p class="recommend-price">{{'{:,}'.format(item.item_price)}} 원</p>
+                                <p class="recommend-tags">#특징A #특징B #특징C</p>
+                            </div>
+                            <button class="add-btn" type="submit">담기</button>
                         </div>
-                        <button class="add-btn"
-                            onclick='add_btn(JSON.parse(`{
-                                "id": {{ item_id }},
-                                "name": "{{ item_name }}",
-                                "price": {{ item_price }}
-                            }`))'>
-                            담기
-                        </button>
-
-                    </div>
+                    </form>
                 </div>
-
-                <div class="recommended-wide-banner">
-                    </div>
+                <div class="recommended-wide-banner"></div>
             </div>
+            {% endfor %}
         </section>
     </main>
 </body>

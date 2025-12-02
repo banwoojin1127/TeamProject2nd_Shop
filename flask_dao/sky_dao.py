@@ -1,10 +1,10 @@
 import pymysql
-
+import traceback
 class SkyDAO :
     def __init__(self) :
         self.conn = pymysql.connect(
-            host="192.168.60.183",
-            user="members",
+            host="localhost",
+            user="root",
             password="ezen",
             database="shop",
             cursorclass=pymysql.cursors.DictCursor
@@ -16,23 +16,28 @@ class SkyDAO :
     #장바구니 - 상품 조회
     def cart_check(self, user_id) :
         try :
-            #sql = "select * from item_cart where user_id = %s"
-            sql = "select y.* from item_cart x inner join item y on x.item_id = y.item_id  where x.user_id = %s"
+            #sql = "select y.* from item_cart x inner join item y on x.item_id = y.item_id  where x.user_id = %s"
+            sql = """
+                SELECT i.item_id, i.item_name, i.item_price, i.item_rate, i.item_reviewcnt, i.item_img
+                FROM item_cart c
+                JOIN item i ON c.item_id = i.item_id
+                WHERE c.user_id = %s
+            """
             self.cursor.execute(sql, (user_id,))
             cart_check = self.cursor.fetchall()
             return cart_check
         except Exception as e :
             self.conn.rollback()
-            print(e)
+            return []
 
 
     #장바구니 - 추천 상품 담기
     def item_add(self, user_id, item_id) :
-        try :
-            sql = "insert into item_cart(user_id, item_id) values(%s, %s)"
+        try:
+            sql = "INSERT INTO item_cart(user_id, item_id) VALUES (%s, %s)"
             self.cursor.execute(sql, (user_id, item_id))
             self.conn.commit()
-        except Exception as e :
+        except Exception as e:
             self.conn.rollback()
             print(e)
 
@@ -51,12 +56,23 @@ class SkyDAO :
     #장바구니 - 상품 결제 클릭 > 결제내역 추가
     def item_pay(self, user_id, item_id) :
         try :
-            sql = "insert into purchase_history(user_id, item_id) values(%s, %s)"
-            self.cursor.execute(sql, (user_id, item_id))
+            #item 테이블에서 이름/가격 가져오기
+            sql = "select item_name, item_price from item where item_id = %s"
+            self.cursor.execute(sql, (item_id,))
+            item = self.cursor.fetchone()
+            if not item :
+                return None
+
+            #purchase_history에 결제 상품 저장
+            sql2 = "insert into purchase_history(user_id, item_id) values(%s, %s)"
+            self.cursor.execute(sql2, (user_id, item_id))
             self.conn.commit()
+
         except Exception as e :
             self.conn.rollback()
-            print(e)
+            traceback.print_exc()
+            return None
+            #raise   # 예외를 다시 던져서 Flask에서 알 수 있게 함
 
 
     #장바구니 - 상품 결제 완료 > 장바구니 비우기
@@ -76,22 +92,31 @@ class SkyDAO :
         try :
             sql = "select * from item where item_name like %s"
             self.cursor.execute(sql, (f"%{item_name}%",))
+            return self.cursor.fetchall()
         except Exception as e :
             self.conn.rollback()
             print(e)
+            return []
 
 
     """구매내역"""
     #구매내역 - 상품 리스트
     def history_check(self, user_id) :
         try :
-            sql = "select * from purchase_history where user_id = %s"
+            #sql = "select * from purchase_history where user_id = %s"
+            sql = """
+                SELECT p.user_id, p.item_id, p.item_price, i.item_name
+                FROM purchase_history p
+                JOIN item i ON p.item_id = i.item_id
+                WHERE p.user_id = %s
+            """
             self.cursor.execute(sql, (user_id,))
             history_check = self.cursor.fetchall()
             return history_check
         except Exception as e :
             self.conn.rollback()
-            print(e)
+            traceback.print_exc()
+            return []
 
 
     #데이터베이스 연결 종료
