@@ -2,10 +2,6 @@ import re
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import matplotlib.pyplot as plt
-from matplotlib import font_manager, rc
-import platform
-
 from flask import current_app
 from flask_dao.lsh_dao import LshDAO
 
