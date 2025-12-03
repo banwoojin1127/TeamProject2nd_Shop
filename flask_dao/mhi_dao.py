@@ -89,6 +89,7 @@ def create_user(self, user_id, user_pw, user_name, gender=None, birth=None):
     finally:
         conn.close()
 
+# test
 
 
 
