@@ -15,7 +15,6 @@ def cate_nav(category_no):
         session["parent"] = {parent: "class=active"}
 
 @lsh_bp.route("/<int:category_no>/<int:item_no>")
-@lsh_bp.route("/<int:category_no>/<int:item_no>/")
 def item(category_no=0, item_no=0):
     # DAO 생성 및 사용
     dao = LshDAO()
@@ -34,11 +33,15 @@ def item(category_no=0, item_no=0):
     
     # 추천 실행
     try:
-        recs = recommend_similarity(target=result["item_name"], category_id=db_category_no)
-        recs = recs.get("recommendations", [])
+        sim_result = recommend_similarity(
+            target=result["item_name"], 
+            category_id=db_category_no
+        )
+        recs = sim_result.get("recommendations", [])
     except Exception as e:
         print("추천 오류:", e)
         recs = []
+        sim_result = {"graph": {"labels": [], "values": []}}
 
     # 디버깅용 출력
     print("---- DEBUG ----")
@@ -48,7 +51,12 @@ def item(category_no=0, item_no=0):
     print("추천 상품 리스트:", recs)
     print("----------------")
 
-    return render_template("lsh/item.html", ie=result, recs=recs)
+    return render_template(
+        "lsh/item.html", 
+        ie=result,
+        recs=recs,
+        result=sim_result
+    )
 
 @lsh_bp.route("/mypage")
 def mypage():
