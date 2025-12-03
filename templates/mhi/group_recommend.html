@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나와 비슷한 사람들이 구매한 추천 아이템</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/universal.css') }}">
+    <style>
+        .recommendation-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .recommendation-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .item-card {
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s;
+            background-color: #f9f9f9;
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .item-card h3 {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .item-card p {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="recommendation-container">
+        <h1>📊 유사 그룹 추천 아이템</h1>
+        <p>
+            회원님과 **비슷한 연령대와 성별**을 가진 고객들이 
+            가장 많이 구매한 인기 아이템입니다.
+        </p>
+        
+        {% if recommendations %}
+        <ul class="recommendation-list">
+            {% for item in recommendations %}
+            <li class="item-card">
+                <h3>{{ item.product_name }}</h3>
+                <p>구매 수: {{ item.purchase_count }}회</p>
+                </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>죄송합니다. 추천 데이터를 찾을 수 없거나, 회원님의 그룹 정보가 충분하지 않습니다.</p>
+        {% endif %}
+        
+        <a href="{{ url_for('woo.main') }}" class="back-link">메인 페이지로 돌아가기</a>
+    </div>
+</body>
+</html>
