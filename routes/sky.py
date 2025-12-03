@@ -9,7 +9,7 @@ sky_bp = Blueprint("sky", __name__)
 
 #임시 저장된(session) user_id 값 가져오기
 def get_user_id() :
-    return session.get("user_id")
+    return session.get("user").get("user_id")
 
 #item_id 값 가져오기
 def get_item_id() :
@@ -28,9 +28,10 @@ def get_item_price() :
 # ------------------------------
 @sky_bp.route("/cart", methods=["GET"])
 def cart_page() :
-    user_id = "777" #테스트 용 하드코딩
-    #user_id = get_user_id()
-    
+    #user_id = "lucky" #테스트 용 하드코딩
+    user_id = get_user_id()
+    print(session.get("user"))
+
     #로그인 세션에 저장
     session["user_id"] = user_id
 
@@ -42,17 +43,20 @@ def cart_page() :
     #장바구니 - 상품출력
     dao = SkyDAO()
     items = dao.cart_check(user_id)
+
+    #장바구니 - 추천 상품출력
+    recommend_items = dao.item_recommend()
+
     dao.close()
-    return render_template("sky/cart.html", datas=items)
-    
+    return render_template("sky/cart.html", datas=items, rdatas=recommend_items)
 
 # ------------------------------
 # 장바구니 - POST (결제)
 # ------------------------------
 @sky_bp.route("/cart", methods=["POST"])
 def payok() :
-    user_id = "777" #테스트 용 하드코딩
-    #user_id = get_user_id()
+    #user_id = "lucky" #테스트 용 하드코딩
+    user_id = get_user_id()
 
     #로그인 확인
     if not user_id :
@@ -73,8 +77,8 @@ def payok() :
             paid_items.append(obj)
                 #item["item_name"],
                 #item["item_price"]
-    # #결제완료 > 장바구니 초기화(비우기)
-    # dao.item_payok(user_id)
+    #결제완료 > 장바구니 초기화(비우기)
+    dao.item_payok(user_id)
     #session["키"] = 값
     dao.close()
     session["paid_items"] = paid_items #화면용 객체 저장
@@ -83,7 +87,8 @@ def payok() :
 #추천 상품 담기
 @sky_bp.route("/cart/add/<int:item_id>", methods=["POST"])
 def add_to_cart(item_id):
-    user_id = "777" #테스트 용 하드코딩
+    user_id = get_user_id()
+    #user_id = "lucky" #테스트 용 하드코딩
     #item_id = request.json["itemId"]
     #item_id = 17956 #테스트 용 하드코딩
     dao = SkyDAO()
@@ -94,7 +99,8 @@ def add_to_cart(item_id):
 #장바구니에서 제거
 @sky_bp.route("/cart/remove/<int:item_id>", methods=["POST"])
 def remove_from_cart(item_id):
-    user_id = "777"
+    #user_id = "lucky"
+    user_id = get_user_id()
     dao = SkyDAO()
     dao.item_remove(user_id, item_id)
     dao.close()
@@ -105,8 +111,8 @@ def remove_from_cart(item_id):
 # ------------------------------
 @sky_bp.route("/history", methods=["GET"])
 def history_page() :
-    user_id = "777" #테스트 용 하드코딩
-    #user_id = request.args.get("user_id")
+    #user_id = "lucky" #테스트 용 하드코딩
+    user_id = get_user_id()
     #로그인 확인
     if not user_id :
         flash("로그인이 필요한 페이지입니다.")
@@ -137,8 +143,8 @@ def search() :
 # ------------------------------
 @sky_bp.route("/algo", methods=["GET"])
 def algo_page() :
-    user_id = "777" #테스트 용 하드코딩
-    #user_id = request.args.get("user_id")
+    #user_id = "lucky" #테스트 용 하드코딩
+    user_id = get_user_id()
     #로그인 확인
     if not user_id :
         flash("로그인이 필요한 페이지입니다.")

@@ -3,12 +3,29 @@ import traceback
 class SkyDAO :
     def __init__(self) :
         self.conn = pymysql.connect(
-            host="localhost",
-            user="root",
+            #----- ----- ----- ----- ----- -----
+            host="192.168.60.183",
+            #host="localhost",
+            #----- ----- ----- ----- ----- -----
+            user="members",
+            #user="root",
+            #----- ----- ----- ----- ----- -----
             password="ezen",
+            #----- ----- ----- ----- ----- -----
             database="shop",
+            #database="local_shop",
+            #----- ----- ----- ----- ----- -----
             cursorclass=pymysql.cursors.DictCursor
+            # 조회할 때만 : [(), ()] -> [{}, {}}]
         )
+
+        # self.conn = pymysql.connect(
+        #     host="localhost",
+        #     user="root",
+        #     password="ezen",
+        #     database="shop",
+        #     cursorclass=pymysql.cursors.DictCursor
+        # )
         self.cursor = self.conn.cursor()
 
 
@@ -30,10 +47,24 @@ class SkyDAO :
             self.conn.rollback()
             return []
 
+    #장바구니 - 추천 상품 조회
+    def item_recommend(self) :
+        try :
+            #DB에서 단순 랜덤 추천
+            sql = "select * from item order by rand() limit 3"
+            
+            #연관 상품 기반 추천
+            #SELECT * FROM item WHERE item_category IN ( SELECT item_category FROM item_cart c JOIN item i ON c.item_id = i.item_id WHERE c.user_id = %s ) AND item_id NOT IN ( SELECT item_id FROM item_cart WHERE user_id = %s ) LIMIT 3;
+            self.cursor.execute(sql)
+            cart_check = self.cursor.fetchall()
+            return cart_check
+        except Exception as e :
+            self.conn.rollback()
+            return []
 
-    #장바구니 - 추천 상품 담기
+    #장바구니 - 상품 담기(+추천 상품 담기)
     def item_add(self, user_id, item_id) :
-        try:
+        try :
             sql = "INSERT INTO item_cart(user_id, item_id) VALUES (%s, %s)"
             self.cursor.execute(sql, (user_id, item_id))
             self.conn.commit()
@@ -104,12 +135,10 @@ class SkyDAO :
     def history_check(self, user_id) :
         try :
             #sql = "select * from purchase_history where user_id = %s"
+
             sql = """
-                SELECT p.user_id, p.item_id, p.item_price, i.item_name
-                FROM purchase_history p
-                JOIN item i ON p.item_id = i.item_id
-                WHERE p.user_id = %s
-            """
+                    SELECT p.user_id, p.item_id, i.item_name, i.item_price, i.item_img FROM purchase_history p JOIN item i ON p.item_id = i.item_id WHERE p.user_id = %s
+                """
             self.cursor.execute(sql, (user_id,))
             history_check = self.cursor.fetchall()
             return history_check

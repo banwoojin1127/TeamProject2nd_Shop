@@ -21,13 +21,18 @@
             </ul>
         </nav>
         
-        <h1 class="page-title">결제내역</h1>
+        <h1 class="page-title">구매내역</h1>
 
         {% if datas %}
         <section class="cart-list">
             {% for item in datas %}
             <div class="cart-item" data_item_id="{{ item.item_id }}">
-                <div class="cart-item-img-placeholder"></div>
+                <div class="cart-item-img-placeholder">
+                        <!-- 이미지 파일로 받을 때 -->
+                        <img src="{{ url_for('static', filename='img/_item/' ~ item.item_img) }}" alt="{{ item.item_name }}" style="width: 100%; height: 100%; object-fit:cover;">
+                        <!-- 이미지 링크로 받을 때 -->
+                        <!-- <img src="{{ item.item_img }}" alt="{{ item.item_name }}" style="width: 100%; height: 100%; object-fit:cover;"> -->
+                    </div>
                 <div class="cart-item-details">
                     <p class="cart-item-name">상품명&nbsp
                         <span class="cart-item-name-context">
@@ -47,7 +52,7 @@
                 <div class="cart-item-price">
                     <p>상품 가격<br><br>
                         <span class="cart-item-price-context">
-                            {{item_price}} 원
+                            {{'{:,}'.format(item.item_price)}} 원
                         </span>
                     </p>
                 </div>

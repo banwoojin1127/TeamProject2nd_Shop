@@ -22,8 +22,12 @@
             <section class="cart-list">
                 {% for item in items %}
                 <div class="cart-item">
-                
-                    <div class="cart-item-img-placeholder"></div>
+                    <div class="cart-item-img-placeholder">
+                        <!-- 이미지 파일로 받을 때 -->
+                        <img src="{{ url_for('static', filename='img/_item/' ~ item.item_img) }}" alt="{{ item.item_name }}" style="width: 100%; height: 100%; object-fit:cover;">
+                        <!-- 이미지 링크로 받을 때 -->
+                        <!-- <img src="{{ item.item_img }}" alt="{{ item.item_name }}" style="width: 100%; height: 100%; object-fit:cover;"> -->
+                    </div>
                     <div class="cart-item-details">
                         <p class="cart-item-name">상품명&nbsp
                             <span class="cart-item-name-context">
@@ -36,8 +40,10 @@
                             상품 상세 정보<br>
                             <span class="cart-item-detail-context">{{ item.item_name }}입니다.</span>
                         </p>
+                        <!-- 특징 최대 공백 포함 : 144자까지... (널널하게)특징 최대 15개 -->
                         <div class="cart-item-tags">
-                            <p>#특징A #특징B #특징C</p>
+                            <p>#특징A #특징B #특징C #특징C #특징C #특징C #특징C #특징C #특징C #특징C
+                            #특징A #특징B #특징C #특징C #특징C</p>
                         </div>
                     </div>
                     <div class="cart-item-price">
