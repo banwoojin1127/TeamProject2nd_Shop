@@ -56,19 +56,30 @@ class LshDAO :
     
     # 타겟 유저 정보 조회
     def get_user_info(self, user_id: str):
-        self.cur.execute("SELECT birth, gender FROM `user` WHERE user_id = %s", (user_id,))
-        return self.cur.fetchone()
+        self.cursor.execute(
+            "SELECT birth, gender FROM `user` WHERE user_id = %s", (user_id,)
+        )
+        return self.cursor.fetchone()  # dict 형태로 {'birth': ..., 'gender': ...}
 
     # 나이(±2) + 성별 동일 유저 그룹 조회
     def get_homogeneous_users(self, gender: str, year: int, exclude_user: str):
-        self.cur.execute("""
-            SELECT u.user_id
-            FROM `user` u
-            WHERE u.gender = %s
-              AND YEAR(u.birth) BETWEEN %s AND %s
-              AND u.user_id != %s
+        self.cursor.execute("""
+            SELECT user_id
+            FROM `user`
+            WHERE gender = %s
+              AND YEAR(birth) BETWEEN %s AND %s
+              AND user_id != %s
         """, (gender, year-2, year+2, exclude_user))
-        return [r[0] for r in self.cur.fetchall()]
+        return [r['user_id'] for r in self.cursor.fetchall()]  # dict key 사용
+
+    # 전체 사용자 (본인 제외)
+    def get_all_users_except(self, exclude_user: str):
+        self.cursor.execute("""
+            SELECT user_id
+            FROM `user`
+            WHERE user_id != %s
+        """, (exclude_user,))
+        return [r['user_id'] for r in self.cursor.fetchall()]
 
     # 사용자 그룹의 구매 내역 조회 (상품 + 평점 + 리뷰수 + 이미지)
     def get_purchase_history_by_users(self, user_list: list[str]):
@@ -81,10 +92,13 @@ class LshDAO :
             JOIN item i ON ph.item_id = i.item_id
             WHERE ph.user_id IN ({format_strings})
         """
-        self.cur.execute(sql, tuple(user_list))
-        return self.cur.fetchall()
+        self.cursor.execute(sql, tuple(user_list))
+        return self.cursor.fetchall()  # list of dict
 
     # 특정 user의 구매 아이템 목록 조회
-    def get_user_purchase_items(self, user_id: str):
-        self.cur.execute("SELECT item_id FROM purchase_history WHERE user_id = %s", (user_id,))
-        return {r[0] for r in self.cur.fetchall()}
+    def get_user_purchase_set(self, user_id: str):
+        self.cursor.execute(
+            "SELECT item_id FROM purchase_history WHERE user_id = %s", (user_id,)
+        )
+        # dict key 사용, set으로 반환
+        return {r['item_id'] for r in self.cursor.fetchall()}
