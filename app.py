@@ -11,7 +11,7 @@ from flask import Flask
 # 분리된 라우터 파일 임포트
 from routes.woo import woo_bp
 from routes.sky import sky_bp
-from routes.mhi import mhi
+from routes.mhi import mhi_bp
 from routes.lsh import lsh_bp
 
 
@@ -22,7 +22,7 @@ app.secret_key = "ezen"
 # 분리된 woo 라우터를 flask 에 등록
 app.register_blueprint(woo_bp)
 app.register_blueprint(sky_bp)
-app.register_blueprint(mhi)
+app.register_blueprint(mhi_bp)
 app.register_blueprint(lsh_bp)
 
 

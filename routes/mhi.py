@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_dao.mhi_dao import MhiDAO
-
-mhi = Blueprint('mhi', __name__)
 dao = MhiDAO()  # DAO 인스턴스 생성
+mhi_bp = Blueprint('mhi', __name__)
+
 
 # ------------------- JSON 데이터받기 -------------------
 # 자동으로 비밀번호 입력을 위함
-@mhi.route("/get_users")
+@mhi_bp.route("/get_users")
 def get_users():
     users = dao.get_all_users()
     users_dict = {u['user_id']: u['user_pw'] for u in users}
@@ -14,17 +14,17 @@ def get_users():
 
 # DAO에서 모든 user_id만 리스트로 가져와 JSON으로 반환
 # 드롭다운에 들어갈 아이디를 가져오기 위함
-@mhi.route("/get_user_ids")
+@mhi_bp.route("/get_user_ids")
 def get_user_ids_route():
     return jsonify(dao.get_user_ids())
 
 # ------------------- 로그인 페이지 -------------------
-@mhi.route("/login", methods=["GET"])
+@mhi_bp.route("/login", methods=["GET"])
 def login_get():
     return render_template("mhi/login.html", user_id=session.get("user_id"))
 
 # ------------------- 로그인 처리 -------------------
-@mhi.route("/login", methods=["POST"])
+@mhi_bp.route("/login", methods=["POST"])
 def login_post():
     user_id = request.form.get("user_id", "").strip()
     user_pw = request.form.get("user_pw", "").strip()
@@ -47,7 +47,7 @@ def login_post():
         return redirect(url_for("mhi.login_get"))
 
 # ------------------- 로그아웃 -------------------
-@mhi.route("/logout", methods=["POST"])
+@mhi_bp.route("/logout", methods=["POST"])
 def logout():
     # 현재 로그인한 유저의 세션 정보만 삭제
     session.pop("user")
@@ -78,12 +78,12 @@ def logout():
 #     )
 
 
-@mhi.route("/signup", methods=["GET"])
+@mhi_bp.route("/signup", methods=["GET"])
 def signup_get():
     return render_template("mhi/signup.html")
 
 
-@mhi.route("/signup", methods=["POST"])
+@mhi_bp.route("/signup", methods=["POST"])
 def signup_post():
     user_id = request.form.get("user_id", "").strip()
     user_pw = request.form.get("user_pw", "").strip()
@@ -104,3 +104,35 @@ def signup_post():
 
     flash("회원가입이 완료되었습니다! 이제 로그인해주세요.")
     return redirect(url_for("mhi.login_get"))
+
+# routes/mhi.py 파일 하단에 추가
+
+# ------------------- 연령대/성별 기반 추천 페이지 -------------------
+@mhi_bp.route("/group_recommendation")
+def group_recommendation():
+    # 1. 로그인 여부 확인
+    # 'user' 세션 키를 사용하고 있으므로, 이를 확인합니다.
+    if 'user' not in session:
+        flash("추천 서비스를 이용하려면 로그인해주세요.")
+        return redirect(url_for("mhi.login_get"))
+
+    user_id = session['user']['user_id']
+    
+    # 2. DAO 메서드 호출
+    # dao는 이미 파일 상단에 MhiDAO()로 인스턴스화 되어 있습니다.
+    try:
+        # get_recommended_items_by_group 메서드를 호출
+        recommended_list = dao.get_recommended_items_by_homogeneous_group(user_id, limit=10)
+    except Exception as e:
+        # DB 오류나 데이터 처리 오류 발생 시
+        print(f"추천 데이터 로드 오류: {e}")
+        flash("추천 정보를 불러오는 데 실패했습니다.")
+        recommended_list = []
+
+    # 3. 템플릿 렌더링
+    # 'mhi' 폴더 내에 템플릿을 두거나, templates/group_recommend.html로 설정할 수 있습니다.
+    # 여기서는 'mhi/group_recommend.html'을 가정합니다.
+    return render_template(
+        "mhi/group_recommend.html", 
+        recommendations=recommended_list
+    )

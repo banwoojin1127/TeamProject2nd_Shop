@@ -10,7 +10,7 @@
 
 .login-box {
     padding: 40px;
-    border: 2px solid #4CAF50;
+    border: 2px solid #16D99B;
     border-radius: 12px;
     min-width: 400px;
     box-sizing: border-box;
@@ -20,13 +20,13 @@
     text-align: center;
     margin-bottom: 30px;
     font-size: 32px;
-    color: #4CAF50;
+    color: #16D99B;
     cursor: pointer;
 }
 
 /* 마우스 올렸을 때 */
 .login-box h1:hover {
-    color: #43a047;
+    color: #4CAF50;
     /* 살짝 진해짐 */
     text-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
 }
