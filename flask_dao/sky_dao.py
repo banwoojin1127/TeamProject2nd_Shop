@@ -62,16 +62,15 @@ class SkyDAO :
             self.conn.rollback()
             return []
 
-    #장바구니 - 상품 담기(+추천 상품 담기)
+    #장바구니 - 추천 상품 담기
     def item_add(self, user_id, item_id) :
         try :
             sql = "INSERT INTO item_cart(user_id, item_id) VALUES (%s, %s)"
             self.cursor.execute(sql, (user_id, item_id))
             self.conn.commit()
-        except Exception as e:
+        except Exception as e :
             self.conn.rollback()
             print(e)
-
 
     #장바구니 - 상품 제거
     def item_remove(self, user_id, item_id) :

@@ -313,6 +313,7 @@ main {
     height: 200px; /* 상품 썸네일 높이 임의 지정 */
     background-color: #f7f7f7;
     border: 1px dashed #ddd; /* 이미지 플레이스홀더 스타일 */
+    object-fit:cover;
 }
 /* 중간 와이드 배너 || !!!!! !!!!! 다만 이 영역은 그래프를 출력하는 자리로 수정 필요 !!!!! !!!!! */
 .middle-banner-area {
@@ -427,9 +428,10 @@ main {
 }
 .detail-item-image {
     flex: 1; /* 이미지 영역 */
-    height: 600px; /* 큰 이미지 높이 임의 지정 */
+    /* height: 600px; 큰 이미지 높이 임의 지정 */
     background-color: #f7f7f7;
     border: 1px dashed #ddd;
+    object-fit: cover;
 }
 .detail-item-info {
     flex: 1; /* 정보 영역 */
@@ -680,7 +682,11 @@ main {
 /* 추천 상품 섹션 */
 /* ------------------- */
 .recommended-items {
-    margin-top: 50px;
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;  /* 양쪽 끝으로 배치 */
+    align-items: flex-start;         /* 위쪽 정렬 */
+    gap: 20px;
 }
 
 .section-title { /* 중복되는 클래스 지정이 있지만 값이 같아서 문제 없음 */
@@ -691,7 +697,7 @@ main {
 
 .recommended-container {
     display: flex;
-    gap: 30px;
+    flex-direction: column;
 }
 
 .recommended-list {
@@ -748,6 +754,7 @@ main {
 
 .recommended-wide-banner {
     flex: 2; /* 오른쪽 배너가 더 많은 공간을 차지 */
+    width: 500px;
     height: 400px; /* 높이 임의 지정 */
     background-color: #e0e0e0;
     border: 1px dashed #ccc;

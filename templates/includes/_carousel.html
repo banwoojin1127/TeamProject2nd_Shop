@@ -1,3 +1,31 @@
+<style>
+.slide_img {
+    display: flex;
+    align-items: center;
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    margin-left: 120px;
+}
+
+.slide_item_name {
+    width: 400px;
+    text-align: left;
+    margin-left: 320px;
+    margin-bottom: 67px;
+    align-items: center;
+    font-size: 30px;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+</style>
+
 <!-- 캐러셀 (슬라이드) 시작 -->
 <div id="carouselSlideslidesShow" class="main-banner carousel slide">
     <div class="carousel-indicators">
@@ -6,23 +34,24 @@
         <button type="button" data-bs-target="#carouselSlideslidesShow" data-bs-slide-to="{{ indi_no }}" aria-label="Slide {{ indi_no + 1 }}"></button>
         {% endfor %}
     </div>
-    <div class="carousel-inner" style="width: 100%; height: 100%;">
+    <div class="carousel-inner" style="width: 100%; height: 100%; background-color: #aa2020;">
         <a href="/{{ (best_li[0]['item_category'] - 9) // 10 }}/{{ best_li[0]['item_id'] }}">
             <div class="carousel-item active" style="width: 100%; height: 100%;">
-                <img src="{{ url_for('static', filename='img/_item/' + best_li[0]['item_img']) }}"
-                class="d-block" style="height: 100%; object-fit: cover; display: flex; margin: auto;" alt="...">
+                <img class="slide_img" src="{{ url_for('static', filename='img/_item/' + best_li[0]['item_img']) }}"
+                class="d-block" alt="...">
                 <div class="carousel-caption d-none d-md-block">
-                    <p> {{ best_li[0]['item_name'] }} </p>
+                    <p class="slide_item_name"> {{ best_li[0]['item_name'] }} </p>
                 </div>
             </div>
         </a>
+
         {% for casel in best_li[1:] %}
         <a href="/{{ (casel['item_category'] - 9) // 10 }}/{{ casel['item_id'] }}">
             <div class="carousel-item" style="width: 100%; height: 100%;">
-                <img src="{{ url_for('static', filename='img/_item/' + casel['item_img']) }}"
-                class="d-block" style="height: 100%; object-fit: cover; display: flex; margin: auto;" alt="...">
+                <img class="slide_img" src="{{ url_for('static', filename='img/_item/' + casel['item_img']) }}"
+                class="d-block" style="height: 100%; object-fit: cover; display: flex;" alt="...">
                 <div class="carousel-caption d-none d-md-block">
-                    <p> {{ casel['item_name'] }} </p>
+                    <p class="slide_item_name"> {{ casel['item_name'] }} </p>
                 </div>
             </div>
         </a>

@@ -41,11 +41,14 @@ def cart_page() :
         return redirect("/login")
     
     #장바구니 - 상품출력
+    user_id = get_user_id()
     dao = SkyDAO()
     items = dao.cart_check(user_id)
 
     #장바구니 - 추천 상품출력
     recommend_items = dao.item_recommend()
+    #화면용 객체 저장
+    session["recommend_items"] = recommend_items 
 
     dao.close()
     return render_template("sky/cart.html", datas=items, rdatas=recommend_items)
@@ -81,7 +84,8 @@ def payok() :
     dao.item_payok(user_id)
     #session["키"] = 값
     dao.close()
-    session["paid_items"] = paid_items #화면용 객체 저장
+    #화면용 객체 저장
+    session["paid_items"] = paid_items 
     return redirect("/history")
 
 #추천 상품 담기

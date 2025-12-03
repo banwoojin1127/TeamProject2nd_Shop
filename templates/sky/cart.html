@@ -80,15 +80,20 @@
             {% endif %}
         </section>
 
-        {% if rdatas %}
+        {% if datas %}
+        <h2 class="section-title">함께 구매하면 좋은 상품들이에요!</h2>
         <section class="recommended-items">
-            <h2 class="section-title">함께 구매하면 좋은 상품들이에요!</h2>
             <div class="recommended-container">
                 {% for item in rdatas %}
                 <div class="recommended-list">
-                    <form action="/cart" method="post">
+                    <form action="{{ url_for('sky.add_to_cart', item_id=item.item_id) }}" method="post">
                         <div class="recommend-item" data-item_id="{{item_id}}" data-item_name="{{item_name}}" data-item_price="{{item_price}}">
-                            <div class="recommend-img-placeholder"></div>
+                            <div class="cart-item-img-placeholder">
+                                <!-- 이미지 파일로 받을 때 -->
+                                <img src="{{ url_for('static', filename='img/_item/' ~ item.item_img) }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
+                                <!-- 이미지 링크로 받을 때 -->
+                                <!-- <img src="{{ item.item_img }}" alt="{{ item.item_name }}" style="width: 100%; height: 100%; object-fit:cover;"> -->
+                            </div>
                             <div class="recommend-info">
                                 <h3 class="recommend-name">상품명 {{item.item_name}}</h3>
                                 <p class="recommend-price">{{'{:,}'.format(item.item_price)}} 원</p>
@@ -100,11 +105,12 @@
                 </div>
                 {% endfor %}
             </div>
-            
-            <div class="recommended-wide-banner"></div>
+            <div class="recommended_banner">
+                <div class="recommended-wide-banner"></div>
+            </div>
         </section>
         {% endif %}
-        
+        <br><br><br>
     </main>
 </body>
 </html>
