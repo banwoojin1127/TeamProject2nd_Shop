@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_dao.mhi_dao import MhiDAO
 
-mhi = Blueprint('mhi', __name__)
+mhi_bp = Blueprint('mhi', __name__)
 dao = MhiDAO()  # DAO 인스턴스 생성
 
 # ------------------- JSON 데이터받기 -------------------
 # 자동으로 비밀번호 입력을 위함
-@mhi.route("/get_users")
+@mhi_bp.route("/get_users")
 def get_users():
     users = dao.get_all_users()
     users_dict = {u['user_id']: u['user_pw'] for u in users}
@@ -14,17 +14,17 @@ def get_users():
 
 # DAO에서 모든 user_id만 리스트로 가져와 JSON으로 반환
 # 드롭다운에 들어갈 아이디를 가져오기 위함
-@mhi.route("/get_user_ids")
+@mhi_bp.route("/get_user_ids")
 def get_user_ids_route():
     return jsonify(dao.get_user_ids())
 
 # ------------------- 로그인 페이지 -------------------
-@mhi.route("/login", methods=["GET"])
+@mhi_bp.route("/login", methods=["GET"])
 def login_get():
     return render_template("mhi/login.html", user_id=session.get("user_id"))
 
 # ------------------- 로그인 처리 -------------------
-@mhi.route("/login", methods=["POST"])
+@mhi_bp.route("/login", methods=["POST"])
 def login_post():
     user_id = request.form.get("user_id", "").strip()
     user_pw = request.form.get("user_pw", "").strip()
@@ -47,7 +47,7 @@ def login_post():
         return redirect(url_for("mhi.login_get"))
 
 # ------------------- 로그아웃 -------------------
-@mhi.route("/logout", methods=["POST"])
+@mhi_bp.route("/logout", methods=["POST"])
 def logout():
     # 현재 로그인한 유저의 세션 정보만 삭제
     session.pop("user")
@@ -78,12 +78,12 @@ def logout():
 #     )
 
 
-@mhi.route("/signup", methods=["GET"])
+@mhi_bp.route("/signup", methods=["GET"])
 def signup_get():
     return render_template("mhi/signup.html")
 
 
-@mhi.route("/signup", methods=["POST"])
+@mhi_bp.route("/signup", methods=["POST"])
 def signup_post():
     user_id = request.form.get("user_id", "").strip()
     user_pw = request.form.get("user_pw", "").strip()

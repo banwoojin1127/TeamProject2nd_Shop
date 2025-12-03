@@ -13,6 +13,7 @@
     </header>
 
     <main>
+        <!-- 상품 상세 -->
         <section class="detail-item-section">
             <div class="detail-item-image">
                 <img src="{{ url_for('static', filename='img/_item/' + ie['item_img']) }}"
@@ -50,6 +51,7 @@
             </div>
         </section>
 
+        <!-- 추천 상품 -->
         <section class="related-items-section">
             <h2 class="section-title">함께 보면 좋은 상품</h2>
             <div class="related-grid">
@@ -68,12 +70,92 @@
             </div>
         </section>
 
-        <section class="full-description-area">
-            <div>
-                <img src="{{ url_for('static', filename='img/recommend_similarity_plot.png') }}"
-                style="width: 100%; height: 100%;">
+        <!-- 유사도 그래프 -->
+        <section class="full-description-area" style="background: #ffffff;">
+            <div style="width: 100%; max-width: 800px; margin: 0 auto; background: #ffffff;">
+                <canvas id="simChart" style="background: #ffffff;"></canvas>
             </div>
         </section>
+
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            // Python → JS 데이터 전달
+            let graphData;
+            try {
+                graphData = JSON.parse(`{{ result.graph | tojson | safe }}`);
+            } catch (e) {
+                graphData = { labels: [], values: [] };
+            }
+
+            // 데이터 기본값 처리
+            let labels = Array.isArray(graphData.labels) ? graphData.labels : [];
+            let values = Array.isArray(graphData.values) ? graphData.values : [];
+
+            // 10글자 넘으면 축약
+            labels = labels.map(label =>
+                (label && label.length > 10) ? label.substring(0, 10) + "..." : label
+            );
+
+            const ctx = document.getElementById('simChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '유사도 점수 (%)',
+                        data: values,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 14   // X축 글씨 크기
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 1,
+                            ticks: {
+                                stepSize: 0.2,
+                                callback: (value) => `${value * 100}`,  // 0.1 → 10
+                                font: { size: 14 }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    size: 14  // 범례(font) 크기
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: '추천 상품 유사도',
+                            font: {
+                                size: 25 // 제목 글씨 크기
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                            // 0.52 → 52%
+                            label: (ctx) => `${(ctx.raw * 100).toFixed(2)}%`
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
     </main>
 </body>
 </html>
