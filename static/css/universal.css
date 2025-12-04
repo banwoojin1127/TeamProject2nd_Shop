@@ -281,7 +281,7 @@ main {
 .thumbnail-item {
     height: 150px; /* 높이 임의 지정 */
     background-color: #f7f7f7;
-    border: 1px dashed #ddd; /* 이미지 플레이스홀더 스타일 */
+    border: 1px dashed #fdfdfd; /* 이미지 플레이스홀더 스타일 */
 }
 
 /* 와이드 배너 */
@@ -311,7 +311,7 @@ main {
 .product-item {
     height: 200px; /* 상품 썸네일 높이 임의 지정 */
     background-color: #f7f7f7;
-    border: 1px dashed #ddd; /* 이미지 플레이스홀더 스타일 */
+    border: 1px dashed #fdfdfd; /* 이미지 플레이스홀더 스타일 */
     object-fit:cover;
 }
 /* 중간 와이드 배너 || !!!!! !!!!! 다만 이 영역은 그래프를 출력하는 자리로 수정 필요 !!!!! !!!!! */
@@ -320,7 +320,7 @@ main {
     height: 200px; /* 높이 임의 지정 */
     background-color: #e0e0e0;
     margin-bottom: 40px;
-    border: 1px dashed #ccc;
+    border: 1px dashed #fdfdfd;
 }
 
 /* TOP 버튼 */
@@ -429,7 +429,7 @@ main {
     flex: 1; /* 이미지 영역 */
     /* height: 600px; 큰 이미지 높이 임의 지정 */
     background-color: #f7f7f7;
-    border: 1px dashed #ddd;
+    border: 1px dashed #fdfdfd;
     object-fit: cover;
 }
 .detail-item-info {
@@ -455,12 +455,15 @@ main {
     margin: 30px 0;
 }
 .detail-description h2 {
-    font-size: 18px;
-    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
 }
 .detail-description p {
-    font-size: 15px;
+    font-size: 20px;
     color: #333;
+    font-weight: 600;
+    font-family: sans-serif;
 }
 .action-area {
     display: flex;
@@ -500,7 +503,7 @@ main {
 .related-item {
     height: 200px; /* 관련 상품 썸네일 높이 임의 지정 */
     background-color: #f7f7f7;
-    border: 1px dashed #ddd;
+    border: 1px dashed #fdfdfd;
 }
 
 /* 상세 설명 컨텐츠 영역 */
@@ -508,8 +511,8 @@ main {
     width: 100%;
     height: 500px; /* 상세 설명 이미지/컨텐츠 영역 높이 임의 지정 */
     background-color: #e0e0e0;
-    border: 1px dashed #ccc;
-    margin-top: 50px;
+    border: 1px dashed #fdfdfd;
+    margin-top: 70px;
     margin-bottom: 50px;
 }
 /*===== ===== ===== ===== ===== ===== ===== ===== ===== =====
@@ -549,7 +552,7 @@ main {
     width: 100px;
     height: 100px;
     background-color: #f7f7f7;
-    border: 1px dashed #ddd;
+    border: 1px dashed #fdfdfd;
     margin-right: 20px;
 }
 
@@ -641,12 +644,14 @@ main {
     font-weight: bold;
     color: #333;
     text-align: right;
+    font-family: sans-serif;
 }
 
 .cart-item-price-context {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 600;
     margin-right: 3px;
+    font-family: sans-serif;
 }
 
 .remove-btn {
@@ -710,14 +715,14 @@ main {
     display: flex;
     align-items: center;
     padding: 15px;
-    border: 1px solid #eee;
+    border: 1px solid #fdfdfd;
 }
 
 .recommend-img-placeholder {
     width: 80px;
     height: 80px;
     background-color: #f7f7f7;
-    border: 1px dashed #ddd;
+    border: 1px dashed #fdfdfd;
     margin-right: 15px;
 }
 
@@ -731,9 +736,11 @@ main {
 }
 
 .recommend-price {
-    font-size: 14px;
-    color: #4CAF50;
+    font-size: 18px;
+    color: #000;
     margin: 5px 0;
+    font-weight: 600;
+    font-family: sans-serif;
 }
 
 .recommend-tags {
@@ -756,7 +763,7 @@ main {
     width: 500px;
     height: 400px; /* 높이 임의 지정 */
     background-color: #e0e0e0;
-    border: 1px dashed #ccc;
+    border: 1px dashed #fdfdfd;
 }
 /*===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 ===== ===== ===== ===== ===== ===== ===== ===== ===== =====*/

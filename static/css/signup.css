@@ -10,11 +10,10 @@
 }
 
 .signup-box {
-    width: 400px;  
-    padding: 50px 60px;
+    width: 510px;
+    padding: 30px 100px 50px 100px;
     border: 2px solid #16D99B;
     border-radius: 12px;
-    min-width: 400px;
     box-sizing: border-box;
 }
 

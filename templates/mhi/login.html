@@ -14,13 +14,13 @@
     <div class="login-container">
         <div class="login-box">
             <a href="/">
-                <img src="{{ url_for('static', filename='img/Hub_mall_logo.png') }}" alt="Hub" height="100">
+                <img src="{{ url_for('static', filename='img/Hub_mall_logo.png') }}" alt="Hub" height="110">
             </a>
             {% with messages = get_flashed_messages() %}
             {% if messages %}
             <ul>
                 {% for msg in messages %}
-                <li>{{ msg }}</li>
+                <li class="li">{{ msg }}</li>
                 {% endfor %}
             </ul>
             {% endif %}
@@ -36,7 +36,7 @@
                 </div>
             </form>
             <div class="login-links">
-                <a href="/signup" class="link-button">회원가입</a>
+                <a href="/signup" class="link-button" style="text-decoration-line: none;">회원가입</a>
             </div>
         </div>
     </div>

@@ -14,7 +14,7 @@ class SkyDAO :
             #----- ----- ----- ----- ----- -----
             database="shop",
             #database="local_shop",
-            #----- ----- ----- ----- ----- -----
+            #----- ----- ----- ----- ----- -----    
             cursorclass=pymysql.cursors.DictCursor
             # 조회할 때만 : [(), ()] -> [{}, {}}]
         )
@@ -135,7 +135,7 @@ class SkyDAO :
             #sql = "select * from purchase_history where user_id = %s"
 
             sql = """
-                    SELECT p.user_id, p.item_id, i.item_name, i.item_price, i.item_img, i.item_category FROM purchase_history p JOIN item i ON p.item_id = i.item_id WHERE p.user_id = %s
+                    SELECT p.user_id, p.item_id, i.item_name, i.item_price, i.item_img, i.item_category FROM purchase_history p JOIN item i ON p.item_id = i.item_id WHERE p.user_id = %s order by p.purchase_id desc
                 """
             self.cursor.execute(sql, (user_id,))
             history_check = self.cursor.fetchall()
