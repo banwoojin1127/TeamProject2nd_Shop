@@ -13,7 +13,9 @@
 <body>
     <div class="login-container">
         <div class="login-box">
-            <h1 id="logoTitle">Hüb mall</h1>
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/Hub_mall_logo.png') }}" alt="Hub" height="100">
+            </a>
             {% with messages = get_flashed_messages() %}
             {% if messages %}
             <ul>
@@ -29,19 +31,14 @@
                 <div class="combo-wrapper">
                     <input id="comboInput" name="user_id" type="text" placeholder="아이디" autocomplete="off">
                     <ul id="comboMenu"></ul>
-                </div>
-                <input type="password" id="pwInput" name="user_pw" placeholder="비밀번호">
+                    <input type="password" id="pwInput" name="user_pw" placeholder="비밀번호">
                 <button type="submit" class="login-button">로그인</button>
-
+                </div>
             </form>
             <div class="login-links">
                 <a href="/signup" class="link-button">회원가입</a>
             </div>
         </div>
-
-
-    </div>
-    </div>
     </div>
 
     <script>

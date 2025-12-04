@@ -35,7 +35,7 @@ class SkyDAO :
         try :
             #sql = "select y.* from item_cart x inner join item y on x.item_id = y.item_id  where x.user_id = %s"
             sql = """
-                SELECT i.item_id, i.item_name, i.item_price, i.item_rate, i.item_reviewcnt, i.item_img
+                SELECT i.item_id, i.item_name, i.item_price, i.item_rate, i.item_reviewcnt, i.item_img, i.item_category
                 FROM item_cart c
                 JOIN item i ON c.item_id = i.item_id
                 WHERE c.user_id = %s
@@ -135,7 +135,7 @@ class SkyDAO :
             #sql = "select * from purchase_history where user_id = %s"
 
             sql = """
-                    SELECT p.user_id, p.item_id, i.item_name, i.item_price, i.item_img FROM purchase_history p JOIN item i ON p.item_id = i.item_id WHERE p.user_id = %s
+                    SELECT p.user_id, p.item_id, i.item_name, i.item_price, i.item_img, i.item_category FROM purchase_history p JOIN item i ON p.item_id = i.item_id WHERE p.user_id = %s
                 """
             self.cursor.execute(sql, (user_id,))
             history_check = self.cursor.fetchall()
@@ -144,7 +144,21 @@ class SkyDAO :
             self.conn.rollback()
             traceback.print_exc()
             return []
-
+        
+    """상품 상세보기"""
+    #상품 상세보기 조회
+    def item_detail(self, item_category, item_id) :
+        try :
+            sql = """
+                select * from item where item_category = %s and item_id = %s
+            """
+            self.cursor.execute(sql, (item_category, item_id))
+            result = self.cursor.fetchone()
+            return result
+        except Exception as e :
+            self.conn.rollback()
+            traceback.print_exc()
+            return []
 
     #데이터베이스 연결 종료
     def close(self) :

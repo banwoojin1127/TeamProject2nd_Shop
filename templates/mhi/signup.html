@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <title>회원가입</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
-
-    <styel>
-        
-    </styel>
 </head>
 <body>
     <div class="signup-container">
         <div class="signup-box">
-            <h1>회원가입</h1>
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/Hub_mall_logo.png') }}" alt="Hub" height="100">
+            </a>
 
             {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -35,7 +33,7 @@
                     <option value="F">여자</option>
                 </select>
 
-                <input type="date" name="birth" placeholder="생년월일">
+                <input type="date" name="birth" placeholder="생년월일" style="color: #555; margin-top: 10px;">
 
                 <button type="submit" class="login-button">회원가입</button>
             </form>

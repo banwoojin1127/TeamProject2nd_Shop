@@ -26,7 +26,7 @@
 
 /* 마우스 올렸을 때 */
 .login-box h1:hover {
-    color: #4CAF50;
+    color: #16D99B;
     /* 살짝 진해짐 */
     text-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
 }
@@ -42,7 +42,7 @@
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 6px;
-    font-size: 18px;
+    font-size: 15px;
     outline: none;
     transition: border 0.2s, box-shadow 0.2s;
 }
@@ -54,7 +54,7 @@
     border: none;
     border-radius: 6px;
     color: white;
-    font-size: 18px;
+    font-size: 15px;
     cursor: pointer;
 }
 
@@ -81,7 +81,7 @@
     list-style: none;
     padding: 12px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 15px;
 }
 
 #comboMenu li:hover {
@@ -102,7 +102,9 @@
     /* 버튼 사이 간격 좁게 */
     margin-bottom: 0.1px;
     /* 로그인 버튼과 간격 */
-    margin-top: 10px;
+    margin-top: 15px;
+    height: 25px;
+    align-items: center;
 }
 
 .link-button {
@@ -116,6 +118,8 @@
     cursor: pointer;
     padding: 0;
     /* 내부 여백 제거 */
+    text-decoration: none;
+    /* 밑줄 제거 */
 }
 
 .dicider {
