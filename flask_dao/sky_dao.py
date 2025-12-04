@@ -115,7 +115,6 @@ class SkyDAO :
             self.conn.rollback()
             print(e)
 
-
     """검색"""
     #상품 검색
     def item_search(self, item_name) :
