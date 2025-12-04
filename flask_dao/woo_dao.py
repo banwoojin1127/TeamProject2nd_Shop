@@ -94,11 +94,18 @@ class WooDAO :
         ranking = self.calc_weighted_rate(option = option, item_category = category_no)
 
         result = []
+        cate_li = []
+        sql = """
+        SELECT parent_id FROM category WHERE %s = category_id
+        """
         for quan in ranking[:quantity] :
             result.append(quan)
+            self.cursor.execute(sql, (quan["item_category"],))
+            parent_no = self.cursor.fetchone()
+            cate_li.append(parent_no['parent_id'])
 
         self.close()
-        return result
+        return result, cate_li
 
 
     def cate_rand_items(self, item_category) :
