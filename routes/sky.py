@@ -37,7 +37,6 @@ def cart_page() :
 
     #로그인 확인
     if not user_id :
-        flash("로그인이 필요한 페이지입니다.")
         return redirect("/login")
     
     #장바구니 - 상품출력
@@ -63,7 +62,6 @@ def payok() :
 
     #로그인 확인
     if not user_id :
-        flash("로그인이 필요한 페이지입니다.")
         return redirect("/login")
     
     dao = SkyDAO()
@@ -119,7 +117,6 @@ def history_page() :
     user_id = get_user_id()
     #로그인 확인
     if not user_id :
-        flash("로그인이 필요한 페이지입니다.")
         return redirect("/login")
     
     #결제 내역 출력
@@ -141,7 +138,20 @@ def search() :
     dao.close()
     return render_template("sky/search.html", items=items, keyword=keyword)
 
+# ------------------------------
+# 상품 상세보기 - (화면)
+# ------------------------------
+"""
+@sky_bp.route("/<int:item_category>/<int:item_id>")
+def item_detail_page(item_category, item_id):
+    #print("item_category:" + str(item_category))
+    #print("item_id:" + str(item_id))
 
+    dao = SkyDAO()
+    item = dao.item_detail(item_category, item_id)
+    print(item)
+    return render_template("item.html", item=item)
+"""
 # ------------------------------
 # 알고리즘 - GET (화면)
 # ------------------------------
@@ -151,7 +161,6 @@ def algo_page() :
     user_id = get_user_id()
     #로그인 확인
     if not user_id :
-        flash("로그인이 필요한 페이지입니다.")
         return redirect("/login")
     return render_template("sky/algorithm.html")
 
