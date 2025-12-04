@@ -89,14 +89,15 @@ def category(category_no = 0) :
     session["cate_no"] = category_no
 
     dao = WooDAO()
-    ie_best_cate_li = dao.calc_ranking_item(
+    ie_best_cate_li, cate_li = dao.calc_ranking_item(
             quantity = 5, option = 1, category_no = category_no
         )
 
     dao = WooDAO()
     ie_li = dao.cate_rand_items(category_no)
 
-    return render_template("woo/category.html", best_li = ie_best_cate_li, ie_li = ie_li)
+    return render_template("woo/category.html",
+                            best_li = ie_best_cate_li, ie_li = ie_li, cate_li = cate_li)
 
 
 #@woo_bp.route("/<int:category_no>/<int:item_no>")
