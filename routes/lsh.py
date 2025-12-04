@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session
+from flask import Blueprint, render_template, session, redirect, flash
 from flask_dao.lsh_dao import LshDAO
 from service.recommend_similarity import recommend_similarity
 from service.recommend_user import recommend_user
@@ -51,6 +51,7 @@ def item(category_no=0, item_no=0):
     print("추천 상품 리스트:", recs)
     print("----------------")
 
+    # 템플릿으로 데이터 전달
     return render_template(
         "lsh/item.html", 
         ie=result,
@@ -58,9 +59,17 @@ def item(category_no=0, item_no=0):
         result=sim_result
     )
 
-@lsh_bp.route("/mypage")
-def mypage():
-    user_id = session.get("user")
+"""
+@lsh_bp.route("/algo")
+def algo_page():
+    user_session = session.get("user")
+
+    if not user_session:
+        flash("로그인이 필요한 페이지입니다.")
+        return redirect("/login")
+
+    user_id = user_session["user_id"]
+
     dao = LshDAO()
     try:
         user = dao.get_user_info(user_id)
@@ -68,14 +77,36 @@ def mypage():
         dao.close()
 
     if not user:
-        return render_template("mypage.html", user=None, recs=[])
+        flash("유저 정보를 찾을 수 없습니다.")
+        return redirect("/login")
 
     # 추천 실행
-    recommend_user(user_id)
-    recs = current_app.recommend_user_result.get("recommendations", [])
+    result = recommend_user(user_id)
 
-    #디버깅용 출력
-    print(f"유저 아이디: {user_id}")
-    print(f"추천 상품 리스트: {recs}")
+    if result is None:
+        result = {
+            "recommendations": [],
+            "graph": {
+                "labels": [],
+                "values": []
+            }
+        }
 
-    return render_template("mypage.html", user=user, recs=recs)
+    recommendations = result.get("recommendations", [])
+
+    graph_data = result.get("graph") or {}
+    labels = graph_data.get("labels", [])
+    values = graph_data.get("values", [])
+
+    # 디버깅 출력
+    print("유저 아이디:", user_id)
+    print("추천 상품:", recommendations)
+
+    # 템플릿으로 데이터 전달    
+    return render_template(
+        "sky/algorithm.html",
+        recommendations=recommendations,
+        chart_labels=labels,
+        chart_values=values
+    )
+"""

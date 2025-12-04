@@ -23,11 +23,11 @@ class WooDAO :
         """
         self.conn = pymysql.connect(
             #----- ----- ----- ----- ----- -----
-            host="192.168.60.183",
-            #host="localhost",
+            #host="192.168.60.183",
+            host="localhost",
             #----- ----- ----- ----- ----- -----
-            user="members",
-            #user="root",
+            #user="members",
+            user="root",
             #----- ----- ----- ----- ----- -----
             password="ezen",
             #----- ----- ----- ----- ----- -----
@@ -51,11 +51,11 @@ class WooDAO :
         """
         self.dfconn = pymysql.connect(
             #----- ----- ----- ----- ----- -----
-            host="192.168.60.183",
-            #host="localhost",
+            #host="192.168.60.183",
+            host="localhost",
             #----- ----- ----- ----- ----- -----
-            user="members",
-            #user="root",
+            #user="members",
+            user="root",
             #----- ----- ----- ----- ----- -----
             password="ezen",
             #----- ----- ----- ----- ----- -----
