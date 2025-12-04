@@ -20,7 +20,7 @@
             <p>로그인 중인 사용자의 구매기록을 바탕으로 사용자가 많이 구매했던 상품과 유사한 상품 추천</p>
             {% endif %}
             {% for ie in ie_li %}
-            <a href="/{{ session['cate_no'] }}/{{ ie['item_id'] }}">
+            <a href="/{{ cate_li[loop.index0] }}/{{ ie['item_id'] }}">
                 <div class="thumbnail-item">
                     <img src="{{ url_for('static', filename='img/_item/' + ie['item_img']) }}"
                     style="width: 100%; height: 100%;">

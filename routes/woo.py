@@ -59,11 +59,13 @@ def main() :
 
     user = session.get("user")
     ie_li = []
+    cate_li = None
     if not user :
         dao = WooDAO()
-        ie_li = dao.calc_ranking_item(quantity = 6)
+        ie_li, cate_li = dao.calc_ranking_item(quantity = 6)
 
-    return render_template("woo/main.html", best_li = ie_best_cate_li, ie_li = ie_li)
+    return render_template("woo/main.html",
+                            best_li = ie_best_cate_li, ie_li = ie_li, cate_li = cate_li)
 
 
 @woo_bp.route("/<int:category_no>")
