@@ -5,11 +5,12 @@ __pycache__/
 *.csv
 
 # 이미지 파일 추적 제외
-*.png
-*.jpg
-*.svg
-*.webp
-*.jpeg
+_item/
+_item/*.png
+_item/*.jpg
+_item/*.svg
+_item/*.webp
+_item/*.jpeg
 
 # C extensions
 *.so
