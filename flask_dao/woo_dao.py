@@ -115,7 +115,7 @@ class WooDAO :
         #, item_tag
         sql = """
         SELECT
-            item_id, item_img
+            item_id, item_img, item_name, item_price
         FROM
             item
         WHERE

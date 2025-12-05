@@ -50,7 +50,10 @@
                 <a href="/{{ session['cate_no'] }}/{{ ie['item_id'] }}">
                     <div class="product-item">
                         <img src="{{ url_for('static', filename='img/_item/' + ie['item_img']) }}"
-                        style="width: 100%; height: 100%;">
+                        >
+                        <span class="cate_item_name">{{ ie['item_name'] }}</span>
+                        <span class="cate_item_price">{{'{:,}'.format(ie['item_price'])}} 원</span>
+                        
                     </div>
                 </a>
             {% endfor %}
