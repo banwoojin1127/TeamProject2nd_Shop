@@ -49,8 +49,9 @@
             {% for ie in ie_li %}
                 <a href="/{{ session['cate_no'] }}/{{ ie['item_id'] }}">
                     <div class="product-item">
-                        <img src="{{ url_for('static', filename='img/_item/' + ie['item_img']) }}"
-                        >
+                        <div class="img-box">
+                            <img src="{{ url_for('static', filename='img/_item/' + ie['item_img']) }}">
+                        </div>
                         <span class="cate_item_name">{{ ie['item_name'] }}</span>
                         <span class="cate_item_price">{{'{:,}'.format(ie['item_price'])}} 원</span>
                         
