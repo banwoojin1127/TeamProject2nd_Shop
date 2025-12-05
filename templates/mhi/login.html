@@ -14,7 +14,7 @@
     <div class="login-container">
         <div class="login-box">
             <a href="/">
-                <img src="{{ url_for('static', filename='img/Hub_mall_logo.png') }}" alt="Hub" height="110">
+                <img src="{{ url_for('static', filename='img/Hub_mall_logo.png') }}" alt="Hub" height="35" style="margin-bottom: 15px;">
             </a>
             {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -85,5 +85,11 @@
     </script>
 
 </body>
-
+{% with msgs = get_flashed_messages() %}
+  {% if msgs %}
+    <script>
+        alert("{{ msgs[0] }}");
+    </script>
+  {% endif %}
+{% endwith %}
 </html>

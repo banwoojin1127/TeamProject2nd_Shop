@@ -1,7 +1,7 @@
 # import sys
 # sys.path.append("D:\\Haneul\\Python\\project")
 
-from flask import Blueprint, render_template, request, redirect, session, flash
+from flask import Blueprint, render_template, request, redirect, session, flash, url_for
 from flask_dao.sky_dao import SkyDAO
 
 #Blueprint 생성
@@ -23,6 +23,13 @@ def get_item_name() :
 def get_item_price() :
     return session.get("item_price")
 
+def get_user_id():
+    user = session.get("user")  # session["user"]가 없으면 None 반환
+    if user is None:
+        return None
+    return user.get("user_id")   # user가 dict이면 user_id 반환
+
+
 # ------------------------------
 # 장바구니 - GET (화면)
 # ------------------------------
@@ -30,14 +37,11 @@ def get_item_price() :
 def cart_page() :
     #user_id = "lucky" #테스트 용 하드코딩
     user_id = get_user_id()
-    print(session.get("user"))
-
-    #로그인 세션에 저장
-    session["user_id"] = user_id
 
     #로그인 확인
     if not user_id :
-        return redirect("/login")
+        flash("로그인이 필요한 서비스입니다.") #메시지 등록
+        return redirect(url_for("mhi.login_get"))
     
     #장바구니 - 상품출력
     user_id = get_user_id()
@@ -62,7 +66,8 @@ def payok() :
 
     #로그인 확인
     if not user_id :
-        return redirect("/login")
+        flash("로그인이 필요한 서비스입니다.") #메시지 등록
+        return redirect(url_for("mhi.login_get"))
     
     dao = SkyDAO()
 
@@ -109,7 +114,7 @@ def remove_from_cart(item_id):
     return redirect("/cart")
 
 # ------------------------------
-# 결제내역 - GET (화면)
+# 구매내역 - GET (화면)
 # ------------------------------
 @sky_bp.route("/history", methods=["GET"])
 def history_page() :
@@ -117,9 +122,10 @@ def history_page() :
     user_id = get_user_id()
     #로그인 확인
     if not user_id :
-        return redirect("/login")
+        flash("로그인이 필요한 서비스입니다.") #메시지 등록
+        return redirect(url_for("mhi.login_get"))
     
-    #결제 내역 출력
+    #구매 내역 출력
     dao = SkyDAO()
     items = dao.history_check(user_id)
     dao.close()
@@ -161,7 +167,8 @@ def algo_page() :
     user_id = get_user_id()
     #로그인 확인
     if not user_id :
-        return redirect("/login")
+        flash("로그인이 필요한 서비스입니다.") #메시지 등록
+        return redirect(url_for("mhi.login_get"))
     return render_template("sky/algorithm.html")
 
 """
