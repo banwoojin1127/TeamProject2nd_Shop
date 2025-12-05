@@ -548,6 +548,10 @@ main {
 
 }
 
+.cart-list :hover {
+    background-color: aliceblue;
+}
+
 .cart-item-img-placeholder {
     width: 100px;
     height: 100px;
