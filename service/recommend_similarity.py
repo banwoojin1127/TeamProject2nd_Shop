@@ -47,7 +47,11 @@ def recommend_similarity(target: str, category_id=None, top_n=5):
         df['clean_name'] = df['item_name'].apply(preprocess_name)
 
         # TF-IDF 학습
-        tfidf = TfidfVectorizer(ngram_range=(1, 2))
+        tfidf = TfidfVectorizer(
+            ngram_range = (1, 3),   # 더 긴 n-gram 사용
+            min_df = 1,
+            max_df = 0.9
+        )
         matrix = tfidf.fit_transform(df['clean_name'])
 
         # 학습된 데이터 캐싱
@@ -68,6 +72,7 @@ def recommend_similarity(target: str, category_id=None, top_n=5):
 
     # 유사도 계산
     sim = cosine_similarity(matrix[idx], matrix).flatten()
+    sim = sim ** 0.5    # 유사도 스케일 증가
     s = pd.Series(sim, index=df.index)
     s = s.drop(idx)
     top = s.sort_values(ascending=False).head(top_n)
