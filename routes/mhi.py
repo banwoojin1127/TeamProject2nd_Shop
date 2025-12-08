@@ -108,8 +108,8 @@ def signup_post():
 # routes/mhi.py 파일 하단에 추가
 
 # ------------------- 연령대/성별 기반 추천 페이지 -------------------
-@mhi_bp.route("/group_recommendation")
-def group_recommendation():
+@mhi_bp.route("/group_recommend")
+def group_recommend():
     # 1. 로그인 여부 확인
     # 'user' 세션 키를 사용하고 있으므로, 이를 확인합니다.
     if 'user' not in session:
