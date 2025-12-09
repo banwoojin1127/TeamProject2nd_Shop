@@ -89,7 +89,7 @@ class WooDAO :
         """
         # 전체상품 TABLE item 에서
         # 역대 최고 평가 상위 quantity 개 까지 LIMIT quantity
-        # 가 return
+        # return
         """
         ranking = self.calc_weighted_rate(option = option, item_category = category_no)
 
@@ -116,7 +116,8 @@ class WooDAO :
 
     def cate_rand_items(self, item_category) :
         """
-        # TALBE item 에서 item_category 특정범위의 무작위 상품 item_id 12개
+        # TALBE item 에서 
+        # item_category 특정범위의 무작위 상품 item_id 12개 까지 LIMIT 12
         """
         #, item_tag
         sql = """

@@ -41,16 +41,17 @@ def go_main() :
     """
     return redirect(url_for('mhi.main'))
 
+DOCSTRING_COMMENT_MAIN = '''
 #@woo_bp.route("/")
 #def main() :
 #    """
 #    # url 의 root 에 해당하는 경로
 #    # 각 대분류별 역대 최고 평가 상품이 출력 되어야 합니다
 #
-#    x# 로그인 되어있는 경우에는 :
+#    ?# 로그인 되어있는 경우에는 :
 #    # user 의 관심사에 따라 출력 요소가 변경되어야 합니다
 #    # "나"의 구매목록을 기준으로 관심도를 추론해서 상품 6개가 출력 되어야 합니다
-#   # "나" 와 유사한 사용자간의 구매목록을 특이값 분해해서 출력 되어야 합니다
+#    # "나" 와 유사한 사용자간의 구매목록을 특이값 분해해서 출력 되어야 합니다
 #
 #    o# 로그인 되어있지 않는 경우에는 :
 #    # 웹서비스 내에서 역대 최고 평가 상위 6개 가 출력 되어야 합니다
@@ -66,11 +67,12 @@ def go_main() :
 # ujin 님 작업 영역 시작
 # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
 #    if not user :
+#        ie_li = []
+#        cate_li = None
+
 #        dao = WooDAO()
 #        ie_li, cate_li = dao.calc_ranking_item(quantity = 6)
 #
-#        ie_li = []
-#        cate_li = None
 #        target_keys = [
 #            'item_name', 'item_rate', 'trust_score', 'item_reviewcnt'
 #        ]
@@ -92,6 +94,7 @@ def go_main() :
 # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
 # ujin 님 작업 영역 종료
 # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+'''
 
 
 @woo_bp.route("/<int:category_no>")
@@ -100,30 +103,41 @@ def category(category_no = 0) :
     """
     # 카테고리에 따라 출력 요소가 변경되어야 합니다
     
-    x# 카테고리의 특정기준 1등 상품, 카테고리의 특정기준 추천 상품 1~4개 
+    o# 현재 카테고리에 해당하는 역대 최고 평가 상품 8개 
     
     x# 로그인 되어있는 경우에는 :
     # 사용자의 구매 내역을 기준으로
     # 구매 시 높은 평점을 남길 것 같은 상품들을 추천 (6개)
     
     x# 로그인 되어있지 않는 경우에는 :
-    # 카테고리의 특정기준 2~7등 상품 (6개)
+    # 카테고리의 특정기준 9~14등 상품 (6개)
     
     o# 카테고리내의 무작위 상품 12개
     """
     cate_nav(category_no)
     session["cate_no"] = category_no
 
+
     dao = WooDAO()
-    ie_best_cate_li, cate_li = dao.calc_ranking_item(
-            quantity = 5, option = 1, category_no = category_no
+    best_li, cate_li = dao.calc_ranking_item(
+            quantity = 8, option = 1, category_no = category_no
         )
 
     dao = WooDAO()
     ie_li = dao.cate_rand_items(category_no)
 
-    return render_template("woo/category.html",
-                            best_li = ie_best_cate_li, ie_li = ie_li, cate_li = cate_li)
+    user = session.get("user")
+    if user :
+        pass
+
+        # ?????
+
+    else :
+
+        # ?????
+
+        return render_template("woo/category.html",
+                                best_li = best_li, ie_li = ie_li, cate_li = cate_li)
 
 
 #@woo_bp.route("/<int:category_no>/<int:item_no>")

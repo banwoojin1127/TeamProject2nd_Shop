@@ -29,27 +29,44 @@
 <!-- 캐러셀 (슬라이드) 시작 -->
 <div id="carouselSlideslidesShow" class="main-banner carousel slide">
     <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselSlideslidesShow" data-bs-slide-to="0" aria-label="Slide 1" aria-current="true" class="active"></button>
-        {% for indi_no in range(1, best_li | length) %}
-        <button type="button" data-bs-target="#carouselSlideslidesShow" data-bs-slide-to="{{ indi_no }}" aria-label="Slide {{ indi_no + 1 }}"></button>
-        {% endfor %}
+        <button type="button" data-bs-target="#carouselSlideslidesShow" data-bs-slide-to="0"
+        aria-label="Slide 1" aria-current="true" class="active"></button>
+        {% if (best_li | length) <= 8 %}
+            {% for indi_no in range(1, best_li | length) %}
+            <button type="button" data-bs-target="#carouselSlideslidesShow" data-bs-slide-to="{{ indi_no }}"
+            aria-label="Slide {{ indi_no + 1 }}"></button>
+            {% endfor %}
+        {% else %}
+            {% for indi_no in range(1, 8) %}
+            <button type="button" data-bs-target="#carouselSlideslidesShow" data-bs-slide-to="{{ indi_no }}"
+            aria-label="Slide {{ indi_no + 1 }}"></button>
+            {% endfor %}
+        {% endif %}
     </div>
     <div class="carousel-inner" style="width: 100%; height: 100%; background-color: #aa2020;">
         <a href="/{{ (best_li[0]['item_category'] - 9) // 10 }}/{{ best_li[0]['item_id'] }}">
             <div class="carousel-item active" style="width: 100%; height: 100%;">
-                <img class="slide_img" src="{{ url_for('static', filename='img/_item/' + best_li[0]['item_img']) }}"
-                class="d-block" alt="...">
+                {% if best_li[0]['item_img'].endswith(".png") %}
+                <img class="slide_img" src="{{ url_for('static', filename='img/_item/' + best_li[0]['item_img']) }}" alt="...">
+                {% else %}
+                <img class="slide_img" src="{{ best_li[0]['item_img'] }}" alt="{{ best_li[0]['item_name'] }}">
+                {% endif %}
                 <div class="carousel-caption d-none d-md-block">
                     <p class="slide_item_name"> {{ best_li[0]['item_name'] }} </p>
                 </div>
             </div>
         </a>
 
-        {% for casel in best_li[1:] %}
+        {% for casel in best_li[1:8] %}
         <a href="/{{ (casel['item_category'] - 9) // 10 }}/{{ casel['item_id'] }}">
             <div class="carousel-item" style="width: 100%; height: 100%;">
+                {% if casel['item_img'].endswith(".png") %}
                 <img class="slide_img" src="{{ url_for('static', filename='img/_item/' + casel['item_img']) }}"
-                class="d-block" style="height: 100%; object-fit: cover; display: flex;" alt="...">
+                style="height: 100%; object-fit: cover; display: flex;" alt="...">
+                {% else %}
+                <img class="slide_img" src="{{ casel['item_img'] }}" alt="{{ casel['item_name'] }}"
+                style="height: 100%; object-fit: cover; display: flex;" alt="...">
+                {% endif %}
                 <div class="carousel-caption d-none d-md-block">
                     <p class="slide_item_name"> {{ casel['item_name'] }} </p>
                 </div>
