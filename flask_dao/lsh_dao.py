@@ -87,7 +87,7 @@ class LshDAO :
             return []
         format_strings = ','.join(['%s'] * len(user_list))
         sql = f"""
-            SELECT ph.item_id, i.item_name, i.item_rate, i.item_reviewcnt, i.item_img
+            SELECT ph.item_id, i.item_name, i.item_rate, i.item_reviewcnt, i.item_img, i.item_category
             FROM purchase_history ph
             JOIN item i ON ph.item_id = i.item_id
             WHERE ph.user_id IN ({format_strings})

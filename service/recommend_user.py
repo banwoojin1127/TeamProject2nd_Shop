@@ -43,13 +43,13 @@ def recommend_user(target_user: str, top_n=5):
     if not user_group:
         user_group = dao.get_all_users_except(target_user)
 
-    # 구매 내역 조회 (상품, 가격, 평점, 이미지)
+    # 구매 내역 조회 (상품, 가격, 평점, 이미지, 카테고리)
     rows = dao.get_purchase_history_by_users(user_group)
     if not rows:
         dao.close()
         return EMPTY_RESULT
 
-    df = pd.DataFrame(rows, columns=["item_id", "item_name", "item_rate", "item_price", "item_img"])
+    df = pd.DataFrame(rows, columns=["item_id", "item_name", "item_rate", "item_price", "item_img", "item_category"])
     df = df.fillna("")
     df["item_name"] = df["item_name"].str.strip()
 
@@ -89,7 +89,7 @@ def recommend_user(target_user: str, top_n=5):
     rec_ids = [i for i, c in freq.most_common(top_n)]
 
     # 추천 DF 추출 (가격, 평점 포함)
-    recs = df[df["item_id"].isin(rec_ids)][["item_id", "item_name", "item_img", "item_price", "item_rate"]]
+    recs = df[df["item_id"].isin(rec_ids)][["item_id", "item_name", "item_img", "item_price", "item_rate", "item_category"]]
     recs = recs.drop_duplicates("item_id").head(top_n)
 
     # 추천 목록 정리
@@ -99,9 +99,10 @@ def recommend_user(target_user: str, top_n=5):
             "item_name": name,
             "item_img": img,
             "item_price": int(price) if price not in (None, "") else 0,
-            "item_rate": float(rate) if rate not in (None, "") else 0.0
+            "item_rate": float(rate) if rate not in (None, "") else 0.0,
+            "item_category": category
         }
-        for iid, name, img, price, rate in recs.values
+        for iid, name, img, price, rate, category in recs.values
     ]
 
     # 그래프용 데이터
@@ -123,4 +124,5 @@ def recommend_user(target_user: str, top_n=5):
 
     current_app.recommend_user_result = result
     dao.close()
+    
     return result
