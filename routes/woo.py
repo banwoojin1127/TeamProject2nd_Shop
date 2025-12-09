@@ -10,6 +10,9 @@ from flask import Blueprint, render_template, redirect, session
 from flask_dao.woo_dao import WooDAO
 # woo = WooDAO()
 
+from flask_dao.mhi_dao import MhiDAO
+import json
+
 woo_bp = Blueprint("woo", __name__)
 
 """
@@ -66,14 +69,16 @@ def main() :
     # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
     # 문홍일 님 작업 영역 시작
     # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-
-    from flask_dao.mhi_dao import MhiDAO
-    import json
-    # 1. 변수 초기화: 그래프 오류 방지를 위해 안전한 기본값 설정
-    recommended_list = []      # 캐러셀용 (Python List)
-    recommendations_json = "[]" # 🚨 그래프용 (JSON String) 초기화
-
     if user :
+    
+        # 1. 변수 초기화: 그래프 오류 방지를 위해 안전한 기본값 설정
+        recommended_list = []      # 캐러셀용 (Python List)
+        recommendations_json = "[]" # 🚨 그래프용 (JSON String) 초기화
+
+        # 기타 템플릿 변수 초기화
+        ie_li = []
+        cate_li = None
+
         user_id = user['user_id']
         try:
             mhi_dao = MhiDAO()
@@ -86,20 +91,16 @@ def main() :
                 # json.dumps()를 사용해 템플릿에서 오류 없는 JSON 문자열로 변환
                 recommendations_json = json.dumps(recommended_list)
             
+
+            
         except Exception as e:
             # 오류 발생 시 빈 값으로 처리하여 템플릿 오류를 방지합니다.
             print(f"추천 데이터 로드 오류: {e}")
             recommended_list = []
             recommendations_json = "[]"
-
-    # 기타 템플릿 변수 초기화
-    ie_li = []
-    cate_li = None
-
- 
-
-   # 3. 템플릿 렌더링 시 두 가지 추천 데이터를 모두 전달
-    return render_template("woo/main.html",
+            
+         # 3. 템플릿 렌더링 시 두 가지 추천 데이터를 모두 전달
+        return render_template("woo/main.html",
                             best_li = ie_best_cate_li, 
                             ie_li = ie_li, 
                             cate_li = cate_li,
@@ -107,6 +108,11 @@ def main() :
                             recommendations = recommended_list,
                             # 그래프에서 사용: Chart.js 스크립트에 사용 (가장 중요)
                             recommendations_json = recommendations_json)
+
+
+
+
+
 
 
     # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
