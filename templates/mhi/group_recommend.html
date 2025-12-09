@@ -1,78 +1,110 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>나와 비슷한 사람들이 구매한 추천 아이템</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/universal.css') }}">
-    <style>
-        .recommendation-container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 8px;
-        }
-        .recommendation-list {
-            list-style: none;
-            padding: 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        .item-card {
-            border: 1px solid #eee;
-            border-radius: 4px;
-            padding: 15px;
-            text-align: center;
-            transition: transform 0.2s;
-            background-color: #f9f9f9;
-        }
-        .item-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-        .item-card h3 {
-            font-size: 1.1em;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        .item-card p {
-            font-size: 0.9em;
-            color: #666;
-        }
-        .back-link {
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-            color: #007bff;
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
-    <div class="recommendation-container">
-        <h1>📊 유사 그룹 추천 아이템</h1>
-        <p>
-            회원님과 **비슷한 연령대와 성별**을 가진 고객들이 
-            가장 많이 구매한 인기 아이템입니다.
-        </p>
-        
-        {% if recommendations %}
-        <ul class="recommendation-list">
-            {% for item in recommendations %}
-            <li class="item-card">
-                <h3>{{ item.product_name }}</h3>
-                <p>구매 수: {{ item.purchase_count }}회</p>
-                </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-        <p>죄송합니다. 추천 데이터를 찾을 수 없거나, 회원님의 그룹 정보가 충분하지 않습니다.</p>
-        {% endif %}
-        
-        <a href="{{ url_for('woo.main') }}" class="back-link">메인 페이지로 돌아가기</a>
+<style>
+/* --------------------------------------------------------------------
+    캐러셀 전용 스타일 (가로 폭 및 높이 축소 적용)
+-------------------------------------------------------------------- */
+
+/* 이미지 스타일 (크기, 정렬, 마진) */
+.g_slide_img {
+    width: 200px; /* 🚨 300px -> 200px (가로 축소) */
+    height: 200px; /* 🚨 300px -> 200px (세로 축소) */
+    object-fit: cover; 
+    display: block; /* Flexbox 내에서 블록 요소로 사용 */
+    margin-left: 0; /* 🚨 120px -> 0 (Flexbox 중앙 정렬 사용) */
+}
+
+/* 상품명 스타일 (텍스트, 색상, 오버플로우) */
+.g_slide_item_name {
+    width: 300px; /* 🚨 400px -> 300px (가로 축소) */
+    text-align: left;
+    margin-left: 0; /* 🚨 320px -> 0 (Flexbox 중앙 정렬 사용) */
+    margin-bottom: 20px; /* 🚨 67px -> 20px (여백 조정) */
+    font-size: 24px; /* 🚨 30px -> 24px (글꼴 크기 축소) */
+    color: white; 
+    font-weight: bold;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    
+    /* 2줄 제한 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 캐러셀 아이템 전체 스타일 (Flexbox를 사용해 이미지와 텍스트를 정렬) */
+.g_carousel-item-content {
+    display: flex; 
+    align-items: center; 
+    justify-content: center; /* 🚨 수평 중앙 정렬 */
+    height: 300px; /* 🚨 400px -> 250px (전체 높이 축소) */
+    padding: 10px; /* 패딩도 축소 */
+    background-color: #3f6093;
+}
+
+/* 이전/다음 버튼 스타일 */
+.g_prev-arrow, .g_next-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
+    background: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 10px; cursor: pointer;
+    font-size: 24px; line-height: 1;
+}
+.g_prev-arrow { left: 0; }
+.g_next-arrow { right: 0; }
+</style>
+
+<div id="recommendedSlideshow" class="main-banner carousel slide" data-bs-ride="carousel">
+    
+    <div class="carousel-indicators">
+        {% for item in recommendations %}
+        <button type="button" 
+                data-bs-target="#recommendedSlideshow" 
+                data-bs-slide-to="{{ loop.index0 }}" 
+                aria-label="Slide {{ loop.index }}" 
+                class="{% if loop.first %}active{% endif %}"
+                aria-current="{% if loop.first %}true{% else %}false{% endif %}">
+        </button>
+        {% endfor %}
     </div>
-</body>
-</html>
+    
+    <div class="carousel-inner" style="width: 100%; height: 100%;">
+        {% if recommendations %}
+            {% for item in recommendations %}
+            
+            {% set item_url = "/" ~ ((item['item_category'] - 9) // 10) ~ "/" ~ item['item_id'] %}
+            
+            <div class="carousel-item {% if loop.first %}active{% endif %}" style="width: 100%; height: 100%;">
+                
+                <a href="{{ item_url }}" style="text-decoration: none; color: inherit;">
+        <div class="g_carousel-item-content">
+            
+            <img class="g_slide_img me-3" 
+                src="{{ url_for('static', filename='img/_item/' + item['item_img']) }}"
+                alt="{{ item['product_name'] | default('추천 상품') }}">
+            <div class="g_slide_textbox">
+                <p class="g_slide_item_name">{{ item.product_name | default('상품명 없음') }}</p>
+                <p style="color: white; font-size: 16px; margin-left: 0;"> 
+                    유사 고객 구매 횟수: {{ item.purchase_count }}회
+                </p>
+            </div>
+            
+        </div>
+
+                </a>
+                
+            </div>
+            {% endfor %}
+            
+        {% else %}
+            <div class="carousel-item active" style="width: 100%; height: 100%;">
+                 <div class="g_carousel-item-content" style="background-color: #6c757d; height: 250px;">
+                    <div class="carousel-caption d-block">
+                        <h3 style="color: white;">추천 데이터를 찾을 수 없습니다.</h3>
+                        <p style="color: #eee;">죄송합니다. 그룹 정보가 불충분하거나 추천 가능한 상품이 없습니다.</p>
+                    </div>
+                 </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <button class="g_prev-arrow" data-bs-target="#recommendedSlideshow" data-bs-slide="prev"> &lt; </button>
+    <button class="g_next-arrow" data-bs-target="#recommendedSlideshow" data-bs-slide="next"> &gt; </button>
+</div>

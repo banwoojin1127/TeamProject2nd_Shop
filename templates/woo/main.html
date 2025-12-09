@@ -37,12 +37,28 @@
             {% endfor %}
         </section>
 
+   <!-- # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+    # 문홍일 님 작업 영역 시작
+    # ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### -->
+
         {% if session["user"] %}
         <section class="wide-banners">
-            <div class="wide-banner-item large"></div>
-            <div class="wide-banner-item small"></div>
+            <div class="wide-banner-item large">
+                {% include "mhi/group_recommend.html" %}
+            </div>
+            <div class="wide-banner-item small">
+                {% include "mhi/group_g.html" %}
+            </div>
+
         </section>
         {% endif %}
+
+
+<!--    # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+    # 문홍일 님 작업 영역 끝
+    # ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### -->
+
+        
 
         <section class="middle-banner-area">
         </section>

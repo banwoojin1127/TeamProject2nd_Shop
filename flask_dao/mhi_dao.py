@@ -133,7 +133,7 @@ class MhiDAO:
             WHERE u.gender = %s
               AND YEAR(u.birth) BETWEEN %s AND %s
               AND u.user_id != %s
-        """, (gender, year-2, year+2, exclude_user)) 
+        """, (gender, year-5, year+5, exclude_user)) 
         return [r['user_id'] for r in cursor.fetchall()]
 
     def get_user_purchase_items(self, cursor, user_id: str):
@@ -155,11 +155,12 @@ class MhiDAO:
                 i.item_rate, 
                 i.item_reviewcnt, 
                 i.item_img,
+                i.item_category,
                 COUNT(ph.item_id) as purchase_count
             FROM purchase_history ph
             JOIN item i ON ph.item_id = i.item_id
             WHERE ph.user_id IN ({format_strings})
-            GROUP BY ph.item_id, i.item_name, i.item_rate, i.item_reviewcnt, i.item_img
+            GROUP BY ph.item_id, i.item_name, i.item_rate, i.item_reviewcnt, i.item_img,i.item_category
             ORDER BY purchase_count DESC, i.item_rate DESC
         """
         cursor.execute(sql, tuple(user_list))

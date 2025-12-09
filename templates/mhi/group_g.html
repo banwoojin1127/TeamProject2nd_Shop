@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>유사 고객 기반 추천 통계</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .recommend-container {
+            background: #3f6093;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 0px;
+        }
+        .recommend-title {
+            color: white;
+            margin-bottom: 1rem;
+        }
+        #groupChart {
+            width: 100%;
+            max-width: 240px;
+            margin: 0 auto;
+        }
+        .no-data {
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container recommend-container" >
+    <h4 class="recommend-title" style="font-size: 16px; margin-bottom: 8px;" >📊 나와 비슷한 유저가 구매한 카테고리</h4>
+
+    {% if recommendations_json %}
+        <canvas id="groupChart"></canvas>
+    {% else %}
+        <p class="no-data">추천 데이터가 존재하지 않습니다.</p>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const jsonString = `{{ recommendations_json | safe }}`;
+
+    let dataList = [];
+    try {
+        dataList = JSON.parse(jsonString);
+    } catch (e) {
+        console.error("JSON 파싱 오류:", e);
+        return;
+    }
+
+    if (!dataList.length) return;
+
+    /* 🔵 1. 대분류 매핑 (parent_id 기준) */
+    const CATEGORY_PARENT = {
+        1: "과일",
+        2: "채소",
+        3: "고기",
+        4: "해산물",
+        5: "쌀/잡곡/견과",
+        6: "빵",
+        7: "과자",
+        8: "음료"
+    };
+
+    /* 🔵 2. 소분류 item_category → 대분류 parent_id 변환 필요
+       item_category(=소분류) → parent_id를 모르면 JS에서 직접 매핑해야 함 */
+
+    // 🔥 소분류→대분류 매핑 직접 입력 (DB 기준)
+    const CATEGORY_MAP = {
+        // 과일 (1)
+        9:1,10:1,11:1,12:1,13:1,14:1,15:1,16:1,17:1,18:1,
+
+        // 채소 (2)
+        19:2,20:2,21:2,22:2,23:2,24:2,25:2,26:2,27:2,28:2,
+
+        // 고기 (3)
+        29:3,30:3,31:3,32:3,33:3,34:3,35:3,36:3,37:3,38:3,
+
+        // 해산물 (4)
+        39:4,40:4,41:4,42:4,43:4,44:4,45:4,46:4,47:4,48:4,
+
+        // 쌀/잡곡/견과 (5)
+        49:5,50:5,51:5,52:5,53:5,54:5,55:5,56:5,57:5,58:5,
+
+        // 빵 (6)
+        59:6,60:6,61:6,62:6,63:6,64:6,65:6,66:6,67:6,68:6,
+
+        // 과자 (7)
+        69:7,70:7,71:7,72:7,73:7,74:7,75:7,76:7,77:7,78:7,
+
+        // 음료 (8)
+        79:8,80:8,81:8,82:8,83:8,84:8,85:8,86:8,87:8,88:8
+    };
+
+    /* 🔵 3. 대분류별 구매 횟수 합산 */
+    const categorySummary = {};
+
+    dataList.forEach(item => {
+        const sub = item.item_category;           // 9, 10, 19, ...
+        const parent = CATEGORY_MAP[sub];         // 1, 2, 3, ...
+        const parentName = CATEGORY_PARENT[parent];
+
+        if (!categorySummary[parentName]) {
+            categorySummary[parentName] = 0;
+        }
+        categorySummary[parentName] += item.purchase_count || 0;
+    });
+
+    /* 🔵 4. 차트 데이터 준비 */
+    const labels = Object.keys(categorySummary);
+    const values = Object.values(categorySummary);
+
+    const ctx = document.getElementById('groupChart').getContext('2d');
+
+    /* 🔥 파이 차트 출력 */
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: { color: "#ffffff" }
+                }
+            }
+        }
+    });
+
+});
+</script>
+
+</body>
+</html>
