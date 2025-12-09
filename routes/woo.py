@@ -5,13 +5,13 @@
  MVC 패턴에서 Controller 역할
 
 """
-from flask import Blueprint, render_template, redirect, session
+from flask import Blueprint, render_template, redirect, session, url_for
 # request,
 from flask_dao.woo_dao import WooDAO
 # woo = WooDAO()
 
-from flask_dao.mhi_dao import MhiDAO
-import json
+#from flask_dao.mhi_dao import MhiDAO
+#import json
 
 woo_bp = Blueprint("woo", __name__)
 
@@ -39,91 +39,59 @@ def go_main() :
     """
     # 웹 서비스 홈페이지로 이동시키기
     """
-    return redirect("/")
+    return redirect(url_for('mhi.main'))
 
-@woo_bp.route("/")
-def main() :
-    """
-    # url 의 root 에 해당하는 경로
-    # 각 대분류별 역대 최고 평가 상품이 출력 되어야 합니다
-    
-    x# 로그인 되어있는 경우에는 :
-    # user 의 관심사에 따라 출력 요소가 변경되어야 합니다
-    # "나"의 구매목록을 기준으로 관심도를 추론해서 상품 6개가 출력 되어야 합니다
-    # "나" 와 유사한 사용자간의 구매목록을 특이값 분해해서 출력 되어야 합니다
-    
-    o# 로그인 되어있지 않는 경우에는 :
-    # 웹서비스 내에서 역대 최고 평가 상위 6개 가 출력 되어야 합니다
-    """
-    cate_nav(-1)
-
-    dao = WooDAO()
-    ie_best_cate_li = dao.main_banner()
-
-    user = session.get("user")
-
-
-
-
-
-    # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-    # 문홍일 님 작업 영역 시작
-    # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-    if user :
-    
-        # 1. 변수 초기화: 그래프 오류 방지를 위해 안전한 기본값 설정
-        recommended_list = []      # 캐러셀용 (Python List)
-        recommendations_json = "[]" # 🚨 그래프용 (JSON String) 초기화
-
-        # 기타 템플릿 변수 초기화
-        ie_li = []
-        cate_li = None
-
-        user_id = user['user_id']
-        try:
-            mhi_dao = MhiDAO()
-            
-            # 추천 데이터 로드 (Python 리스트 형태)
-            recommended_list = mhi_dao.get_recommended_items_by_homogeneous_group(user_id, limit=10)
-            
-            # 2. Python 리스트를 JSON 문자열로 변환 (그래프용 데이터)
-            if recommended_list:
-                # json.dumps()를 사용해 템플릿에서 오류 없는 JSON 문자열로 변환
-                recommendations_json = json.dumps(recommended_list)
-            
-
-            
-        except Exception as e:
-            # 오류 발생 시 빈 값으로 처리하여 템플릿 오류를 방지합니다.
-            print(f"추천 데이터 로드 오류: {e}")
-            recommended_list = []
-            recommendations_json = "[]"
-            
-         # 3. 템플릿 렌더링 시 두 가지 추천 데이터를 모두 전달
-        return render_template("woo/main.html",
-                            best_li = ie_best_cate_li, 
-                            ie_li = ie_li, 
-                            cate_li = cate_li,
-                            # 캐러셀에서 사용: Jinja2 for 루프에 사용
-                            recommendations = recommended_list,
-                            # 그래프에서 사용: Chart.js 스크립트에 사용 (가장 중요)
-                            recommendations_json = recommendations_json)
-
-
-
-
-
-
-
-    # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-    # 문홍일 님 작업 영역 종료
-    # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-
-
-
-
-
-
+#@woo_bp.route("/")
+#def main() :
+#    """
+#    # url 의 root 에 해당하는 경로
+#    # 각 대분류별 역대 최고 평가 상품이 출력 되어야 합니다
+#
+#    x# 로그인 되어있는 경우에는 :
+#    # user 의 관심사에 따라 출력 요소가 변경되어야 합니다
+#    # "나"의 구매목록을 기준으로 관심도를 추론해서 상품 6개가 출력 되어야 합니다
+#   # "나" 와 유사한 사용자간의 구매목록을 특이값 분해해서 출력 되어야 합니다
+#
+#    o# 로그인 되어있지 않는 경우에는 :
+#    # 웹서비스 내에서 역대 최고 평가 상위 6개 가 출력 되어야 합니다
+#    """
+#   cate_nav(-1)
+#
+#    dao = WooDAO()
+#    best_li = dao.main_banner()
+#
+#    user = session.get("user")
+#
+# ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+# ujin 님 작업 영역 시작
+# ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+#    if not user :
+#        dao = WooDAO()
+#        ie_li, cate_li = dao.calc_ranking_item(quantity = 6)
+#
+#        ie_li = []
+#        cate_li = None
+#        target_keys = [
+#            'item_name', 'item_rate', 'trust_score', 'item_reviewcnt'
+#        ]
+#        name = []
+#        rate = []
+#        trust = []
+#        review = []
+#        for item in ie_li :
+#            name.append(item[target_keys[0]])
+#            rate.append(item[target_keys[1]])
+#            trust.append(item[target_keys[2]])
+#            review.append(item[target_keys[3]])
+#
+#        column_chart_data = [ name, rate, trust, review ]
+#
+#        return render_template("woo/main.html",
+#                                best_li = best_li, ie_li = ie_li, cate_li = cate_li,
+#                                column_chart_data = column_chart_data)
+# ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+# ujin 님 작업 영역 종료
+# ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
 
 
 @woo_bp.route("/<int:category_no>")

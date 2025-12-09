@@ -104,6 +104,12 @@ class WooDAO :
             parent_no = self.cursor.fetchone()
             cate_li.append(parent_no['parent_id'])
 
+        for quan in ranking[len(ranking) - quantity:] :
+            result.append(quan)
+            self.cursor.execute(sql, (quan["item_category"],))
+            parent_no = self.cursor.fetchone()
+            cate_li.append(parent_no['parent_id'])
+
         self.close()
         return result, cate_li
 

@@ -12,6 +12,10 @@ _item/*.svg
 _item/*.webp
 _item/*.jpeg
 
+# 커스텀 블랙리스트
+.memo/
+.env
+
 # C extensions
 *.so
 

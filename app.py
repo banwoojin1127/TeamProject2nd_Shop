@@ -19,7 +19,7 @@ from routes.lsh import lsh_bp
 app = Flask(__name__)
 app.secret_key = "ezen"
 
-# 분리된 woo 라우터를 flask 에 등록
+# 분리된 라우터를 flask 에 등록
 app.register_blueprint(woo_bp)
 app.register_blueprint(sky_bp)
 app.register_blueprint(mhi_bp)
@@ -30,3 +30,6 @@ app.register_blueprint(lsh_bp)
 # 디버그 모드 : .py 나 .html 등등이 변경되었을때,
 # 서버를 재시작 할 필요 없이 변경 사항이 반영됨
 app.run(debug=True)
+# 서버에 다른 PC 가 접근하려면
+# host = "0.0.0.0"
+# 을 매개변수 ( 파라미터 ) 로 넣어야함
