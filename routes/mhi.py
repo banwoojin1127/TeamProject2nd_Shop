@@ -146,11 +146,12 @@ def main() :
 # ujin 님 작업 영역 시작
 # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
     if not user :
+        ie_li = []
+        cate_li = None
+        
         wdao = WooDAO()
         ie_li, cate_li = wdao.calc_ranking_item(quantity = 6)
 
-        ie_li = []
-        cate_li = None
         target_keys = [
             'item_name', 'item_rate', 'trust_score', 'item_reviewcnt'
         ]
