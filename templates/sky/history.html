@@ -27,11 +27,14 @@
             {% for item in datas %}
             <div id="cart" class="cart-item" onclick='location.href="/{{ item.item_category }}/{{ item.item_id }}"'>
                 <div class="cart-item-img-placeholder">
+                    {% if item.item_img.endswith(".png") %}
                         <!-- 이미지 파일로 받을 때 -->
-                        <img src="{{ url_for('static', filename='img/_item/' ~ item.item_img) }}" alt="{{ item.item_name }}" style="width: 100%; height: 100%; object-fit:cover;">
+                        <img src="{{ url_for('static', filename='img/_item/' ~ item.item_img) }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
+                    {% else %}
                         <!-- 이미지 링크로 받을 때 -->
-                        <!-- <img src="{{ item.item_img }}" alt="{{ item.item_name }}" style="width: 100%; height: 100%; object-fit:cover;"> -->
-                    </div>
+                        <img src="{{ item.item_img }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
+                    {% endif %}
+                </div>
                 <div class="cart-item-details">
                     <p class="cart-item-name">상품명&nbsp
                         <span class="cart-item-name-context">
