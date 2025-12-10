@@ -54,57 +54,46 @@
 <div id="recommendedSlideshow" class="main-banner carousel slide" data-bs-ride="carousel">
     
     <div class="carousel-indicators">
-        {% for item in recommendations %}
+        {% for item in recommendations_carousel %}
         <button type="button" 
                 data-bs-target="#recommendedSlideshow" 
                 data-bs-slide-to="{{ loop.index0 }}" 
-                aria-label="Slide {{ loop.index }}" 
                 class="{% if loop.first %}active{% endif %}"
-                aria-current="{% if loop.first %}true{% else %}false{% endif %}">
-        </button>
+                aria-current="{% if loop.first %}true{% else %}false{% endif %}"></button>
         {% endfor %}
     </div>
-    
-    <div class="carousel-inner" style="width: 100%; height: 100%;">
-        {% if recommendations %}
-            {% for item in recommendations %}
-            
-            {% set item_url = "/" ~ ((item['item_category'] - 9) // 10) ~ "/" ~ item['item_id'] %}
-            
-            <div class="carousel-item {% if loop.first %}active{% endif %}" style="width: 100%; height: 100%;">
-                
-                <a href="{{ item_url }}" style="text-decoration: none; color: inherit;">
-        <div class="g_carousel-item-content">
-            
-            <img class="g_slide_img me-3" 
-                src="{{ url_for('static', filename='img/_item/' + item['item_img']) }}"
-                alt="{{ item['product_name'] | default('추천 상품') }}">
-            <div class="g_slide_textbox">
-                <p class="g_slide_item_name">{{ item.product_name | default('상품명 없음') }}</p>
-                <p style="color: white; font-size: 16px; margin-left: 0;"> 
-                    유사 고객 구매 횟수: {{ item.purchase_count }}회
-                </p>
-            </div>
-            
-        </div>
 
-                </a>
-                
-            </div>
+    <div class="carousel-inner" style="width: 100%; height: 100%;">
+        {% if recommendations_carousel %}
+            {% for item in recommendations_carousel %}
+                {% set item_url = "/" ~ ((item['item_category'] - 9) // 10) ~ "/" ~ item['item_id'] %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}" style="width: 100%; height: 100%;">
+                    <a href="{{ item_url }}" style="text-decoration: none; color: inherit;">
+                        <div class="g_carousel-item-content">
+                            <img class="g_slide_img me-3" 
+                                 src="{{ url_for('static', filename='img/_item/' + item['item_img']) }}"
+                                 alt="{{ item['product_name'] | default('추천 상품') }}">
+                            <div class="g_slide_textbox">
+                                <p class="g_slide_item_name">{{ item.product_name | default('상품명 없음') }}</p>
+                                
+                                <p style="color: white; font-size: 20px;">가격: {{ "{:,}".format(item.item_price) }}원</p>
+                                <p style="color: white; font-size: 16px;">유사 고객 구매 횟수: {{ item.purchase_count }}회</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             {% endfor %}
-            
         {% else %}
-            <div class="carousel-item active" style="width: 100%; height: 100%;">
-                 <div class="g_carousel-item-content" style="background-color: #6c757d; height: 250px;">
+            <div class="carousel-item active">
+                <div class="g_carousel-item-content" style="background-color: #6c757d; height: 250px;">
                     <div class="carousel-caption d-block">
                         <h3 style="color: white;">추천 데이터를 찾을 수 없습니다.</h3>
-                        <p style="color: #eee;">죄송합니다. 그룹 정보가 불충분하거나 추천 가능한 상품이 없습니다.</p>
                     </div>
-                 </div>
+                </div>
             </div>
         {% endif %}
     </div>
-    
-    <button class="g_prev-arrow" data-bs-target="#recommendedSlideshow" data-bs-slide="prev"> &lt; </button>
-    <button class="g_next-arrow" data-bs-target="#recommendedSlideshow" data-bs-slide="next"> &gt; </button>
+
+    <button class="g_prev-arrow" data-bs-target="#recommendedSlideshow" data-bs-slide="prev">&lt;</button>
+    <button class="g_next-arrow" data-bs-target="#recommendedSlideshow" data-bs-slide="next">&gt;</button>
 </div>

@@ -1,0 +1,51 @@
+<!-- mhi/list.html -->
+
+<div class="container mt-4">
+    <h4 class="mb-3">📌 추천 상품</h4>
+
+    <div class="row row-cols-2 row-cols-md-6 g-3">   <!-- 🔥 6개씩 가로로 -->
+        
+{% if recommendations_list %}
+    {% for item in recommendations_list[:6] %}
+                {% set item_url = "/" ~ ((item['item_category'] - 9) // 10) ~ "/" ~ item['item_id'] %}
+
+                <div class="col">
+                    <a href="{{ item_url }}" style="text-decoration: none; color: inherit;">
+                        <div class="card h-100 shadow-sm" style="width: 100%;">
+
+                            <img 
+                                src="{{ url_for('static', filename='img/_item/' + item['item_img']) }}" 
+                                class="card-img-top"
+                                alt="{{ item['product_name'] | default('추천 상품') }}"
+                                style="height: 150px; object-fit: cover;"   <!-- 🔥 크기 줄임 -->
+                            
+
+                            <div class="card-body p-2"> <!-- 🔥 내부 여백 줄임 -->
+                                <h6 class="card-title" style="font-size: 0.9rem;">
+                                    {{ item.product_name }}
+                                </h6>
+                            </div>
+
+                            <div class="card-footer text-center p-1">
+                                <small class="text-muted" style="font-size: 0.8rem;">
+                                    가격: {{ "{:,}".format(item.item_price) }}원
+                                    ⭐ {{ item.item_rate }} / 5.0
+                                </small>
+                            </div>
+
+                        </div>
+                    </a>
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-secondary" role="alert">
+                    추천 상품이 없습니다.
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
