@@ -109,7 +109,7 @@ def category(category_no = 0) :
     # 사용자의 구매 내역을 기준으로
     # 구매 시 높은 평점을 남길 것 같은 상품들을 추천 (6개)
     
-    x# 로그인 되어있지 않는 경우에는 :
+    o# 로그인 되어있지 않는 경우에는 :
     # 카테고리의 특정기준 9~14등 상품 (6개)
     
     o# 카테고리내의 무작위 상품 12개
@@ -128,9 +128,11 @@ def category(category_no = 0) :
 
     user = session.get("user")
     if user :
-        pass
 
         # ?????
+
+        return render_template("woo/category.html",
+                                best_li = best_li, ie_li = ie_li, cate_li = cate_li)
 
     else :
 
