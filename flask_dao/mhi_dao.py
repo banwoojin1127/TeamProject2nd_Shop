@@ -124,9 +124,9 @@ class MhiDAO:
         return cursor.fetchone() 
 
     def get_homogeneous_users(self, cursor, gender: str, year: int, exclude_user: str):
-        """나이(±2년) + 성별 동일 유저 그룹의 ID 리스트 조회"""
+        """나이(±5년) + 성별 동일 유저 그룹의 ID 리스트 조회"""
         # 참고: 이전에 year-30, year+30으로 범위가 매우 넓었는데,
-        # '나이(±2세)' 기준에 맞게 year-2, year+2로 수정했습니다.
+        # '나이(±5세)' 기준에 맞게 year-5, year+5로 수정했습니다.
         cursor.execute("""
             SELECT user_id
             FROM `user` u
@@ -151,17 +151,21 @@ class MhiDAO:
         sql = f"""
             SELECT 
                 ph.item_id, 
-                i.item_name AS product_name,  /* 템플릿과의 일관성을 위해 별칭 추가 */
+                i.item_name AS product_name,
                 i.item_rate, 
                 i.item_reviewcnt, 
                 i.item_img,
+                i.item_price,
                 i.item_category,
-                COUNT(ph.item_id) as purchase_count
+                COUNT(ph.item_id) AS purchase_count
             FROM purchase_history ph
             JOIN item i ON ph.item_id = i.item_id
             WHERE ph.user_id IN ({format_strings})
-            GROUP BY ph.item_id, i.item_name, i.item_rate, i.item_reviewcnt, i.item_img,i.item_category
-            ORDER BY purchase_count DESC, i.item_rate DESC
+            GROUP BY ph.item_id, i.item_name, i.item_rate, i.item_reviewcnt, 
+                    i.item_img, i.item_category
+            ORDER BY purchase_count DESC   -- ✅ 구매횟수 많은 순으로 정렬
+
+        
         """
         cursor.execute(sql, tuple(user_list))
         return cursor.fetchall()
@@ -172,7 +176,7 @@ class MhiDAO:
     # ------------------------------------------------------------------
 
     def get_recommended_items_by_homogeneous_group(self, user_id: str, limit: int = 10):
-        """나이(±2세) 및 성별 기반으로 유사 사용자들이 구매한 아이템을 추천합니다."""
+        """나이(±5세) 및 성별 기반으로 유사 사용자들이 구매한 아이템을 추천합니다."""
         conn = self._get_conn()
         try:
             with conn.cursor() as cursor:
@@ -186,11 +190,11 @@ class MhiDAO:
                 birth_year = user_info['birth'].year 
                 gender = user_info['gender']
                 
-                # 2. 유사 사용자 그룹 조회 (나이 ±2년, 성별 동일)
+                # 5. 유사 사용자 그룹 조회 (나이 ±5년, 성별 동일)
                 homogeneous_users = self.get_homogeneous_users(cursor, gender, birth_year, user_id)
                 
                 if not homogeneous_users:
-                    print("--- 디버깅 --- 유사 사용자 그룹(나이±2세)을 찾지 못함")
+                    print("--- 디버깅 --- 유사 사용자 그룹(나이±5세)을 찾지 못함")
                     return []
 
                 # 3. 유사 그룹의 구매 내역 집계
