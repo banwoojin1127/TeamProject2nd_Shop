@@ -28,6 +28,15 @@ class LshDAO :
                 pass
             self.conn = None
 
+    # 전체 상품 조회
+    def get_items_all(self):
+        sql = """
+            SELECT item_id, item_name, item_img, item_category 
+            FROM item
+        """
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()
+
     # 카테고리별 상품 조회
     def get_items(self, category_id=None):
         if category_id is None:
@@ -54,51 +63,39 @@ class LshDAO :
         self.close()
         return result
     
-    # 타겟 유저 정보 조회
-    def get_user_info(self, user_id: str):
-        self.cursor.execute(
-            "SELECT birth, gender FROM `user` WHERE user_id = %s", (user_id,)
-        )
-        return self.cursor.fetchone()  # dict 형태로 {'birth': ..., 'gender': ...}
-
-    # 나이(±2) + 성별 동일 유저 그룹 조회
-    def get_homogeneous_users(self, gender: str, year: int, exclude_user: str):
-        self.cursor.execute("""
-            SELECT user_id
-            FROM `user`
-            WHERE gender = %s
-              AND YEAR(birth) BETWEEN %s AND %s
-              AND user_id != %s
-        """, (gender, year-2, year+2, exclude_user))
-        return [r['user_id'] for r in self.cursor.fetchall()]  # dict key 사용
-
-    # 전체 사용자 (본인 제외)
-    def get_all_users_except(self, exclude_user: str):
-        self.cursor.execute("""
-            SELECT user_id
-            FROM `user`
-            WHERE user_id != %s
-        """, (exclude_user,))
-        return [r['user_id'] for r in self.cursor.fetchall()]
-
-    # 사용자 그룹의 구매 내역 조회 (상품 + 평점 + 리뷰수 + 이미지)
-    def get_purchase_history_by_users(self, user_list: list[str]):
+    # 유사 사용자 그룹이 가장 많이 구매한 상품 TOP 6 조회
+    def get_top_items_from_users(self, user_list: list[str], top_n=6):
+        """
+        주어진 user_list의 구매 내역에서 가장 많이 구매된 상품 TOP N을 반환.
+        item_id, item_name, item_img, item_category 포함.
+        """
         if not user_list:
             return []
+
         format_strings = ','.join(['%s'] * len(user_list))
+
         sql = f"""
-            SELECT ph.item_id, i.item_name, i.item_rate, i.item_reviewcnt, i.item_img, i.item_category
+            SELECT 
+                ph.item_id, 
+                i.item_name,
+                i.item_img, 
+                i.item_category,
+                COUNT(*) AS cnt
             FROM purchase_history ph
             JOIN item i ON ph.item_id = i.item_id
             WHERE ph.user_id IN ({format_strings})
+            GROUP BY ph.item_id
+            ORDER BY cnt DESC
+            LIMIT %s;
         """
-        self.cursor.execute(sql, tuple(user_list))
-        return self.cursor.fetchall()  # list of dict
 
-    # 특정 user의 구매 아이템 목록 조회
-    def get_user_purchase_set(self, user_id: str):
-        self.cursor.execute(
-            "SELECT item_id FROM purchase_history WHERE user_id = %s", (user_id,)
-        )
-        # dict key 사용, set으로 반환
-        return {r['item_id'] for r in self.cursor.fetchall()}
+        params = tuple(user_list) + (top_n,)
+        self.cursor.execute(sql, params)
+
+        return self.cursor.fetchall()
+
+    # 구매내역 전체 조회
+    def get_purchase_history_all(self):
+        sql = "SELECT user_id, item_id FROM purchase_history;"
+        self.cursor.execute(sql)
+        return self.cursor.fetchall()

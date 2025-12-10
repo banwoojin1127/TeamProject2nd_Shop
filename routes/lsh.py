@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, flash
 from flask_dao.lsh_dao import LshDAO
 from service.recommend_similarity import recommend_similarity
-from service.recommend_user import recommend_user
 from flask import current_app
 
 lsh_bp = Blueprint('lsh', __name__)
@@ -58,55 +57,3 @@ def item(category_no=0, item_no=0):
         recs=recs,
         result=sim_result
     )
-
-"""
-@lsh_bp.route("/algo")
-def algo_page():
-    user_session = session.get("user")
-
-    if not user_session:
-        flash("로그인이 필요한 페이지입니다.")
-        return redirect("/login")
-
-    user_id = user_session["user_id"]
-
-    dao = LshDAO()
-    try:
-        user = dao.get_user_info(user_id)
-    finally:
-        dao.close()
-
-    if not user:
-        flash("유저 정보를 찾을 수 없습니다.")
-        return redirect("/login")
-
-    # 추천 실행
-    result = recommend_user(user_id)
-
-    if result is None:
-        result = {
-            "recommendations": [],
-            "graph": {
-                "labels": [],
-                "values": []
-            }
-        }
-
-    recommendations = result.get("recommendations", [])
-
-    graph_data = result.get("graph") or {}
-    labels = graph_data.get("labels", [])
-    values = graph_data.get("values", [])
-
-    # 디버깅 출력
-    print("유저 아이디:", user_id)
-    print("추천 상품:", recommendations)
-
-    # 템플릿으로 데이터 전달    
-    return render_template(
-        "sky/algorithm.html",
-        recommendations=recommendations,
-        chart_labels=labels,
-        chart_values=values
-    )
-"""
