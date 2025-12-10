@@ -74,8 +74,18 @@ def recommend_similarity(target: str, category_id=None, top_n=5):
     sim = cosine_similarity(matrix[idx], matrix).flatten()
     sim = sim ** 0.5    # 유사도 스케일 증가
     s = pd.Series(sim, index=df.index)
+
+    # 자기 자신 제거
     s = s.drop(idx)
-    top = s.sort_values(ascending=False).head(top_n)
+
+    # 유사도 1.0인 상품 제거
+    s = s[s < 1.0]
+
+    # 동일 유사도 값이 여러 개면 하나만 남기고 제거
+    unique_s = s.groupby(s).head(1)
+
+    # 유사도 높은 순서대로 정렬 후 top_n만 선택
+    top = unique_s.sort_values(ascending=False).head(top_n)
 
     # 추천 상품 목록
     recommendations = [
