@@ -99,3 +99,18 @@ class LshDAO :
         sql = "SELECT user_id, item_id FROM purchase_history;"
         self.cursor.execute(sql)
         return self.cursor.fetchall()
+
+    #전체 상품 조회 (이름만)
+    def get_items_all_name(self):
+        sql = "SELECT item_id, item_name FROM item"
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+
+        # DictCursor → tuple 변환
+        return [(row["item_id"], row["item_name"]) for row in rows]
+    
+    # item_tag 저장
+    def update_item_tag(self, item_id, tags):
+        sql = "UPDATE item SET item_tag = %s WHERE item_id = %s"
+        self.cursor.execute(sql, (tags, item_id))
+        self.conn.commit()
