@@ -14,13 +14,18 @@
             <div class="col">
                 <a href="{{ item_url }}" style="text-decoration: none; color: inherit;">
                     <div class="card h-100 shadow-sm transition-3d hover-shadow" style="width: 100%;">
-
-                        <img 
-                            src="{{ url_for('static', filename='img/_item/' + item['item_img']) }}" 
-                            class="card-img-top"
+                        {% if item['item_img'].endswith(".png") %}
+                        <!-- 이미지 파일로 받을 때 -->
+                        <img src="{{ url_for('static', filename='img/_item/' + item['item_img']) }}" class="card-img-top"
                             alt="{{ item['product_name'] | default('추천 상품') }}"
-                            style="height: 150px; object-fit: cover;" 
-                        >
+                            style="height: 150px; object-fit: cover;">
+                        {% else %}
+                        <!-- 이미지 링크로 받을 때 -->
+                        <img src="{{ item['item_img'] }}" 
+                            alt="{{ item['item_name'] }}" 
+                            style="height: 150px; object-fit: cover;">
+                        {% endif %}
+
                         
                         <div class="card-body p-2"> 
                             <h6 class="card-title" style="font-size: 0.85rem; height: 38px; overflow: hidden;">

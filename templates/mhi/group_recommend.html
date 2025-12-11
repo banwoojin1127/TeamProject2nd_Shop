@@ -70,9 +70,14 @@
                 <div class="carousel-item {% if loop.first %}active{% endif %}" style="width: 100%; height: 100%;">
                     <a href="{{ item_url }}" style="text-decoration: none; color: inherit;">
                         <div class="g_carousel-item-content">
-                            <img class="g_slide_img me-3" 
-                                 src="{{ url_for('static', filename='img/_item/' + item['item_img']) }}"
-                                 alt="{{ item['product_name'] | default('추천 상품') }}">
+                            {% if item.item_img.endswith(".png") %}
+                                <!-- 이미지 파일로 받을 때 -->
+                                <img class="g_slide_img me-3" 
+                                src="{{ url_for('static', filename='img/_item/' + item['item_img']) }}" alt="{{ item['product_name'] | default('추천 상품') }}">
+                            {% else %}
+                                <!-- 이미지 링크로 받을 때 -->
+                                <img class="g_slide_img me-3" src="{{ item['item_img'] }}" alt="{{ item.item_name }}">
+                            {% endif %} 
                             <div class="g_slide_textbox">
                                 <p class="g_slide_item_name">{{ item.product_name | default('상품명 없음') }}</p>
                                 
