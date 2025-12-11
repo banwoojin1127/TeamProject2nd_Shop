@@ -59,6 +59,7 @@
         # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
         -->
         {% if session["user"] %}
+        <h4 class="mb-3">📌 추천 상품(나와 비슷한 사용자기준 구매 횟수)</h4>
         
         <section class="wide-banners">
             <div class="wide-banner-item large">
@@ -68,6 +69,12 @@
                 {% include "mhi/group_g.html" %}
             </div>
         </section>
+
+            {% if session['user'] %}
+                {% include "mhi/rank.html" %}
+            {% endif %}        
+
+
         {% endif %}
         <br><br><br>
         <!--

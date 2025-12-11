@@ -1,5 +1,5 @@
 <div class="container mt-4">
-    <h4 class="mb-3">📌 추천 상품(나와 비슷한 사용자별점기준순위)</h4>
+    <h4 class="mb-3">📌 추천 상품(나와 비슷한 사용자별점기준순위+리뷰수 50개이상)</h4>
 
     <div class="row row-cols-2 row-cols-md-6 g-3"> 
         
@@ -7,7 +7,7 @@
     
     {% for item in recommendations_list[:6] %}
         
-        {% if item.item_reviewcnt is not none %} 
+        {% if item.item_reviewcnt >= 50 %} 
         
             {% set item_url = "/" ~ ((item['item_category'] - 9) // 10) ~ "/" ~ item['item_id'] %}
 
