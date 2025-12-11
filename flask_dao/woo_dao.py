@@ -173,6 +173,32 @@ class WooDAO :
         cnt = self.cursor.rowcount
         self.close()
         return cnt
+    
+    """무한 스크롤"""
+    #상품 리스트 조회
+    def get_items_by_parent(self, parent_id, offset, limit):
+        # 1) parent_id에서 소분류 목록 가져오기
+        sql_sub = "select category_id from category where parent_id = %s"
+        self.cursor.execute(sql_sub, (parent_id,))
+        sub_categories = [row['category_id'] for row in self.cursor.fetchall()]
+
+        if not sub_categories:
+            return []  # 소분류 없으면 바로 return
+
+        # 2) item 조회
+        format_strings = ",".join(["%s"] * len(sub_categories))
+        sql_items = f"""
+            select item_id, item_name, item_price, item_img, item_category
+            from item
+            where item_category IN ({format_strings})
+            order by item_id desc limit %s offset %s
+        """
+        params = sub_categories + [limit, offset]
+        self.cursor.execute(sql_items, params)
+        result = self.cursor.fetchall()
+        self.close()
+        return result
+
 
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 # QED Temp 함수
@@ -286,5 +312,7 @@ class WooDAO :
         # Flask 템플릿으로 넘기기 쉽도록 딕셔너리 리스트로 변환
         # 소수점 둘째 자리까지만 표시
         df['trust_score'] = df['trust_score'].round(2)
+
+
 
         return df.to_dict('records')

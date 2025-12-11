@@ -5,7 +5,7 @@
  MVC 패턴에서 Controller 역할
 
 """
-from flask import Blueprint, render_template, redirect, session, url_for
+from flask import Blueprint, render_template, redirect, session, url_for, request, jsonify
 # request,
 from flask_dao.woo_dao import WooDAO
 # woo = WooDAO()
@@ -189,6 +189,35 @@ def add_item_to_cart(category_no = 0, item_no = 0) :
         return redirect("/")
 
     return redirect("/cart")
+# ------------------------------
+# 무한 스크롤 
+# ------------------------------
+@woo_bp.route("/api/items/<int:category_no>")
+def api_scroll(category_no):
+    session["cate_no"] = category_no
+
+    # 함수 안에서 URL index → DB parent_id 매핑
+    url_index_to_parent_id = {
+        0: 1,  # 과일
+        1: 2,  # 채소
+        2: 3,  # 고기
+        3: 4,  # 해산물
+        4: 5,  # 견과류
+        5: 6,  # 빵/곡류
+        6: 7,  # 스낵
+        7: 8,  # 음료
+    }
+    parent_id = url_index_to_parent_id.get(category_no, 1)  # 기본값 1
+
+    page = int(request.args.get("page", 1))
+    per_page = 20
+    offset = (page - 1) * per_page
+
+    dao = WooDAO()
+    items = dao.get_items_by_parent(parent_id, offset, per_page)
+
+    return jsonify(items)
+
 
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 # QED Temp 라우터
@@ -223,3 +252,6 @@ def cate_nav(category_no) :
         parent = parent_li[category_no]
         session["parent"] = {}
         session["parent"][parent] = "class=active"
+
+        # ------------------------------
+

@@ -15,7 +15,7 @@
     <main>
         {% include "includes/_carousel.html" %}
 
-        <section class="category-thumbnails">
+        <section class="category-thumbnails" >
             {% if session['user'] %}
             <!-- <p>로그인 중인 사용자의 구매기록을 바탕으로 사용자가 많이 구매했던 상품과 유사한 카테고리 내의 상품 추천</p> -->
             <a href="/{{ session['cate_no'] }}/0">
@@ -43,7 +43,7 @@
         <section class="middle-banner-area">
         </section>
 
-        <section class="product-grid">
+        <section class="product-grid" id="infinite_scroll">
             {% for ie in ie_li %}
                 <a href="/{{ session['cate_no'] }}/{{ ie['item_id'] }}">
                     <div class="product-item">
@@ -62,6 +62,8 @@
         </section>
 
         <button id="pop" class="top-btn">TOP</button>
+        <div id="scroll-trigger" style="height: 50px;"></div>
     </main>
+    {% include "includes/_infinite_scroll.html" %}
 </body>
 </html>

@@ -6,9 +6,7 @@
     <title>Hub - 검색 결과</title>
 {% include "includes/_style.html" %}
 </head>
-<style>
 
-</style>
 <body>
     <header>
         {% include "includes/_header.html" %}
@@ -16,7 +14,6 @@
     <br>
     <main>
         <h1 class="page-title">"({{keyword}})"에 관한 결과</h1>
-        
         <section class="search-items-list">
             {% if items %}
             <section class="cart-list">
@@ -64,6 +61,7 @@
             {% endif %}
         </section>
         <button class="top-btn">TOP</button>
+        <div id="scroll-trigger"></div>
     </main>
 </body>
 </html>

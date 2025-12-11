@@ -1,0 +1,82 @@
+<script>
+const sessionCateNo = "{{ session['cate_no'] }}";
+
+//*** 무한 스크롤 ***//
+let page = 1;
+let isLoading = false;
+
+// async : 비동기(Asynchronous) 처리를 위한 키워드
+// 내부에서 await를 사용할 수 있음
+async function fetchData() {
+    // 데이터 로딩중이면 함수를 종료
+    // (중복 방지, 무한 스크롤은 여러 번 감지될 수 있음)
+    if(isLoading) return;
+    isLoading = true; // 지금부터 데이터 로딩 중 상태
+
+    // 서버에 page 번호를 전달, 해당 페이지로 데이터 요청
+    // fetch는 promise 반환 await로 응답 올 때까지 기다림
+    const res = await fetch(`/api/items/${sessionCateNo}?page=${page}`);
+    const data = await res.json();
+
+    renderItems(data); //화면에 데이터 추가
+
+    page++;
+    isLoading = false;
+}
+
+// 상품 리스트 출력
+function renderItems(items) {
+    const list = document.getElementById('infinite_scroll');
+
+    items.forEach(item => {
+        const a = document.createElement('a');
+        a.href = `/${sessionCateNo}/${item.item_id}`;
+
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('product-item');
+
+        const imgBox = document.createElement('div');
+        imgBox.classList.add('img-box');
+
+        const img = document.createElement('img');
+
+        // ★ DB의 값에 따라 경로 분기 (HTML과 동일한 로직)
+        if (item.item_img.endsWith(".png")) {
+            img.src = `/static/img/_item/${item.item_img}`;
+        } else {
+            img.src = item.item_img;
+        }
+
+        img.style.width = '100%';
+        img.style.height = '100%';
+
+        imgBox.appendChild(img);
+
+        const name = document.createElement('span');
+        name.classList.add('cate_item_name');
+        name.textContent = item.item_name;
+
+        const price = document.createElement('span');
+        price.classList.add('cate_item_price');
+        price.textContent = `${item.item_price.toLocaleString()} 원`;
+
+        wrapper.appendChild(imgBox);
+        wrapper.appendChild(name);
+        wrapper.appendChild(price);
+
+        a.appendChild(wrapper);
+        list.appendChild(a);
+    });
+}
+
+
+// IntersectionObserver 생성
+const observer = new IntersectionObserver(async entries => {
+    if (entries[0].isIntersecting) {
+        await fetchData();
+    }
+});
+
+// 관찰 시작
+observer.observe(document.getElementById('scroll-trigger'));
+</script>

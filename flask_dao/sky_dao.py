@@ -18,14 +18,6 @@ class SkyDAO :
             cursorclass=pymysql.cursors.DictCursor
             # 조회할 때만 : [(), ()] -> [{}, {}}]
         )
-
-        # self.conn = pymysql.connect(
-        #     host="localhost",
-        #     user="root",
-        #     password="ezen",
-        #     database="shop",
-        #     cursorclass=pymysql.cursors.DictCursor
-        # )
         self.cursor = self.conn.cursor()
 
 

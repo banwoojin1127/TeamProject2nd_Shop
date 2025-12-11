@@ -1,7 +1,7 @@
 # import sys
 # sys.path.append("D:\\Haneul\\Python\\project")
 
-from flask import Blueprint, render_template, request, redirect, session, flash, url_for
+from flask import Blueprint, render_template, request, redirect, session, flash, url_for, jsonify
 from flask_dao.sky_dao import SkyDAO
 
 #Blueprint 생성
