@@ -7,6 +7,8 @@
 """
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 # !!! import
+# pip install python-dotenv
+# pip install -q -U google-generativeai
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 
 # .json 파일 사용하기 위함
