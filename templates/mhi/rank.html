@@ -1,12 +1,11 @@
 <div class="container mt-4">
-    <h4 class="mb-3">📌 추천 상품(나와 비슷한 사용자별점기준순위+리뷰50개이상)</h4>
+    <h4 class="mb-3">📌 추천 상품(나와 비슷한 사용자별점기준순위+리뷰수 50개이상)</h4>
 
-    <div class="row row-cols-2 row-cols-md-6 g-3">   
+    <div class="row row-cols-2 row-cols-md-6 g-3"> 
+        
 {% if recommendations_list %}
     
-    {% set displayed_count = [0] %} 
-
-    {% for item in recommendations_list %}
+    {% for item in recommendations_list[:6] %}
         
         {% if item.item_reviewcnt >= 50 %} 
         
@@ -24,7 +23,7 @@
                         >
                         
                         <div class="card-body p-2"> 
-                            <h6 class="card-title text-truncate" style="font-size: 0.9rem;">
+                            <h6 class="card-title" style="font-size: 0.85rem; height: 38px; overflow: hidden;">
                                 {{ item.product_name }}
                             </h6>
                         </div>
@@ -35,23 +34,24 @@
                             </small>
                             
                             <small class="text-muted d-block" style="font-size: 0.75rem;">
-                                ⭐ 평점: {{ item.item_rate | float | round(2) }}점 (리뷰 {{ item.item_reviewcnt }}개)
+                                ⭐ 평점: {{ item.item_rate | float | round(2) }}점
+                            </small>
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                (리뷰 {{ item.item_reviewcnt }}개)
                             </small>
                         </div>
                     </div>
                 </a>
             </div>
-            
-            {% set _ = displayed_count.append(displayed_count.pop() + 1) %}
 
         {% endif %} 
     
     {% endfor %}
 
-    {% if displayed_count[0] == 0 %}
+    {% if recommendations_list | length == 0 %}
         <div class="col-12">
             <div class="alert alert-info" role="alert">
-                추천 상품은 있지만, 신뢰도 기준(리뷰 50개)을 만족하는 상품이 없습니다.
+                추천 상품은 있지만, 표시할 데이터가 없습니다.
             </div>
         </div>
     {% endif %}
