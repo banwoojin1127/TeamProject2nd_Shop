@@ -92,7 +92,7 @@ class WooGemini :
             load_dotenv()
 
             # os.getenv를 사용하여 값을 가져옴
-            self.api_key = os.getenv("UJ_GOOGLE_API_KEY")
+            self.api_key = os.getenv("GOOGLE_GEMINI_FST_API_KEY")
             self.db_url = os.getenv("DATABASE_URL")
 
             # 값을 확인하고 연결
