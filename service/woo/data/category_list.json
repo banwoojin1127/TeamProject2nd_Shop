@@ -1,0 +1,355 @@
+{
+"category_list": [
+	{
+		"category_id" : 1,
+		"category_name" : "과일"
+	},
+	{
+		"category_id" : 2,
+		"category_name" : "채소"
+	},
+	{
+		"category_id" : 3,
+		"category_name" : "고기"
+	},
+	{
+		"category_id" : 4,
+		"category_name" : "해산물"
+	},
+	{
+		"category_id" : 5,
+		"category_name" : "쌀\/잡곡\/견과"
+	},
+	{
+		"category_id" : 6,
+		"category_name" : "빵"
+	},
+	{
+		"category_id" : 7,
+		"category_name" : "과자"
+	},
+	{
+		"category_id" : 8,
+		"category_name" : "음료"
+	},
+	{
+		"category_id" : 9,
+		"category_name" : "사과"
+	},
+	{
+		"category_id" : 10,
+		"category_name" : "배"
+	},
+	{
+		"category_id" : 11,
+		"category_name" : "감귤"
+	},
+	{
+		"category_id" : 12,
+		"category_name" : "수박"
+	},
+	{
+		"category_id" : 13,
+		"category_name" : "메론"
+	},
+	{
+		"category_id" : 14,
+		"category_name" : "참외"
+	},
+	{
+		"category_id" : 15,
+		"category_name" : "딸기"
+	},
+	{
+		"category_id" : 16,
+		"category_name" : "키위"
+	},
+	{
+		"category_id" : 17,
+		"category_name" : "포도"
+	},
+	{
+		"category_id" : 18,
+		"category_name" : "복숭아"
+	},
+	{
+		"category_id" : 19,
+		"category_name" : "토마토"
+	},
+	{
+		"category_id" : 20,
+		"category_name" : "오이"
+	},
+	{
+		"category_id" : 21,
+		"category_name" : "콩나물"
+	},
+	{
+		"category_id" : 22,
+		"category_name" : "고구마"
+	},
+	{
+		"category_id" : 23,
+		"category_name" : "감자"
+	},
+	{
+		"category_id" : 24,
+		"category_name" : "양파"
+	},
+	{
+		"category_id" : 25,
+		"category_name" : "옥수수"
+	},
+	{
+		"category_id" : 26,
+		"category_name" : "마늘"
+	},
+	{
+		"category_id" : 27,
+		"category_name" : "파"
+	},
+	{
+		"category_id" : 28,
+		"category_name" : "상추"
+	},
+	{
+		"category_id" : 29,
+		"category_name" : "돼지삼겹살"
+	},
+	{
+		"category_id" : 30,
+		"category_name" : "돼지목살"
+	},
+	{
+		"category_id" : 31,
+		"category_name" : "한우등심"
+	},
+	{
+		"category_id" : 32,
+		"category_name" : "소갈비"
+	},
+	{
+		"category_id" : 33,
+		"category_name" : "생오리"
+	},
+	{
+		"category_id" : 34,
+		"category_name" : "훈제오리"
+	},
+	{
+		"category_id" : 35,
+		"category_name" : "양갈비"
+	},
+	{
+		"category_id" : 36,
+		"category_name" : "양꼬치"
+	},
+	{
+		"category_id" : 37,
+		"category_name" : "닭다리살"
+	},
+	{
+		"category_id" : 38,
+		"category_name" : "닭가슴살"
+	},
+	{
+		"category_id" : 39,
+		"category_name" : "연어"
+	},
+	{
+		"category_id" : 40,
+		"category_name" : "고등어"
+	},
+	{
+		"category_id" : 41,
+		"category_name" : "갈치"
+	},
+	{
+		"category_id" : 42,
+		"category_name" : "꽁치"
+	},
+	{
+		"category_id" : 43,
+		"category_name" : "장어"
+	},
+	{
+		"category_id" : 44,
+		"category_name" : "참치"
+	},
+	{
+		"category_id" : 45,
+		"category_name" : "멸치"
+	},
+	{
+		"category_id" : 46,
+		"category_name" : "오징어"
+	},
+	{
+		"category_id" : 47,
+		"category_name" : "새우"
+	},
+	{
+		"category_id" : 48,
+		"category_name" : "조개"
+	},
+	{
+		"category_id" : 49,
+		"category_name" : "백미"
+	},
+	{
+		"category_id" : 50,
+		"category_name" : "찹쌀"
+	},
+	{
+		"category_id" : 51,
+		"category_name" : "흑미"
+	},
+	{
+		"category_id" : 52,
+		"category_name" : "현미"
+	},
+	{
+		"category_id" : 53,
+		"category_name" : "콩"
+	},
+	{
+		"category_id" : 54,
+		"category_name" : "보리"
+	},
+	{
+		"category_id" : 55,
+		"category_name" : "귀리"
+	},
+	{
+		"category_id" : 56,
+		"category_name" : "아몬드"
+	},
+	{
+		"category_id" : 57,
+		"category_name" : "호두"
+	},
+	{
+		"category_id" : 58,
+		"category_name" : "땅콩"
+	},
+	{
+		"category_id" : 59,
+		"category_name" : "식빵"
+	},
+	{
+		"category_id" : 60,
+		"category_name" : "호빵"
+	},
+	{
+		"category_id" : 61,
+		"category_name" : "모닝빵"
+	},
+	{
+		"category_id" : 62,
+		"category_name" : "베이글"
+	},
+	{
+		"category_id" : 63,
+		"category_name" : "바게트"
+	},
+	{
+		"category_id" : 64,
+		"category_name" : "카스테라"
+	},
+	{
+		"category_id" : 65,
+		"category_name" : "크로아상"
+	},
+	{
+		"category_id" : 66,
+		"category_name" : "치아바타빵"
+	},
+	{
+		"category_id" : 67,
+		"category_name" : "치즈빵"
+	},
+	{
+		"category_id" : 68,
+		"category_name" : "도넛"
+	},
+	{
+		"category_id" : 69,
+		"category_name" : "고래밥"
+	},
+	{
+		"category_id" : 70,
+		"category_name" : "포카칩"
+	},
+	{
+		"category_id" : 71,
+		"category_name" : "새우깡"
+	},
+	{
+		"category_id" : 72,
+		"category_name" : "초코파이"
+	},
+	{
+		"category_id" : 73,
+		"category_name" : "칸쵸"
+	},
+	{
+		"category_id" : 74,
+		"category_name" : "빼빼로"
+	},
+	{
+		"category_id" : 75,
+		"category_name" : "몽쉘"
+	},
+	{
+		"category_id" : 76,
+		"category_name" : "사브레"
+	},
+	{
+		"category_id" : 77,
+		"category_name" : "맛동산"
+	},
+	{
+		"category_id" : 78,
+		"category_name" : "후렌치파이"
+	},
+	{
+		"category_id" : 79,
+		"category_name" : "콜라"
+	},
+	{
+		"category_id" : 80,
+		"category_name" : "사이다"
+	},
+	{
+		"category_id" : 81,
+		"category_name" : "생수"
+	},
+	{
+		"category_id" : 82,
+		"category_name" : "소주"
+	},
+	{
+		"category_id" : 83,
+		"category_name" : "맥주"
+	},
+	{
+		"category_id" : 84,
+		"category_name" : "아메리카노"
+	},
+	{
+		"category_id" : 85,
+		"category_name" : "라떼"
+	},
+	{
+		"category_id" : 86,
+		"category_name" : "핫초코"
+	},
+	{
+		"category_id" : 87,
+		"category_name" : "와인"
+	},
+	{
+		"category_id" : 88,
+		"category_name" : "막걸리"
+	}
+]}

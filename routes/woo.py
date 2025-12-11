@@ -5,24 +5,17 @@
  MVC 패턴에서 Controller 역할
 
 """
+#import json
 from flask import Blueprint, render_template, redirect, session, url_for, request, jsonify
 # request,
 from flask_dao.woo_dao import WooDAO
 # woo = WooDAO()
 
-#from flask_dao.mhi_dao import MhiDAO
-#import json
+from service.woo.for_gemini import WooGemini
+wodel = WooGemini()
 
 woo_bp = Blueprint("woo", __name__)
 
-"""
-main_logout        : 
-main_login         : 
-category_logout    : 
-category_login     : 
-item               : 
-
-"""
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 # 확인용 라우터 || 이후 지워야함
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
@@ -41,7 +34,7 @@ def go_main() :
     """
     return redirect(url_for('mhi.main'))
 
-DOCSTRING_COMMENT_MAIN = '''
+COMMENT_MAIN_PAGE_ROUTE = '''
 #@woo_bp.route("/")
 #def main() :
 #    """
@@ -108,6 +101,7 @@ def category(category_no = 0) :
     x# 로그인 되어있는 경우에는 :
     # 사용자의 구매 내역을 기준으로
     # 구매 시 높은 평점을 남길 것 같은 상품들을 추천 (6개)
+    # 이었는데 API 로 Gemini 한테 물어보기
     
     o# 로그인 되어있지 않는 경우에는 :
     # 카테고리의 특정기준 9~14등 상품 (6개)
@@ -128,8 +122,9 @@ def category(category_no = 0) :
 
     user = session.get("user")
     if user :
-
-        # ?????
+        user_id = user.get("user_id")
+        recommend_plan = wodel.recommend_cate_in_parent(user_id, category_no)
+        print(recommend_plan)
 
         return render_template("woo/category.html",
                                 best_li = best_li, ie_li = ie_li, cate_li = cate_li)
@@ -141,7 +136,7 @@ def category(category_no = 0) :
         return render_template("woo/category.html",
                                 best_li = best_li, ie_li = ie_li, cate_li = cate_li)
 
-
+COMMENT_ITEM_PAGE_ROUTE = '''
 #@woo_bp.route("/<int:category_no>/<int:item_no>")
 #@woo_bp.route("/<int:category_no>/<int:item_no>/")
 #def item(category_no = 0, item_no = 0) :
@@ -156,7 +151,7 @@ def category(category_no = 0) :
 #    ie = dao.load_i_info(item_no)
 #
 #    return render_template("woo/item.html", ie = ie)
-
+'''
 
 @woo_bp.route("/<int:category_no>/<int:item_no>/cart", methods = ["GET"])
 @woo_bp.route("/<int:category_no>/<int:item_no>/cart/", methods = ["GET"])
@@ -190,10 +185,17 @@ def add_item_to_cart(category_no = 0, item_no = 0) :
 
     return redirect("/cart")
 # ------------------------------
-# 무한 스크롤 
+# 무한 스크롤
 # ------------------------------
 @woo_bp.route("/api/items/<int:category_no>")
 def api_scroll(category_no):
+    """
+    api_scroll의 Docstring
+    
+    :param category_no: 설명
+    :return: 설명
+    :rtype: Response
+    """
     session["cate_no"] = category_no
 
     # 함수 안에서 URL index → DB parent_id 매핑

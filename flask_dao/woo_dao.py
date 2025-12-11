@@ -71,16 +71,14 @@ class WooDAO :
 
     def main_banner(self, quantity = 1) :
         """
-        # TALBE item 각 대분류 item_category 별로
-        # 역대 최고 평가 상품 item_id 이
-        # return
+        # 전체상품 TALBE item 에서 각 대분류 별로
+        # 역대 최고 평가 상품 item_id 을 반환 return
         """
         result = []
         for category_no in range(8) :
             ranking = self.calc_weighted_rate(option = 1, item_category = category_no)
             for quan in ranking[:quantity] :
                 result.append(quan)
-
 
         self.close()
         return result
@@ -89,7 +87,8 @@ class WooDAO :
         """
         # 전체상품 TABLE item 에서
         # 역대 최고 평가 상위 quantity 개 까지 LIMIT quantity
-        # return
+        # 그리고 분류 Category 에서 소분류 item_category 로 대분류 parent_id
+        # 조회 SELECT
         """
         ranking = self.calc_weighted_rate(option = option, item_category = category_no)
 
@@ -116,8 +115,8 @@ class WooDAO :
 
     def cate_rand_items(self, item_category) :
         """
-        # TALBE item 에서 
-        # item_category 특정범위의 무작위 상품 item_id 12개 까지 LIMIT 12
+        # 전체상품 TALBE item 의
+        # 대분류 f(x)item_category 에서 "무작위" 상품 item_id 12개 까지 LIMIT 12
         """
         #, item_tag
         sql = """
@@ -143,7 +142,7 @@ class WooDAO :
     def load_i_info(self, item_id) :
         """
         # 상품 item_id 에 따라 상세 정보를
-        # TABLE item 에서 SELECT 합니다
+        # 전체상품 정보 TABLE item 에서 조회 SELECT
         """
         sql = """
         SELECT i.* FROM item AS i
@@ -159,7 +158,7 @@ class WooDAO :
     def add_i_to_c(self, user_id, item_id) :
         """
         # 현재 상세를 보고있는 user_id 를 상품 item_id 와 묶어서
-        # TALBE item_cart 에 INSERT 합니다
+        # 장바구니 TALBE item_cart 에 추가 INSERT
         """
         sql = """
         INSERT INTO item_cart
@@ -173,10 +172,20 @@ class WooDAO :
         cnt = self.cursor.rowcount
         self.close()
         return cnt
-    
-    """무한 스크롤"""
+
+    # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+    # """무한 스크롤""" by.sky
+    # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
     #상품 리스트 조회
     def get_items_by_parent(self, parent_id, offset, limit):
+        """
+        get_items_by_parent의 Docstring
+        
+        :param self: 설명
+        :param parent_id: 설명
+        :param offset: 설명
+        :param limit: 설명
+        """
         # 1) parent_id에서 소분류 목록 가져오기
         sql_sub = "select category_id from category where parent_id = %s"
         self.cursor.execute(sql_sub, (parent_id,))
