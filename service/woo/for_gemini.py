@@ -7,8 +7,21 @@
 """
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 # !!! import
+
+# 아래 라이브러리 install 하셔야합니다
 # pip install python-dotenv
 # pip install -q -U google-generativeai
+
+# python-dotenv 는 아마 이미 되어있을 가능성이 높습니다
+
+# google-generativeai 가 API 를 통해 Gemini 활용하는 라이브러리입니다
+
+# 프로젝트 최상위 디렉토리에 .env 파일 만들어야 합니다
+# Google AI Stdio 에서 API KEY 발급 받으셔서
+
+# GOOGLE_GEMINI_FST_API_KEY=발급받은키값
+
+# 으로 저장하시면 아마 문제없이 동작할겁니다.
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 
 # .json 파일 사용하기 위함
