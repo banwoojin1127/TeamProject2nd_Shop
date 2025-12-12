@@ -1,71 +1,63 @@
 <div class="container mt-4">
-    <h4 class="mb-3">📌 추천 상품(나와 비슷한 사용자별점기준순위)</h4>
+    <h4 class="mb-3">📌 유샤그룹 평점기준+리뷰수50개이상</h4>
 
-    <div class="row row-cols-2 row-cols-md-6 g-3"> 
-        
-{% if recommendations_list %}
-    
-    {% for item in recommendations_list[:6] %}
-        
-        {% if item.item_reviewcnt is not none %} 
-        
-            {% set item_url = "/" ~ ((item['item_category'] - 9) // 10) ~ "/" ~ item['item_id'] %}
+    <div class="row row-cols-2 row-cols-md-6 g-3">
 
-            <div class="col">
-                <a href="{{ item_url }}" style="text-decoration: none; color: inherit;">
-                    <div class="card h-100 shadow-sm transition-3d hover-shadow" style="width: 100%;">
-                        {% if item.item_img.endswith(".png") %}
-                        <!-- 이미지 파일로 받을 때 -->
-                        <img src="{{ url_for('static', filename='img/_item/' + item['item_img']) }}" 
-                            class="card-img-top"
-                            alt="{{ item['product_name'] | default('추천 상품') }}"
-                            style="height: 150px; object-fit: cover;">
-                        {% else %}
-                            <!-- 이미지 링크로 받을 때 -->
-                            <img class="card-img-top" src="{{ item.item_img }}" alt="{{ item.item_name }}">
-                        {% endif %}
-                        
-                        <div class="card-body p-2"> 
-                            <h6 class="card-title" style="font-size: 0.85rem; height: 38px; overflow: hidden;">
-                                {{ item.product_name }}
-                            </h6>
+        {% set filtered = recommendations_list | selectattr('item_reviewcnt', '>=', 50) | list %}
+
+        {% if filtered %}
+            {% for item in filtered[:6] %}
+                {% set item_url = "/" ~ ((item.item_category - 9) // 10) ~ "/" ~ item.item_id %}
+
+                <div class="col">
+                    <a href="{{ item_url }}" style="text-decoration: none; color: inherit;">
+                        <div class="card h-100 shadow-sm" style="width: 100%;">
+
+                            <!-- 이미지 -->
+                            {% if item.item_img and item.item_img.endswith(".png") %}
+                                <img src="{{ url_for('static', filename='img/_item/' + item.item_img) }}"
+                                     class="card-img-top"
+                                     style="height: 150px; object-fit: cover;">
+                            {% elif item.item_img %}
+                                <img src="{{ item.item_img }}"
+                                     class="card-img-top"
+                                     style="height: 150px; object-fit: cover;">
+                            {% else %}
+                                <div style="height:150px;background:#f8f9fa;display:flex;align-items:center;justify-content:center;color:#6c757d;">
+                                    No Image
+                                </div>
+                            {% endif %}
+
+                            <!-- 상품명 -->
+                            <div class="card-body p-2">
+                                <h6 class="card-title" style="font-size: 0.85rem; height: 38px; overflow: hidden;">
+                                    {{ item.product_name }}
+                                </h6>
+                            </div>
+
+                            <!-- 가격/평점 -->
+                            <div class="card-footer text-center p-1">
+                                <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                    <span class="fw-bold text-success">{{ "{:,}".format(item.item_price|int) }}원</span>
+                                </small>
+                                <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                    ⭐ {{ item.item_rate|float|round(2) }}점
+                                </small>
+                                <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                    리뷰 {{ item.item_reviewcnt }}개
+                                </small>
+                            </div>
                         </div>
+                    </a>
+                </div>
 
-                        <div class="card-footer text-center p-1">
-                            <small class="text-muted d-block" style="font-size: 0.75rem;">
-                                <span class="fw-bold text-success">{{ "{:,}".format(item.item_price | int) }}원</span>
-                            </small>
-                            
-                            <small class="text-muted d-block" style="font-size: 0.75rem;">
-                                ⭐ 평점: {{ item.item_rate | float | round(2) }}점
-                            </small>
-                            <small class="text-muted d-block" style="font-size: 0.75rem;">
-                                (리뷰 {{ item.item_reviewcnt }}개)
-                            </small>
-                        </div>
-                    </div>
-                </a>
+            {% endfor %}
+
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-secondary">추천 상품이 없습니다.</div>
             </div>
-
-        {% endif %} 
-    
-    {% endfor %}
-
-    {% if recommendations_list | length == 0 %}
-        <div class="col-12">
-            <div class="alert alert-info" role="alert">
-                추천 상품은 있지만, 표시할 데이터가 없습니다.
-            </div>
-        </div>
-    {% endif %}
-
-{% else %}
-    <div class="col-12">
-        <div class="alert alert-secondary" role="alert">
-            추천 상품 데이터 자체를 가져오지 못했습니다.
-        </div>
-    </div>
-{% endif %}
+        {% endif %}
 
     </div>
 </div>
