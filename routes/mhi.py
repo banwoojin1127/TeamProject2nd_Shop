@@ -138,26 +138,26 @@ def main() :
             # - 차트용 JSON: 가중치 순위 목록 사용
             recommendations_json = json.dumps(weighted_list) 
 
-    return render_template(
-        "woo/main.html",
-        best_li=best_li,
-        ie_li=ie_li,
-        cate_li=cate_li,
-        # -------------------------------------------------
-        # ⭐ 템플릿에 전달할 추천 목록
-        # -------------------------------------------------
-        # 1) 캐러셀 (구매 횟수 순위)
-        recommendations_carousel=recommendations_carousel,
-        
-        # 2) 별점 순위 리스트 (기존 rank.html에서 사용)
-        recommendations_list=recommendations_list,
-        
-        # 3) 가중치 순위 리스트 (새로운 템플릿에서 사용)
-        weighted_recommendations_list=weighted_recommendations_list,
-        
-        # 4) 차트용 JSON
-        recommendations_json=recommendations_json
-    )
+        return render_template(
+            "woo/main.html",
+            best_li=best_li,
+            ie_li=ie_li,
+            cate_li=cate_li,
+            # -------------------------------------------------
+            # ⭐ 템플릿에 전달할 추천 목록
+            # -------------------------------------------------
+            # 1) 캐러셀 (구매 횟수 순위)
+            recommendations_carousel=recommendations_carousel,
+            
+            # 2) 별점 순위 리스트 (기존 rank.html에서 사용)
+            recommendations_list=recommendations_list,
+            
+            # 3) 가중치 순위 리스트 (새로운 템플릿에서 사용)
+            weighted_recommendations_list=weighted_recommendations_list,
+            
+            # 4) 차트용 JSON
+            recommendations_json=recommendations_json
+        )
 
 
 # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
