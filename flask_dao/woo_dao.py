@@ -113,6 +113,22 @@ class WooDAO :
         return result, cate_li
 
 
+    def fetch_api_recommend_items(self, recommend_plan, quantity = 6, option = 2) :
+        """
+        # API 가 추천해준 소분류에서 가중 평점 결과가 가장 높은 상품들 조회
+        """
+
+        api_pick_sub_cate = [
+            recommend['item_category'] for recommend in recommend_plan['추천답변']
+        ]
+        #print(api_pick_sub_cate)
+
+        ranking = self.calc_weighted_rate(option=option, values_array=api_pick_sub_cate)
+        #print(ranking)
+        result = [ quan for quan in ranking[:quantity] ]
+
+        return result
+
     def cate_rand_items(self, item_category) :
         """
         # 전체상품 TALBE item 의
@@ -263,7 +279,7 @@ class WooDAO :
             #print("Debug | File woo_dao | calc_weighted_rate() : !!! Array None !!!")
             #print("# " + "=" * 50)
             values_array = []
-        placeholders = ', '.join(['%s'] * len(values_array))
+        placeholders = ', '.join([ str(value) for value in values_array ])
         querys = [
         """
         SELECT

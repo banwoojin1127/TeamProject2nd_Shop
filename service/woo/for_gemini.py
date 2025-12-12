@@ -173,8 +173,16 @@ class WooGemini :
                     "추천전략A", "추천전략B", ...
                 ],
                 "추천답변" : [
-                    {{ "item_category" : sub_category_id, "reason" : "추천 이유 설명" }},
-                    {{ "item_category" : sub_category_id, "reason" : "추천 이유 설명" }},
+                    {{
+                        "item_category" : sub_category_id,
+                        "category_name" : "sub_category_name",
+                        "reason" : "추천 이유 설명"
+                    }},
+                    {{
+                        "item_category" : sub_category_id,
+                        "category_name" : "sub_category_name",
+                        "reason" : "추천 이유 설명"
+                    }},
                     ...
                 ]
             }}

@@ -122,12 +122,20 @@ def category(category_no = 0) :
 
     user = session.get("user")
     if user :
+        recommend_plan = None
+        recommend_item = None
+
         #user_id = user.get("user_id")
         #recommend_plan = wodel.recommend_cate_in_parent(user_id, category_no)
-        #print(recommend_plan)
+
+        #dao = WooDAO()
+        #recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan)
+        #print("# " + "=" * 50 + "\n" + f"{recommend_item}" + "\n" + "# " + "=" * 50 + "\n")
 
         return render_template("woo/category.html",
-                                best_li = best_li, ie_li = ie_li, cate_li = cate_li)
+                                best_li = best_li, ie_li = ie_li, cate_li = cate_li
+                                , recom_pl = recommend_plan, recom_li = recommend_item
+                            )
 
     else :
 
