@@ -54,7 +54,7 @@
 <div id="recommendedSlideshow" class="main-banner carousel slide" data-bs-ride="carousel">
     
     <div class="carousel-indicators">
-        {% for item in recommendations_carousel %}
+        {% for item in recommendations_carousel[:10] %}
         <button type="button" 
                 data-bs-target="#recommendedSlideshow" 
                 data-bs-slide-to="{{ loop.index0 }}" 

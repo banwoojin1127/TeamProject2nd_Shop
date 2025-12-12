@@ -178,6 +178,7 @@ class MhiDAO:
             return []
             
         try:
+            # Pandas 라이브러리 임포트 필요 (상단에 'import pandas as pd' 확인)
             df = pd.DataFrame(recommendation_list)
 
             # 1. 데이터 타입 변환 및 결측치 처리
@@ -201,8 +202,15 @@ class MhiDAO:
                 (w_review * df['norm_review'])
             )
 
-            # 4. 'weighted_score' 기준으로 내림차순 정렬 및 점수 반올림
-            df = df.sort_values(by='weighted_score', ascending=False)
+            # 4. 정렬 로직 수정: 요청하신 1차/2차/3차 기준 적용
+            # - 1차: weighted_score (주 가중치)
+            # - 2차: item_rate (동점 시 평점 높은 순)
+            # - 3차: item_reviewcnt (2차 동점 시 리뷰 수 많은 순)
+            df = df.sort_values(
+                by=['weighted_score', 'item_rate', 'item_reviewcnt'],
+                ascending=[False, False, False] # 모두 내림차순 정렬
+            )
+            
             df['weighted_score'] = df['weighted_score'].round(4) 
 
             print(f"--- 디버깅 --- 커스텀 가중치 정렬 완료. W(R): {w_rating}, W(P): {w_purchase}, W(V): {w_review}")
@@ -212,7 +220,7 @@ class MhiDAO:
         except Exception as e:
             print(f"--- 가중치 계산 중 오류 발생 (apply_custom_weighted_ranking): {e}")
             # 오류 발생 시, 정렬되지 않은 원본 리스트 반환
-            return recommendation_list 
+            return recommendation_list
 
     # ------------------------------------------------------------------
     # --- 메인 추천 로직 메서드 (세 가지 리스트 반환) ---
