@@ -1,5 +1,75 @@
+<style>
+/* ===========================
+   📌 Tooltip Container
+=========================== */
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* 기본 텍스트 hover 효과 */
+.tooltip-container:hover {
+    color: #0d6efd;
+}
+
+/* ===========================
+   📌 Tooltip Box
+=========================== */
+.tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    width: 240px;
+    background: #212529;
+    color: #fff;
+    text-align: left;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+
+    /* 말풍선 위치 */
+    position: absolute;
+    z-index: 999;
+    top: 130%;
+    left: 105%;
+    transform: translateX(-50%);
+
+    /* 부드러운 효과 */
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+
+    /* 말풍선 삼각형 */
+}
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent #212529 transparent;
+}
+
+/* Hover 시 보임 */
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+</style>
+
+
+
 <div class="container mt-4">
-    <h4 class="mb-3">📌 유샤그룹 평점기준+리뷰수50개이상</h4>
+<h4 class="mb-3">
+        <span class="tooltip-container">
+            📌 유샤그룹 평점기준+리뷰수50개이상
+            <span class="tooltip-text">
+                유샤그룹(본인나이±5, 동일성별)이 구매한 아이템중에 평점이 높은 아이템을 출력(리뷰수 50개 이상 필터링)
+            </span>
+        </span>
+    </h4>
 
     <div class="row row-cols-2 row-cols-md-6 g-3">
 

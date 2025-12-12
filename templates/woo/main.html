@@ -59,16 +59,26 @@
         # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
         -->
         {% if session["user"] %}
-        <h4 class="mb-3">📌 유샤그룹 구매 횟수기준</h4>
-        
-        <section class="wide-banners">
-            <div class="wide-banner-item large">
-                {% include "mhi/group_recommend.html" %}
-            </div>
-            <div>
-                {% include "mhi/group_g.html" %}
-            </div>
-        </section>
+        <h4 class="mb-3">
+            <span class="tooltip-container">
+                📌 유샤그룹의 구매횟수 기준
+                <span class="tooltip-text">
+                    유샤그룹(본인나이±5, 동일성별)이 구매한 아이템중에 구매횟수가 많은 아이템을 출력
+                </span>
+            </span>
+        </h4>     
+
+            <div class="container mt-3">
+                <div class="row">
+                    <div class="col-md-8">
+                        {% include "mhi/group_recommend.html" %}
+                    </div>
+
+                    <div class="col-md-4">
+                        {% include "mhi/group_g.html" %}
+                    </div>
+                </div>
+            </div>  
 
             {% if session['user'] %}
                 {% include "mhi/rank.html" %}
