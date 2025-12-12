@@ -122,7 +122,7 @@ def category(category_no = 0) :
 
     user = session.get("user")
     if user :
-        user_id = user.get("user_id")
+        #user_id = user.get("user_id")
         #recommend_plan = wodel.recommend_cate_in_parent(user_id, category_no)
         #print(recommend_plan)
 

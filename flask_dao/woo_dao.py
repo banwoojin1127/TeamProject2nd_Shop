@@ -250,24 +250,46 @@ class WooDAO :
 # 일반 함수
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 
-    def calc_weighted_rate(self, option = 0, item_category = 0) :
+    def calc_weighted_rate(self, option = 0, item_category = 0, values_array = None) :
         """
         # 별점과 리뷰수로 신뢰도를 추출해서
         # 신뢰성 높은 유의미한 별점을 추출하고
         # 신뢰성 별점을 기준으로 순위를 매기는 함수
         """
+
+        # values_array 가 비어있는 경우 오류 방지
+        if not values_array:
+            #print("# " + "=" * 50)
+            #print("Debug | File woo_dao | calc_weighted_rate() : !!! Array None !!!")
+            #print("# " + "=" * 50)
+            values_array = []
+        placeholders = ', '.join(['%s'] * len(values_array))
         querys = [
-            """
-            SELECT item_id, item_name, item_rate, item_reviewcnt, item_img, item_category
-            FROM item
-            """,
-            f"""
-            SELECT item_id, item_name, item_rate, item_reviewcnt, item_img, item_category
-            FROM item 
-            WHERE
+        """
+        SELECT
+            item_id, item_name, item_rate, item_reviewcnt, item_img, item_category
+        FROM
+            item
+        WHERE
+            item_img IS NOT NULL
+        """,
+        f"""
+        SELECT
+            item_id, item_name, item_rate, item_reviewcnt, item_img, item_category
+        FROM
+            item 
+        WHERE
             item_category BETWEEN {item_category} * 10 + 9 AND ({item_category} + 1) * 10 + 8
-             AND item_img IS NOT NULL
-            """
+            AND item_img IS NOT NULL
+        """,
+        f"""
+        SELECT
+            item_id, item_name, item_price, item_rate, item_reviewcnt, item_img, item_category
+        FROM
+            item
+        WHERE
+            item_category IN ({placeholders}) AND item_img IS NOT NULL
+        """
         ]
         try :
             self.pandas_conn()
@@ -277,10 +299,17 @@ class WooDAO :
             self.pandas_close()
 
         except Exception as e :
+            print("# " + "=" * 50)
             print(f"데이터베이스 오류 발생: {e}")
+            print("# " + "=" * 50)
+
             return []
 
         if df.empty :
+            print("# " + "=" * 50)
+            print("데이터프레임 오류 발생")
+            print("# " + "=" * 50)
+
             return []
 
         df['item_rate'] = pd.to_numeric(df['item_rate'], errors='coerce')
@@ -294,7 +323,7 @@ class WooDAO :
         # 리뷰 수가 충분히 많은 상품에 높은 가중치를 부여합니다.
         # m_vote = df['item_reviewcnt'].quantile(0.8) # 리뷰 수 상위 20%의 최소값
         # 또는 고정값 사용 (예: 50개)
-        m_vote = 50
+        m_vote = m_vote = df['item_reviewcnt'].quantile(0.7)
 
         # 3. Weighted Rating (WR) 공식 적용
         def weighted_rating(row, m_vote, rate_mean):
@@ -321,7 +350,5 @@ class WooDAO :
         # Flask 템플릿으로 넘기기 쉽도록 딕셔너리 리스트로 변환
         # 소수점 둘째 자리까지만 표시
         df['trust_score'] = df['trust_score'].round(2)
-
-
 
         return df.to_dict('records')
