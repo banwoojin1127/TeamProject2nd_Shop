@@ -86,20 +86,13 @@ def logout():
 def main() :
     """
     # url 의 root 에 해당하는 경로
-    # 각 대분류별 역대 최고 평가 상품이 출력 되어야 합니다
-    
-    x# 로그인 되어있는 경우에는 :
-    # user 의 관심사에 따라 출력 요소가 변경되어야 합니다
-    # "나"의 구매목록을 기준으로 관심도를 추론해서 상품 6개가 출력 되어야 합니다
-    # "나" 와 유사한 사용자간의 구매목록을 특이값 분해해서 출력 되어야 합니다
-    
-    o# 로그인 되어있지 않는 경우에는 :
-    # 웹서비스 내에서 역대 최고 평가 상위 6개 가 출력 되어야 합니다
+    # 로그인 시: 유사 사용자 기반 추천 목록 (3가지 순위 기준)을 출력
+    # 비로그인 시: 웹서비스 내 역대 최고 평가 상위 6개 출력
     """
     cate_nav(-1)
 
     wdao = WooDAO()
-    best_li = wdao.main_banner()
+    best_li = wdao.main_banner() # 비로그인 시 사용될 전체 최고 평가 상품
 
     user = session.get("user")
 # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
@@ -109,47 +102,60 @@ def main() :
     # ##### 로그인한 경우 #####
     ie_li = []
     cate_li = None
+    
+    # 기본값 설정
+    recommendations_carousel = []   # 캐러셀 (구매 횟수 기준 사용)
+    recommendations_list = []       # 리스트 (별점 기준 사용)
+    weighted_recommendations_list = [] # 추가된 가중치 순위 리스트
+    recommendations_json = json.dumps([]) # 차트용 JSON
 
     if user:
         user_id = user['user_id']
+        
+        # --------------------------------------------------------
+        # ⭐ 1. DAO를 한 번만 호출하여 세 가지 정렬 리스트를 모두 받기
+        # --------------------------------------------------------
+        recommendation_data = dao.get_recommended_items_by_homogeneous_group(user_id, limit=100)
+        
+        if recommendation_data and recommendation_data.get('rating_list'):
+            
+            # 2. 각 리스트 추출
+            purchase_list = recommendation_data['purchase_list'] # 구매 횟수 순위
+            rating_list = recommendation_data['rating_list']     # 별점 순위
+            weighted_list = recommendation_data['weighted_list'] # 가중치 순위
 
-        # -------------------
-        # 1) 구매횟수 기준 추천 (캐러셀용)
-        # -------------------
-        carousel_list = dao.get_recommended_items_by_homogeneous_group(user_id, limit=10)
-        if carousel_list:
-            carousel_list = sorted(
-                carousel_list,
-                key=lambda x: x.get('purchase_count', 0),
-                reverse=True
-            )
-
-        # -------------------
-        # 2) 평점 기준 추천 (리스트용)
-        # -------------------
-        rating_list = dao.get_recommended_items_by_homogeneous_group(user_id, limit=10)
-        if rating_list:
-            rating_list = sorted(
-                rating_list,
-                key=lambda x: float(x.get('item_rate', 0)),
-                reverse=True
-            )
-
-        # -------------------
-        # 3) 차트용 JSON 생성 (json)
-        # -------------------
-        recommendations_json = json.dumps(carousel_list)  # 구매 횟수 기준 사용 가능
+            # 3. 각 용도에 맞게 매핑
+            
+            # - 캐러셀용: 구매 횟수 순위 사용
+            recommendations_carousel = purchase_list
+            
+            # - 메인 리스트용: 별점 순위 사용
+            recommendations_list = rating_list
+            
+            # - 가중치 평점 리스트용: 가중치 순위 사용
+            weighted_recommendations_list = weighted_list
+            
+            # - 차트용 JSON: 가중치 순위 목록 사용
+            recommendations_json = json.dumps(weighted_list) 
 
         return render_template(
             "woo/main.html",
             best_li=best_li,
             ie_li=ie_li,
             cate_li=cate_li,
-            # 캐러셀
-            recommendations_carousel=carousel_list,
-            # 리스트
-            recommendations_list=rating_list,
-            # 차트용 JSON
+            # -------------------------------------------------
+            # ⭐ 템플릿에 전달할 추천 목록
+            # -------------------------------------------------
+            # 1) 캐러셀 (구매 횟수 순위)
+            recommendations_carousel=recommendations_carousel,
+            
+            # 2) 별점 순위 리스트 (기존 rank.html에서 사용)
+            recommendations_list=recommendations_list,
+            
+            # 3) 가중치 순위 리스트 (새로운 템플릿에서 사용)
+            weighted_recommendations_list=weighted_recommendations_list,
+            
+            # 4) 차트용 JSON
             recommendations_json=recommendations_json
         )
 
