@@ -70,7 +70,9 @@ class WithAPI :
 
         # purchase_tuple이 비어있는 경우(구매 이력 없음) 오류 방지
         if not purchase_tuple:
-            print("구매 이력이 없어 처리할 항목이 없습니다.")
+            print("# " + "=" * 50)
+            print("Debug | Class WithAPI | !!! Array None !!!")
+            print("# " + "=" * 50)
             return []
 
         placeholders = ', '.join(['%s'] * len(purchase_tuple))

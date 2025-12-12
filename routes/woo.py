@@ -123,8 +123,8 @@ def category(category_no = 0) :
     user = session.get("user")
     if user :
         user_id = user.get("user_id")
-        recommend_plan = wodel.recommend_cate_in_parent(user_id, category_no)
-        print(recommend_plan)
+        #recommend_plan = wodel.recommend_cate_in_parent(user_id, category_no)
+        #print(recommend_plan)
 
         return render_template("woo/category.html",
                                 best_li = best_li, ie_li = ie_li, cate_li = cate_li)
