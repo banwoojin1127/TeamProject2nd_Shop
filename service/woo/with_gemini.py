@@ -1,8 +1,9 @@
 """
 파일 이름 : with_gemini.py
-작성일 : 2025-12-10
 파일 용도 :
  API 용으로 DB 에서 Data 를 맞춤으로 조회하기 위함 
+파일 작성 : woo
+작성 날짜 : 2025-12-10
 
 """
 import pymysql
