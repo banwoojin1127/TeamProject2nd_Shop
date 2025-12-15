@@ -1,113 +1,113 @@
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/highcharts-more.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
-<div id="container-column" style="width:100%; height:500px;"></div>
+    <div id="container-column" style="width:100%; height:500px;"></div>
 
-<script>
-const column_data = {{ column_chart_data | tojson | safe }};
-const nameData = column_data[0];    // 상품명
-const rateData = column_data[1];    // 실제 평점
-const trustData = column_data[2];    // 신뢰 평점
-const reviewData = column_data[3];    // 리뷰수
+    <script>
+    const column_data = {{ column_chart_data | tojson | safe }};
+    const nameData = column_data[0];    // 상품명
+    const rateData = column_data[1];    // 실제 평점
+    const trustData = column_data[2];    // 신뢰 평점
+    const reviewData = column_data[3];    // 리뷰수
 
-document.addEventListener('DOMContentLoaded', function () {
-    Highcharts.chart('container-column', { // 'container-column' ID에 차트를 그립니다.
+    document.addEventListener('DOMContentLoaded', function () {
+        Highcharts.chart('container-column', { // 'container-column' ID에 차트를 그립니다.
 
-        chart: {
-            type: 'column',
-            plotBorderWidth: 0,
-            backgroundColor: 'rgba(255, 255, 255, 0.0)' // 배경 투명 처리
-        },
-        
-        title: {
-            text: '상품별 신뢰 평점 및 실제 평점 비교', // 제목
-            align: 'left'
-        },
-        
-        subtitle: {
-            text: 'Trust Score vs. Item Rate',
-            align: 'left'
-        },
-        
-        legend: {
-            // 범례 활성화 (어떤 막대가 신뢰 평점인지, 실제 평점인지 구분)
-            enabled: true 
-        },
-
-        plotOptions: {
-            column: {
-                // 막대 간의 간격을 조절하여 비교하기 쉽게 설정
-                pointPadding: 0.1, 
-                borderWidth: 0,
-                grouping: false
-            }
-        },
-        
-        tooltip: {
-            shared: true, // 툴팁을 공유하여 두 데이터(신뢰/실제 평점)를 한 번에 보여줌
-            useHTML: true, // HTML 사용을 명시적으로 설정 (선택사항이지만 권장)
-            
-            // 포맷터(formatter) 함수를 사용하여 커스텀 HTML 문자열을 반환
-            formatter: function() {
-                // this.points: shared: true일 때, 겹쳐진 모든 데이터 포인트 정보를 담고 있음
-                const productName = this.points[0].key; // X축 카테고리 (상품명)
-                
-                let tooltipHtml = '<span style="font-size: 14px; font-weight: bold;">' + productName + '</span><br/>';
-                
-                // 각 시리즈별 데이터 포인트를 순회하며 내용을 추가
-                this.points.forEach(function(point) {
-                    tooltipHtml += '<span style="color:' + point.color + '">\u25CF</span> ' + 
-                                   point.series.name + ': <b>' + point.y + ' 점</b><br/>';
-                });
-                const pointIndex = this.points[0].point.index;
-                const reviewcnt = reviewData[pointIndex];
-                // 여기에 임의의 설명문을 추가합니다.
-                tooltipHtml += '<hr style="margin: 5px 0; border-top: 1px solid #ccc;"/>';
-                tooltipHtml += '<span>* 상품 리뷰수 (Review Count): <b>' + reviewcnt + ' 개</b></span><br>';
-                
-                return tooltipHtml;
-            }
-        },
-
-        // --- X축: 상품명 ---
-        xAxis: {
-            categories: nameData, // X축 레이블 (상품명)
-            title: {
-                text: '상품명'
+            chart: {
+                type: 'column',
+                plotBorderWidth: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.0)' // 배경 투명 처리
             },
-            labels: {
-                style: {
-                    fontSize: '12px'
-                }
-            }
-        },
-        
-        // --- Y축: 평점 (0.0 ~ 5.0) ---
-        yAxis: {
-            min: 3,
-            max: 5.0, // 평점 최대값 5.0 고정
+            
             title: {
-                text: '평점 (★)'
-            }
-        },
-        
-        series: [{
-            // 첫 번째 시리즈: 실제 평점
-            name: '실제 평점 (Item Rate)',
-            data: rateData,
-            color: '#544FC599', // 연보라색
-            pointPlacement: -0.2 // 막대를 약간 왼쪽으로 이동하여 겹치지 않게 함
-        }, {
-            // 두 번째 시리즈: 신뢰 평점
-            name: '신뢰 평점 (Trust Score)',
-            data: trustData,
-            color: '#2CAFFE' // 하늘색
-        }]
+                text: '상품별 신뢰 평점 및 실제 평점 비교', // 제목
+                align: 'left'
+            },
+            
+            subtitle: {
+                text: 'Trust Score vs. Item Rate',
+                align: 'left'
+            },
+            
+            legend: {
+                // 범례 활성화 (어떤 막대가 신뢰 평점인지, 실제 평점인지 구분)
+                enabled: true 
+            },
 
+            plotOptions: {
+                column: {
+                    // 막대 간의 간격을 조절하여 비교하기 쉽게 설정
+                    pointPadding: 0.1, 
+                    borderWidth: 0,
+                    grouping: false
+                }
+            },
+            
+            tooltip: {
+                shared: true, // 툴팁을 공유하여 두 데이터(신뢰/실제 평점)를 한 번에 보여줌
+                useHTML: true, // HTML 사용을 명시적으로 설정 (선택사항이지만 권장)
+                
+                // 포맷터(formatter) 함수를 사용하여 커스텀 HTML 문자열을 반환
+                formatter: function() {
+                    // this.points: shared: true일 때, 겹쳐진 모든 데이터 포인트 정보를 담고 있음
+                    const productName = this.points[0].key; // X축 카테고리 (상품명)
+                    
+                    let tooltipHtml = '<span style="font-size: 14px; font-weight: bold;">' + productName + '</span><br/>';
+                    
+                    // 각 시리즈별 데이터 포인트를 순회하며 내용을 추가
+                    this.points.forEach(function(point) {
+                        tooltipHtml += '<span style="color:' + point.color + '">\u25CF</span> ' + 
+                                    point.series.name + ': <b>' + point.y + ' 점</b><br/>';
+                    });
+                    const pointIndex = this.points[0].point.index;
+                    const reviewcnt = reviewData[pointIndex];
+                    // 여기에 임의의 설명문을 추가합니다.
+                    tooltipHtml += '<hr style="margin: 5px 0; border-top: 1px solid #ccc;"/>';
+                    tooltipHtml += '<span>* 상품 리뷰수 (Review Count): <b>' + reviewcnt + ' 개</b></span><br>';
+                    
+                    return tooltipHtml;
+                }
+            },
+
+            // --- X축: 상품명 ---
+            xAxis: {
+                categories: nameData, // X축 레이블 (상품명)
+                title: {
+                    text: '상품명'
+                },
+                labels: {
+                    style: {
+                        fontSize: '12px'
+                    }
+                }
+            },
+            
+            // --- Y축: 평점 (0.0 ~ 5.0) ---
+            yAxis: {
+                min: 3,
+                max: 5.0, // 평점 최대값 5.0 고정
+                title: {
+                    text: '평점 (★)'
+                }
+            },
+            
+            series: [{
+                // 첫 번째 시리즈: 실제 평점
+                name: '실제 평점 (Item Rate)',
+                data: rateData,
+                color: '#544FC599', // 연보라색
+                pointPlacement: -0.2 // 막대를 약간 왼쪽으로 이동하여 겹치지 않게 함
+            }, {
+                // 두 번째 시리즈: 신뢰 평점
+                name: '신뢰 평점 (Trust Score)',
+                data: trustData,
+                color: '#2CAFFE' // 하늘색
+            }]
+
+        });
     });
-});
-</script>
+    </script>

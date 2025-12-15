@@ -54,13 +54,13 @@ try:
         CATE_LIST_JSON = json.load(f)
 
     print("# " + "=" * 50)
-    print("Debug | File for_gemini | Field : JSON Load OK")
+    print("Debug | File for_gemini : 57 | Field : JSON Load OK")
     print(f"Debug | JSON Load OK : { type(CATE_LIST_JSON) }")
     print("# " + "=" * 50)
 
 except Exception as e :
     print("# " + "=" * 50)
-    print("Debug | File for_gemini | Field : !!! ERROR !!!")
+    print("Debug | File for_gemini : 63 | Field : !!! ERROR !!!")
     print(f"Debug | ERROR : { e }")
     print("# " + "=" * 50)
 
@@ -87,7 +87,7 @@ class WooGemini :
     # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
     # !!! 생성자
     # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls):
         """
         __new__의 Docstring
         """
@@ -116,16 +116,16 @@ class WooGemini :
                     self.wodelgemini = genai.GenerativeModel("gemini-2.5-flash")
                     self._flaginit = True
                     print("# " + "=" * 50)
-                    print("Debug | Class WooGemini | if is key : Ok")
+                    print("Debug | Class WooGemini : 119 | if is key : Ok")
                     print("# " + "=" * 50)
                 else:
                     print("# " + "=" * 50)
-                    print("Debug | Class WooGemini | if is key : API Key not found!")
+                    print("Debug | Class WooGemini : 123 | if is key : API Key not found!")
                     print("# " + "=" * 50)
 
             except Exception as e :
                 print("# " + "=" * 50)
-                print("Debug | Class WooGemini | __init__() : !!! ERROR !!!")
+                print("Debug | Class WooGemini : 128 | __init__() : !!! ERROR !!!")
                 print(f"Debug | ERROR : { e }")
                 print("# " + "=" * 50)
 
@@ -133,7 +133,7 @@ class WooGemini :
                 pass
         else :
             print("# " + "=" * 50)
-            print("Debug | Class WooGemini | if not flag : Already call __init__()")
+            print("Debug | Class WooGemini : 136 | if not flag : Already call __init__()")
             print("# " + "=" * 50)
 
 
@@ -166,6 +166,7 @@ class WooGemini :
             '추천전략'은 관리자를 위한 설명입니다.
             선택한 추천 상품에 대한 추천 이유를 사용자에게 한문장으로 소개하세요.
             결과는 오직 JSON으로도 변환이 쉬운 Dictionary 형식으로만 출력하세요.
+            후술하는 출력 예시를 반드시 준수하세요.
 
             [ 출력 Dictionary 예시 ]
             {{
@@ -200,16 +201,94 @@ class WooGemini :
             recommend_plan = json.loads(answer.text)
 
             print("# " + "=" * 50)
-            print("Debug | Class WooGemini | recommend_cate_in_parent() : json.loads Ok")
+            print("Debug | Class WooGemini : 204 | recommend_cate_in_parent() : json.loads Ok")
             print("# " + "=" * 50)
 
         except Exception as e :
             print("# " + "=" * 50)
-            print("Debug | Class WooGemini | recommend_cate_in_parent() : !!! ERROR !!!")
+            print("Debug | Class WooGemini : 209 | recommend_cate_in_parent() : !!! ERROR !!!")
             print(f"Debug | ERROR : { e }")
             print("# " + "=" * 50)
 
         return recommend_plan
+
+
+    def recommend_item_in_cart(self, user_id) :
+        """
+        # 장바구니에 담긴 상품을 기반으로
+        # API 를 호출하여 질의응답 하고
+        # "추천전략" 과 "추천답변" 을 반환
+        """
+
+        dao = WithAPI()
+        inner_cart_li = dao.for_recommend_item_in_cart(user_id)
+
+        prompt = f"""
+            역할 : 당신은 마트의 쇼핑 AI 분석가입니다.
+
+            [ 입력 데이터 ]
+            사용자 장바구니 리스트 : {inner_cart_li}
+            소분류 리스트 : {callup_category()}
+
+            [ 지시 사항 ]
+            '사용자 장바구니 리스트'의 정보를 분석하고, 추천 할 만한 상품을 '소분류 리스트'에서 반드시 3개만 선택하세요.
+            '사용자 장바구니 리스트'에서 'total_choices' (선택 수량) 이 많은 항목 순으로 가능한한 연관지어서 생각하세요.
+            '소분류 리스트'에 없는 상품은 절대 선택하지마세요.
+            논리적이고 일반적인 과정을 통한 추천인지 반드시 확인하세요.
+            '추천전략'은 관리자를 위한 설명입니다.
+            선택한 추천 상품에 대한 추천 이유를 사용자에게 한문장으로 소개하세요.
+            결과는 오직 JSON으로도 변환이 쉬운 Dictionary 형식으로만 출력하세요.
+            후술하는 출력 예시를 반드시 준수하세요.
+
+            [ 출력 Dictionary 예시 ]
+            {{
+                "추천전략" : [
+                    "추천전략A", "추천전략B", ...
+                ],
+                "추천답변" : [
+                    {{
+                        "item_category" : sub_category_id,
+                        "category_name" : "sub_category_name",
+                        "reason" : "추천 이유 설명"
+                    }},
+                    {{
+                        "item_category" : sub_category_id,
+                        "category_name" : "sub_category_name",
+                        "reason" : "추천 이유 설명"
+                    }},
+                    ...
+                ]
+            }}
+
+            [ 출력 예시 보강 ]
+            출력 예시에서 sub_category_id 는 integer 입니다.
+        """
+
+        answer = self.wodelgemini.generate_content(
+            prompt,
+            generation_config={"response_mime_type": "application/json"}
+        )
+        recommend_plan = None
+        try :
+            recommend_plan = json.loads(answer.text)
+
+            print("# " + "=" * 50)
+            print("Debug | Class WooGemini : 276 | recommend_cate_in_parent() : json.loads Ok")
+            print("# " + "=" * 50)
+
+        except Exception as e :
+            print("# " + "=" * 50)
+            print("Debug | Class WooGemini : 281 | recommend_cate_in_parent() : !!! ERROR !!!")
+            print(f"Debug | ERROR : { e }")
+            print("# " + "=" * 50)
+
+        print("# " + "=" * 50)
+        print("Debug | Class WooGemini : 286 | recommend_item_in_cart() : 추천 결과")
+        print(f"Debug | 추천 결과 : { recommend_plan }")
+        print("# " + "=" * 50)
+
+        return recommend_plan
+
 
     # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
     # !!! Templaet 함수 ( 메서드 ) QED
@@ -233,6 +312,8 @@ class WooGemini :
 # !!! ?????
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 
+category_li = CATE_LIST_JSON["category_list"]
+
 def choice_category(perent_id) :
     """
     # 대분류 받아서 소분류의 pKey 랑 name 반환
@@ -250,4 +331,17 @@ def choice_category(perent_id) :
 
     return cate_li
 
-category_li = CATE_LIST_JSON["category_list"]
+def callup_category() :
+    """
+    # 소분류의 pKey 랑 name 반환
+    """
+
+    cate_li = [
+        {
+            "sub_category_id" : category_li[cate_id_val - 1]["category_id"],
+            "sub_category_name" : category_li[cate_id_val - 1]["category_name"]
+        }
+        for cate_id_val in range(9, 89)
+    ]
+
+    return cate_li

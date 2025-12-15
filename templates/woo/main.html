@@ -34,17 +34,8 @@
             # ujin 님 작업 영역 시작
             # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
             -->
-            <section class="category-thumbnails">
-                {% if not session["user"] %}
-                    {% for ie in ie_li %}
-                    <a href="/{{ cate_li[loop.index0] }}/{{ ie['item_id'] }}">
-                        <div class="thumbnail-item">
-                            <img src="{{ url_for('static', filename='img/_item/' + ie['item_img']) }}"
-                            style="width: 100%; height: 100%;">
-                        </div>
-                    </a>
-                    {% endfor %}
-                {% endif %}
+            <section>
+                {% include "mhi/list_logout.html" %}
             </section>
 
             <!-- 
@@ -58,12 +49,13 @@
         # 문홍일 님 작업 영역 시작
         # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
         -->
+        <br>
         {% if session["user"] %}
         <h4 class="mb-3">
             <span class="tooltip-container">
-                📌 유샤그룹의 구매횟수 기준
+                📌 유사그룹의 구매횟수 기준
                 <span class="tooltip-text">
-                    유샤그룹(본인나이±5, 동일성별)이 구매한 아이템중에 구매횟수가 많은 아이템을 출력
+                    유사그룹(본인나이±5, 동일성별)이 구매한 아이템중에 구매횟수가 많은 아이템을 출력
                 </span>
             </span>
         </h4>     
@@ -82,11 +74,21 @@
 
             {% if session['user'] %}
                 {% include "mhi/rank.html" %}
+                <br>
+          
             {% endif %}        
 
+            {% if session["user"] %}
+             {% include "mhi/rank_g.html" %}
+            {% endif %}
+            {% if not session["user"] %}
+                <div class="best-items-container">
+                    </div>
+            {% endif %}
 
         {% endif %}
-        <br><br><br>
+        
+        <br>
         <!--
         # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
         # 문홍일 님 작업 영역 끝

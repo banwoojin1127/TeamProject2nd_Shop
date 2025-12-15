@@ -134,7 +134,7 @@ def main() :
             
             # - 가중치 평점 리스트용: 가중치 순위 사용
             weighted_recommendations_list = weighted_list
-            
+                        
             # - 차트용 JSON: 가중치 순위 목록 사용
             recommendations_json = json.dumps(weighted_list) 
 
@@ -157,6 +157,8 @@ def main() :
             
             # 4) 차트용 JSON
             recommendations_json=recommendations_json
+            
+            
         )
 
 

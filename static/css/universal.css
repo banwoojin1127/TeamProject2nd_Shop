@@ -351,7 +351,7 @@ main {
 /* 중간 와이드 배너 || !!!!! !!!!! 다만 이 영역은 그래프를 출력하는 자리로 수정 필요 !!!!! !!!!! */
 .middle-banner-area {
     width: 100%;
-    height: 200px; /* 높이 임의 지정 */
+    /* height: 200px; 높이 임의 지정 */
     background-color: #e0e0e0;
     margin-bottom: 40px;
     border: 1px dashed #fdfdfd;

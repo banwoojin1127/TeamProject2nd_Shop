@@ -111,10 +111,13 @@
 
 </style>
 
-<div id="recommendedSlideshow" class="main-banner carousel slide" data-bs-ride="carousel">
+<div id="recommendedSlideshow" 
+     class="main-banner carousel slide" 
+     data-bs-ride="carousel"
+     data-bs-wrap="true">
     
     <div class="carousel-indicators">
-        {% for item in recommendations_carousel[:10] %}
+        {% for item in recommendations_carousel [:10] %}
         <button type="button" 
                 data-bs-target="#recommendedSlideshow" 
                 data-bs-slide-to="{{ loop.index0 }}" 
@@ -125,7 +128,7 @@
 
     <div class="carousel-inner" style="width: 100%; height: 100%;">
         {% if recommendations_carousel %}
-            {% for item in recommendations_carousel %}
+            {% for item in recommendations_carousel [:10] %}
                 {% set item_url = "/" ~ ((item['item_category'] - 9) // 10) ~ "/" ~ item['item_id'] %}
                 <div class="carousel-item {% if loop.first %}active{% endif %}" style="width: 100%; height: 100%;">
                     <a href="{{ item_url }}" style="text-decoration: none; color: inherit;">
