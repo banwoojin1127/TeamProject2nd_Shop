@@ -32,6 +32,19 @@ def go_main() :
     """
     # 웹 서비스 홈페이지로 이동시키기
     """
+    user = session.get("user")
+    if user :
+        recommend_plan = None
+        recommend_item = None
+
+        user_id = user.get("user_id")
+        recommend_plan = wodel.recommend_item_in_cart(user_id)
+        print("# " + "=" * 50 + "\n" + f"{recommend_plan}" + "\n" + "# " + "=" * 50 + "\n")
+
+        dao = WooDAO()
+        recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan, quantity=1)
+        print("# " + "=" * 50 + "\n" + f"{recommend_item}" + "\n" + "# " + "=" * 50 + "\n")
+
     return redirect(url_for('mhi.main'))
 
 COMMENT_MAIN_PAGE_ROUTE = '''
@@ -125,12 +138,12 @@ def category(category_no = 0) :
         recommend_plan = None
         recommend_item = None
 
-        #user_id = user.get("user_id")
-        #recommend_plan = wodel.recommend_cate_in_parent(user_id, category_no)
+        user_id = user.get("user_id")
+        recommend_plan = wodel.recommend_cate_in_parent(user_id, category_no)
 
-        #dao = WooDAO()
-        #recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan)
-        #print("# " + "=" * 50 + "\n" + f"{recommend_item}" + "\n" + "# " + "=" * 50 + "\n")
+        dao = WooDAO()
+        recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan)
+        print("# " + "=" * 50 + "\n" + f"{recommend_item}" + "\n" + "# " + "=" * 50 + "\n")
 
         return render_template("woo/category.html",
                                 best_li = best_li, ie_li = ie_li, cate_li = cate_li

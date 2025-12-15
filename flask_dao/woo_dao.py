@@ -113,7 +113,7 @@ class WooDAO :
         return result, cate_li
 
 
-    def fetch_api_recommend_items(self, recommend_plan, quantity = 6, option = 2) :
+    def fetch_api_recommend_items(self, recommend_plan, quantity = 2, option = 2) :
         """
         # API 가 추천해준 소분류에서 가중 평점 결과가 가장 높은 상품들 조회
         """
@@ -123,9 +123,12 @@ class WooDAO :
         ]
         #print(api_pick_sub_cate)
 
-        ranking = self.calc_weighted_rate(option=option, values_array=api_pick_sub_cate)
-        #print(ranking)
-        result = [ quan for quan in ranking[:quantity] ]
+        result = []
+        for sub_cate in api_pick_sub_cate :
+            temp_array = [sub_cate]
+            ranking = self.calc_weighted_rate(option=option, values_array=temp_array)
+            for quan in ranking[:quantity] :
+                result.append(quan)
 
         return result
 
@@ -276,7 +279,7 @@ class WooDAO :
         # values_array 가 비어있는 경우 오류 방지
         if not values_array:
             #print("# " + "=" * 50)
-            #print("Debug | File woo_dao | calc_weighted_rate() : !!! Array None !!!")
+            #print("Debug | File woo_dao : 282 | calc_weighted_rate() : !!! Array None !!!")
             #print("# " + "=" * 50)
             values_array = []
         placeholders = ', '.join([ str(value) for value in values_array ])

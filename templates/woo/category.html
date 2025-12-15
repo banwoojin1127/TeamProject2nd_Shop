@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hub - 카테고리</title>
     {% include "includes/_style.html" %}
+    <style>
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -14,7 +22,13 @@
     
     <main>
         {% include "includes/_carousel.html" %}
-
+        <span class="tooltip-container">
+        {% if session['user'] is not none and recom_li is not none %}
+            {{ session["user"]["user_name"] }} 님의 구매목록 기반 맞춤 추천 상품입니다.
+        {% else %}
+            인기 상품 순위에 따른 추천 상품입니다.
+        {% endif %}
+        </span>
         <section class="category-thumbnails" >
             {% if session['user'] is not none and recom_li is not none %}
                 {% for recom in recom_li %}
@@ -46,14 +60,14 @@
         </section>
 
         {% if session['user'] is not none and recom_li is not none %}
-        <section class="middle-banner-area">
-            <p><strong>현재 대분류 추천 전략</strong></p>
+        <section class="middle-banner-area" style="padding: 12px;">
+            <h5><p><strong>* 현재 대분류 추천 전략</strong></p></h5>
             {% for plan in recom_pl['추천전략'] %}
-            <p>{{ loop.index0 }} 번. {{ plan }}</p>
-            {% endfor %}
-            <p><strong>현재 소분류 추천 이유</strong></p>
+            <p><strong>0{{ loop.index0 + 1 }}번.</strong> {{ plan }}</p>
+            {% endfor %}<br>
+            <h5><p><strong>* 현재 소분류 추천 이유</strong></p></h5>
             {% for plan in recom_pl['추천답변'] %}
-            <p>{{ plan['category_name'] }} : {{ plan['reason'] }}</p>
+            <p><strong>{{ plan['category_name'] }} :</strong> {{ plan['reason'] }}</p>
             {% endfor %}
         </section>
         {% endif %}

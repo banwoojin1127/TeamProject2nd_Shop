@@ -71,7 +71,7 @@ class WithAPI :
         # purchase_tuple이 비어있는 경우(구매 이력 없음) 오류 방지
         if not purchase_tuple:
             print("# " + "=" * 50)
-            print("Debug | Class WithAPI | !!! Array None !!!")
+            print("Debug | Class WithAPI : 74 | !!! Array None !!!")
             print("# " + "=" * 50)
             return []
 
@@ -99,6 +99,63 @@ class WithAPI :
         self.close()
         return result
 
+
+    def for_recommend_item_in_cart(self, user_id) :
+        """
+        # 1. 사용자 의 장바구니 내역 을 조회
+        # 2. 조회한 장바구니 내역 의 상품 들을 소분류 로 그룹화하여 개수 조회
+        # 3. 결과를 이하와 같이 return 할 것
+        '사용자 장바구니 내역 리스트' = 
+            [
+                { 소분류 : x, 분류명 : n, 담긴수 : y },
+                { 소분류 : x, 분류명 : n, 담긴수 : y },
+                { 소분류 : x, 분류명 : n, 담긴수 : y },
+                . . .
+            ]
+        """
+
+        sql = """
+            SELECT ci.item_id FROM item_cart AS ci WHERE %s = ci.user_id
+        """
+        self.cursor.execute(sql, (user_id,))
+        result = self.cursor.fetchall()
+
+        inner_cart_tuple = tuple(item.get('item_id') for item in result)
+
+        # inner_cart_tuple 이 비어있는 경우(구매 이력 없음) 오류 방지
+        if not inner_cart_tuple:
+            print("# " + "=" * 50)
+            print("Debug | Class WithAPI : 128 | !!! Array None !!!")
+            print("# " + "=" * 50)
+            return []
+
+        placeholders = ', '.join(['%s'] * len(inner_cart_tuple))
+
+        sql = f"""
+            SELECT
+                cg.category_id AS sub_category_id, 
+                cg.category_name AS sub_category_name, 
+                COUNT(i.item_id) AS total_choices
+            FROM
+                item AS i
+            INNER JOIN
+                category AS cg ON i.item_category = cg.category_id
+            WHERE
+                i.item_id IN ({placeholders})
+            GROUP BY
+                cg.category_id, cg.category_name
+            ORDER BY
+                sub_category_id;
+        """
+        self.cursor.execute(sql, inner_cart_tuple)
+        result = self.cursor.fetchall()
+
+        self.close()
+#        print("# " + "=" * 50)
+#        print("Debug | Class WithAPI | 155 : 장바구니 내역 조회 결과")
+#        print(result)
+#        print("# " + "=" * 50)
+        return result
 
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 # QED Temp 함수
