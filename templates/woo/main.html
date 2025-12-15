@@ -74,11 +74,17 @@
 
             {% if session['user'] %}
                 {% include "mhi/rank.html" %}
-            {% if chart_data %}
-                {% include "woo/rank_g.html" %}
-            {% endif %}
+                <br>
+          
             {% endif %}        
 
+            {% if session["user"] %}
+             {% include "mhi/rank_g.html" %}
+            {% endif %}
+            {% if not session["user"] %}
+                <div class="best-items-container">
+                    </div>
+            {% endif %}
 
         {% endif %}
         
