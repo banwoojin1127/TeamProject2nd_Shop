@@ -111,57 +111,85 @@
 
 </style>
 
-<div id="recommendedSlideshow" 
-     class="main-banner carousel slide" 
-     data-bs-ride="carousel"
-     data-bs-wrap="true">
-    
-    <div class="carousel-indicators">
-        {% for item in recommendations_carousel [:10] %}
-        <button type="button" 
-                data-bs-target="#recommendedSlideshow" 
-                data-bs-slide-to="{{ loop.index0 }}" 
-                class="{% if loop.first %}active{% endif %}"
-                aria-current="{% if loop.first %}true{% else %}false{% endif %}"></button>
-        {% endfor %}
-    </div>
 
-    <div class="carousel-inner" style="width: 100%; height: 100%;">
-        {% if recommendations_carousel %}
-            {% for item in recommendations_carousel [:10] %}
-                {% set item_url = "/" ~ ((item['item_category'] - 9) // 10) ~ "/" ~ item['item_id'] %}
-                <div class="carousel-item {% if loop.first %}active{% endif %}" style="width: 100%; height: 100%;">
-                    <a href="{{ item_url }}" style="text-decoration: none; color: inherit;">
-                        <div class="g_carousel-item-content">
-                            {% if item.item_img.endswith(".png") %}
-                                <!-- 이미지 파일로 받을 때 -->
-                                <img class="g_slide_img me-3" 
-                                src="{{ url_for('static', filename='img/_item/' + item['item_img']) }}" alt="{{ item['product_name'] | default('추천 상품') }}">
-                            {% else %}
-                                <!-- 이미지 링크로 받을 때 -->
-                                <img class="g_slide_img me-3" src="{{ item['item_img'] }}" alt="{{ item.item_name }}">
-                            {% endif %} 
-                            <div class="g_slide_textbox">
-                                <p class="g_slide_item_name">{{ item.product_name | default('상품명 없음') }}</p>
-                                
-                                <p style="color: white; font-size: 20px;">가격: {{ "{:,}".format(item.item_price) }}원</p>
-                                <p style="color: white; font-size: 16px;">유사 고객 구매 횟수: {{ item.purchase_count }}회</p>
+
+
+
+
+
+
+{% if not session["user"] %}
+
+<div class="container mt-4">
+    <h4 class="mb-3">
+        <span class="tooltip-container">
+            📌 신뢰도 평점에 기반한 상품추천
+            <span class="tooltip-text">
+            별점과 리뷰수로 신뢰도를 추출해서,신뢰성 높은 유의미한 별점을 추출하고, 신뢰성 별점을 기준으로 순위 매긴 상품추천
+            </span>
+        </span>
+    </h4>
+
+    <div class="row row-cols-2 row-cols-md-6 g-3">
+
+        {% for ie in ie_li[:12] %}
+            {% set item_url = "/" ~ cate_li[loop.index0] ~ "/" ~ ie['item_id'] %}
+
+            <div class="col">
+                <a href="{{ item_url }}" style="text-decoration:none;color:inherit;">
+                    <div class="card h-100 shadow-sm">
+
+                        <!-- 이미지 -->
+                        {% if ie['item_img'] and ie['item_img'].endswith(".png") %}
+                            <img src="{{ url_for('static', filename='img/_item/' + ie['item_img']) }}"
+                                 class="card-img-top"
+                                 style="height:150px; object-fit:cover;">
+                        {% elif ie['item_img'] %}
+                            <img src="{{ ie['item_img'] }}"
+                                 class="card-img-top"
+                                 style="height:150px; object-fit:cover;">
+                        {% else %}
+                            <div style="height:150px;background:#f8f9fa;
+                                        display:flex;align-items:center;justify-content:center;
+                                        color:#6c757d;">
+                                No Image
                             </div>
-                        </div>
-                    </a>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="carousel-item active">
-                <div class="g_carousel-item-content" style="background-color: #6c757d; height: 250px;">
-                    <div class="carousel-caption d-block">
-                        <h3 style="color: white;">추천 데이터를 찾을 수 없습니다.</h3>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-    </div>
+                        {% endif %}
 
-    <button class="g_prev-arrow" data-bs-target="#recommendedSlideshow" data-bs-slide="prev">&lt;</button>
-    <button class="g_next-arrow" data-bs-target="#recommendedSlideshow" data-bs-slide="next">&gt;</button>
+                        <!-- 상품명 -->
+                        <div class="card-body p-2">
+                            <h6 class="card-title"
+                                style="font-size:0.85rem;height:38px;overflow:hidden;">
+                                {{ ie['item_name'] }}
+                            </h6>
+                        </div>
+
+                        <div class="card-footer text-center p-1">
+                            <small class="text-muted d-block"
+                                style="font-size: 0.75rem;">
+                                <span class="fw-bold text-success">{{ "{:,}".format(ie['item_price']|int) }}원</span>
+                            </small>
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                ⭐ 실제 {{ ie['item_rate']|round(2) }}점
+                            </small>                        
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                    리뷰:{{ "{:,}".format(ie['item_reviewcnt']|int) }}개
+                            </small>
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                🔒 신뢰 {{ ie['trust_score']|round(2) }}점
+                            </small>  
+                        </div>
+
+                                                    <!-- 가격/평점 -->
+                        
+
+
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+
+    </div>
 </div>
+
+{% endif %}

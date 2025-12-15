@@ -34,21 +34,8 @@
             # ujin 님 작업 영역 시작
             # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
             -->
-            <section class="category-thumbnails">
-                {% if not session["user"] %}
-                    {% for ie in ie_li %}
-                    <a href="/{{ cate_li[loop.index0] }}/{{ ie['item_id'] }}">
-                        <div class="thumbnail-item">
-                            {% if ie['item_img'].endswith(".png") %}
-                            <img src="{{ url_for('static', filename='img/_item/' + ie['item_img']) }}"
-                            style="width: 100%; height: 100%;">
-                            {% else %}
-                            <img src="{{ ie['item_img'] }}" alt="{{ ie['item_name'] }}" style="width: 100%; height: 100%;">
-                            {% endif %}
-                        </div>
-                    </a>
-                    {% endfor %}
-                {% endif %}
+            <section>
+                {% include "mhi/list_logout.html" %}
             </section>
 
             <!-- 
@@ -86,10 +73,14 @@
 
             {% if session['user'] %}
                 {% include "mhi/rank.html" %}
+            {% if chart_data %}
+                {% include "woo/rank_g.html" %}
+            {% endif %}
             {% endif %}        
 
 
         {% endif %}
+        
         <br><br><br>
         <!--
         # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
