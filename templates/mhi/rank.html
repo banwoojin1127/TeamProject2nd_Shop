@@ -4,9 +4,9 @@
 <div class="container mt-4">
     <h4 class="mb-3">
         <span class="tooltip-container">
-            📌 유샤그룹 최종 아이템 추천 
+            📌 유사그룹 최종 아이템 추천 
             <span class="tooltip-text">
-                유샤그룹(본인나이±5, 동일성별)이 구매한 아이템중에 가중치(평점=0.5, 구매수=0.2, 리뷰수=0.3)를 통한 최종아이템 추천
+                유사그룹(본인나이±5, 동일성별)이 구매한 아이템중에 가중치(평점=0.5, 구매수=0.2, 리뷰수=0.3)를 통한 최종아이템 추천
             </span>
         </span>
     </h4>
@@ -41,9 +41,14 @@
 
                             <!-- 상품명 -->
                             <div class="card-body p-2">
-                                <h6 class="card-title" style="font-size: 0.85rem; height: 38px; overflow: hidden;">
+                                <h7 class="card-title" style="font-size: 0.85rem; height: 38px; overflow: hidden; 
+                                    display: -webkit-box;
+                                    -webkit-line-clamp: 2;
+                                    -webkit-box-orient: vertical;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;">
                                     {{ item.product_name }}
-                                </h6>
+                                </h7>
                             </div>
 
                             <!-- 가격/평점 -->
