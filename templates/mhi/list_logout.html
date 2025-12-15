@@ -1,0 +1,195 @@
+<style>
+/* --------------------------------------------------------------------
+    캐러셀 전용 스타일 (가로 폭 및 높이 축소 적용)
+-------------------------------------------------------------------- */
+
+/* 이미지 스타일 (크기, 정렬, 마진) */
+.g_slide_img {
+    width: 200px; /* 🚨 300px -> 200px (가로 축소) */
+    height: 200px; /* 🚨 300px -> 200px (세로 축소) */
+    object-fit: cover; 
+    display: block; /* Flexbox 내에서 블록 요소로 사용 */
+    margin-left: 0; /* 🚨 120px -> 0 (Flexbox 중앙 정렬 사용) */
+}
+
+/* 상품명 스타일 (텍스트, 색상, 오버플로우) */
+.g_slide_item_name {
+    width: 300px; /* 🚨 400px -> 300px (가로 축소) */
+    text-align: left;
+    margin-left: 0; /* 🚨 320px -> 0 (Flexbox 중앙 정렬 사용) */
+    margin-bottom: 20px; /* 🚨 67px -> 20px (여백 조정) */
+    font-size: 24px; /* 🚨 30px -> 24px (글꼴 크기 축소) */
+    color: white; 
+    font-weight: bold;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    
+    /* 2줄 제한 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 캐러셀 아이템 전체 스타일 (Flexbox를 사용해 이미지와 텍스트를 정렬) */
+.g_carousel-item-content {
+    display: flex; 
+    align-items: center; 
+    justify-content: center; /* 🚨 수평 중앙 정렬 */
+    height: 300px; /* 🚨 400px -> 250px (전체 높이 축소) */
+    padding: 10px; /* 패딩도 축소 */
+    background-color: #aa2020;
+}
+
+/* 이전/다음 버튼 스타일 */
+.g_prev-arrow, .g_next-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
+    background: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 10px; cursor: pointer;
+    font-size: 24px; line-height: 1;
+}
+.g_prev-arrow { left: 0; }
+.g_next-arrow { right: 0; }
+
+/* ===========================
+   📌 Tooltip Container
+=========================== */
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* 기본 텍스트 hover 효과 */
+.tooltip-container:hover {
+    color: #0d6efd;
+}
+
+/* ===========================
+   📌 Tooltip Box
+=========================== */
+.tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    width: 240px;
+    background: #212529;
+    color: #fff;
+    text-align: left;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+
+    /* 말풍선 위치 */
+    position: absolute;
+    z-index: 999;
+    top: 130%;
+    left: 105%;
+    transform: translateX(-50%);
+
+    /* 부드러운 효과 */
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+
+    /* 말풍선 삼각형 */
+}
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent #212529 transparent;
+}
+
+/* Hover 시 보임 */
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+</style>
+
+
+
+
+
+
+
+
+{% if not session["user"] %}
+
+<div class="container mt-4">
+    <h4 class="mb-3">
+        <span class="tooltip-container">
+            📌 신뢰도 평점에 기반한 상품추천
+            <span class="tooltip-text">
+            별점과 리뷰수로 신뢰도를 추출해서,신뢰성 높은 유의미한 별점을 추출하고, 신뢰성 별점을 기준으로 순위 매긴 상품추천
+            </span>
+        </span>
+    </h4>
+
+    <div class="row row-cols-2 row-cols-md-6 g-3">
+
+        {% for ie in ie_li[:12] %}
+            {% set item_url = "/" ~ cate_li[loop.index0] ~ "/" ~ ie['item_id'] %}
+
+            <div class="col">
+                <a href="{{ item_url }}" style="text-decoration:none;color:inherit;">
+                    <div class="card h-100 shadow-sm">
+
+                        <!-- 이미지 -->
+                        {% if ie['item_img'] and ie['item_img'].endswith(".png") %}
+                            <img src="{{ url_for('static', filename='img/_item/' + ie['item_img']) }}"
+                                 class="card-img-top"
+                                 style="height:150px; object-fit:cover;">
+                        {% elif ie['item_img'] %}
+                            <img src="{{ ie['item_img'] }}"
+                                 class="card-img-top"
+                                 style="height:150px; object-fit:cover;">
+                        {% else %}
+                            <div style="height:150px;background:#f8f9fa;
+                                        display:flex;align-items:center;justify-content:center;
+                                        color:#6c757d;">
+                                No Image
+                            </div>
+                        {% endif %}
+
+                        <!-- 상품명 -->
+                        <div class="card-body p-2">
+                            <h6 class="card-title"
+                                style="font-size:0.85rem;height:38px;overflow:hidden;">
+                                {{ ie['item_name'] }}
+                            </h6>
+                        </div>
+
+                        <div class="card-footer text-center p-1">
+                            <small class="text-muted d-block"
+                                style="font-size: 0.75rem;">
+                                <span class="fw-bold text-success">{{ "{:,}".format(ie['item_price']|int) }}원</span>
+                            </small>
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                ⭐ 실제 {{ ie['item_rate']|round(2) }}점
+                            </small>                        
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                    리뷰:{{ "{:,}".format(ie['item_reviewcnt']|int) }}개
+                            </small>
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                🔒 신뢰 {{ ie['trust_score']|round(2) }}점
+                            </small>  
+                        </div>
+
+                                                    <!-- 가격/평점 -->
+                        
+
+
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endif %}

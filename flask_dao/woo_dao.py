@@ -283,7 +283,7 @@ class WooDAO :
         querys = [
         """
         SELECT
-            item_id, item_name, item_rate, item_reviewcnt, item_img, item_category
+            item_id, item_name, item_price,item_rate, item_reviewcnt, item_img, item_category
         FROM
             item
         WHERE
@@ -291,7 +291,7 @@ class WooDAO :
         """,
         f"""
         SELECT
-            item_id, item_name, item_rate, item_reviewcnt, item_img, item_category
+            item_id, item_name, item_price,item_rate, item_reviewcnt, item_img, item_category
         FROM
             item 
         WHERE
