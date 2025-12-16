@@ -4,6 +4,7 @@ import pymysql
 import datetime
 from datetime import date # datetime.date 객체 처리를 위해 추가
 import pandas as pd # ⭐⭐⭐ Pandas 라이브러리 추가 ⭐⭐⭐
+import numpy as np
 
 DB_CONFIG = {
     'host': '192.168.60.183',
@@ -189,11 +190,15 @@ class MhiDAO:
             # 2. 정규화 (Normalization)
             max_rate = df['item_rate'].max() if df['item_rate'].max() > 0 else 1
             max_purchase = df['purchase_count'].max() if df['purchase_count'].max() > 0 else 1
-            max_review = df['item_reviewcnt'].max() if df['item_reviewcnt'].max() > 0 else 1
+            df['log_review'] = np.log1p(df['item_reviewcnt'])
 
-            df['norm_rate'] = df['item_rate'] / max_rate
+            # 2.1 리뷰 수는 로그 스케일로 정규화
+            df['scaled_review'] = np.log1p(df['item_reviewcnt']) ** 0.7
+            df['norm_review'] = df['scaled_review'] / df['scaled_review'].max()
+
+            df['norm_rate'] = (df['item_rate'] / max_rate) ** 1.3
             df['norm_purchase'] = df['purchase_count'] / max_purchase
-            df['norm_review'] = df['item_reviewcnt'] / max_review
+
             
             # 3. 사용자 정의 가중치(W)를 적용하여 최종 점수 계산
             df['weighted_score'] = (

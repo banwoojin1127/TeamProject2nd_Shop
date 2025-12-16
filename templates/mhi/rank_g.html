@@ -1,141 +1,157 @@
 <div class="recommendation-graph-section">
-    
-    {% set MIN_REVIEW = 50 %}
-    
-    {# 1. Jinja2에서 필터링할 변수 준비 #}
-    {% set filtered_list = [] %}
-    
-    {# 2. 필터링: item_reviewcnt가 MIN_REVIEW(50) 이상인 아이템만 filtered_list에 추가 #}
-    {% for item in weighted_recommendations_list %}
-        {% if item.item_reviewcnt is not none and item.item_reviewcnt|int >= MIN_REVIEW %}
-            {% set _ = filtered_list.append(item) %}
-        {% endif %}
-    {% endfor %}
-    
-    {# 3. 필터링된 목록을 JSON 문자열로 변환하여 JavaScript에 전달 #}
-    {% set filtered_json = filtered_list | tojson %}
 
-    {% if filtered_list %}
+{% set MIN_REVIEW = 50 %}
+{% set filtered_list = [] %}
 
-    <h4 class="mb-3">
-        <span class="tooltip-container">
-            📈 유사그룹 최종 아이템 추천그래프
-            <span class="tooltip-text">
-                유사그룹 최종아이템 추천 기준(평점, 리뷰수, 구매횟수 가중치 합산)을 시각화+리뷰수50개이상
-            </span>
+{% for item in weighted_recommendations_list %}
+    {% if item.item_reviewcnt is not none and item.item_reviewcnt|int >= MIN_REVIEW %}
+        {% set _ = filtered_list.append(item) %}
+    {% endif %}
+{% endfor %}
+
+{% set filtered_json = filtered_list | tojson %}
+
+{% if filtered_list %}
+
+<h4 class="mb-3">
+    <span class="tooltip-container">
+        📈 유사그룹 최종 아이템 추천그래프
+        <span class="tooltip-text">
+            가중치(평점=0.5, 구매수=0.2, 리뷰수=0.3)를 적용한 유사그룹 추천 결과입니다.  
+            ※ 리뷰 수는 분포 편차 완화를 위해 log1p 변환 적용
         </span>
-    </h4>
+    </span>
+</h4>
 
-    <div style="width: 100%; height: 500px;">
-        <canvas id="itemComparisonChart"></canvas>
-    </div>
-    
-    <script>
-        // ⭐⭐ 문제 해결: filtered_json을 사용하여 파싱 ⭐⭐
-        // 이 데이터는 이미 리뷰 50개 이상인 상품만 포함합니다.
-        const recommendationData = JSON.parse('{{ filtered_json | safe }}');
-        
-        // 2. 상위 6개 아이템만 추출 (그래프 가독성을 위해)
-        const topN = 6;
-        const topItems = recommendationData.slice(0, topN);
+<div style="width: 100%; height: 500px;">
+    <canvas id="itemComparisonChart"></canvas>
+</div>
 
-        // 3. 차트 데이터 준비
-        // X축: 상품 이름
-        const itemNames = topItems.map(item => {
-            const name = item.product_name;
-            return name.length > 15 ? name.substring(0, 15) + '...' : name;
-        });
+{% else %}
+<div class="alert alert-info" role="alert">
+    리뷰 {{ MIN_REVIEW }}개 이상인 추천 상품이 없습니다.
+</div>
+{% endif %}
 
-        // Y축 데이터 (DAO에서 정규화된 값 사용: 0 ~ 1)
-        const normRates = topItems.map(item => item.norm_rate.toFixed(3));
-        const normReviews = topItems.map(item => item.norm_review.toFixed(3));
-        const normPurchases = topItems.map(item => item.norm_purchase.toFixed(3));
-        // 총점(Weighted Score)
-        const weightedScores = topItems.map(item => item.weighted_score.toFixed(3)); 
+</div>
 
-        // 4. Chart.js를 사용한 그룹형 세로 막대 그래프 그리기
-        const ctx = document.getElementById('itemComparisonChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar', // 세로 막대 그래프
-            data: {
-                labels: itemNames,
-                datasets: [
-                    // 총점 데이터셋
-                    {
-                        label: '총점 (가중치 점수)',
-                        data: weightedScores,
-                        backgroundColor: 'rgba(255, 159, 64, 0.9)', 
-                        borderColor: 'rgba(255, 159, 64, 1)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: '평점 (정규화)',
-                        data: normRates,
-                        backgroundColor: 'rgba(255, 99, 132, 0.7)', 
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: '리뷰 수 (정규화)',
-                        data: normReviews,
-                        backgroundColor: 'rgba(54, 162, 235, 0.7)', 
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: '구매 수 (정규화)',
-                        data: normPurchases,
-                        backgroundColor: 'rgba(75, 192, 192, 0.7)', 
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }
-                ]
+<script>
+/* ===============================
+   데이터 준비
+================================ */
+const recommendationData = JSON.parse('{{ filtered_json | safe }}');
+const topN = 6;
+const topItems = recommendationData.slice(0, topN);
+
+// 상품명
+const itemNames = topItems.map(item =>
+    item.product_name.length > 15
+        ? item.product_name.substring(0, 15) + '...'
+        : item.product_name
+);
+
+// 점수 기여도
+const rateParts = [];
+const reviewParts = [];
+const purchaseParts = [];
+
+// 말풍선용 설명 데이터
+const tooltipDescriptions = [];
+
+topItems.forEach(item => {
+    const totalNorm =
+        item.norm_rate +
+        item.norm_review +
+        item.norm_purchase;
+
+    const totalScore = item.weighted_score;
+
+    const rateScore = totalScore * item.norm_rate / totalNorm;
+    const reviewScore = totalScore * item.norm_review / totalNorm;
+    const purchaseScore = totalScore * item.norm_purchase / totalNorm;
+
+    rateParts.push(rateScore.toFixed(3));
+    reviewParts.push(reviewScore.toFixed(3));
+    purchaseParts.push(purchaseScore.toFixed(3));
+
+    tooltipDescriptions.push({
+        name: item.product_name,
+        total: totalScore.toFixed(3),
+        rateScore: rateScore.toFixed(3),
+        reviewScore: reviewScore.toFixed(3),
+        purchaseScore: purchaseScore.toFixed(3)
+    });
+});
+
+/* ===============================
+   Chart.js
+================================ */
+const ctx = document.getElementById('itemComparisonChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: itemNames,
+        datasets: [
+            {
+                label: '평점 기여 점수',
+                data: rateParts,
+                backgroundColor: 'rgba(255, 99, 132, 0.85)'
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: '상품명'
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        max: 1.0, 
-                        title: {
-                            display: true,
-                            text: '정규화된 점수 (0.0 ~ 1.0)'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                if (context.parsed.y !== null) {
-                                    label += context.parsed.y.toFixed(3);
-                                }
-                                return label;
-                            }
-                        }
-                    }
+            {
+                label: '리뷰 기여 점수',
+                data: reviewParts,
+                backgroundColor: 'rgba(54, 162, 235, 0.85)'
+            },
+            {
+                label: '구매 기여 점수',
+                data: purchaseParts,
+                backgroundColor: 'rgba(75, 192, 192, 0.85)'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                stacked: true,
+                title: {
+                    display: true,
+                    text: '상품명'
+                }
+            },
+            y: {
+                stacked: true,
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: '총점 (Weighted Score)'
                 }
             }
-        });
-    </script>
-    {% else %}
-    <div class="alert alert-info" role="alert">
-        리뷰 {{ MIN_REVIEW }}개 이상인 추천 상품이 없거나, 추천 데이터를 불러올 수 없습니다.
-    </div>
-    {% endif %}
-</div>
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    title: function(context) {
+                        const i = context[0].dataIndex;
+                        return tooltipDescriptions[i].name;
+                    },
+                    label: function(context) {
+                        const i = context.dataIndex;
+                        const d = tooltipDescriptions[i];
+                        return [
+                            `총점: ${d.total}`,
+                            `평점 기여 점수: ${d.rateScore}`,
+                            `리뷰 기여 점수: ${d.reviewScore}`,
+                            `구매 기여 점수: ${d.purchaseScore}`
+                        ];
+                    }
+                }
+            },
+            legend: {
+                position: 'top'
+            }
+        }
+    }
+});
+</script>
