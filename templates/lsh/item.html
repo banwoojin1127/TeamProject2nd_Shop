@@ -29,9 +29,11 @@
             <div class="detail-item-info">
                 <div class="product-title-area">
                     <h1 class="product-name"> {{ ie["item_name"] }} </h1>
-                    <p class="product-description">
-                        #tag
-                    </p>
+                    <div class="cart-item-tags">
+                        {% for tag in ie.tags %}
+                            <span>#{{ tag }}</span>
+                        {% endfor %}
+                    </div>
                 </div>
                 
                 <hr class="divider">

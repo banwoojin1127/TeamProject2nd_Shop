@@ -1,7 +1,8 @@
 # import sys
 # sys.path.append("D:\\Haneul\\Python\\project")
 
-from flask import Blueprint, render_template, request, redirect, session, flash, url_for, jsonify
+from flask import Blueprint, render_template, request, redirect, session, flash, url_for
+import logging
 from flask_dao.sky_dao import SkyDAO
 
 #Blueprint 생성
@@ -47,6 +48,9 @@ def cart_page() :
     user_id = get_user_id()
     dao = SkyDAO()
     items = dao.cart_check(user_id)
+
+    for item in items:
+        item['tags'] = dao.get_item_tag(item['item_id'])  # 기존 DAO 그대로 사용
 
     #장바구니 - 추천 상품출력
     recommend_items = dao.item_recommend()
@@ -128,11 +132,15 @@ def history_page() :
     #구매 내역 출력
     dao = SkyDAO()
     items = dao.history_check(user_id)
+
+    for item in items:
+        item['tags'] = dao.get_item_tag(item['item_id'])  # 기존 DAO 그대로 사용
+
     dao.close()
     return render_template("sky/history.html", datas=items)
 
 # ------------------------------
-# 검색 - GET (화면, 검색결과)
+# 검색 - GET (화면, 검색결과 페이지)
 # ------------------------------
 @sky_bp.route("/search", methods=["GET"])
 def search() :
@@ -140,24 +148,123 @@ def search() :
     keyword = request.args.get("keyword", "").strip()
     dao = SkyDAO()
     items = dao.item_search(keyword) if keyword else []
+
+     # 최소 변경: 각 item에 'tags' 속성 추가
+    for item in items:
+        item['tags'] = dao.get_item_tag(item['item_id'])  # 기존 DAO 그대로 사용
+
     #검색 결과가 없으면 결과없음
     dao.close()
-    return render_template("sky/search.html", items=items, keyword=keyword)
+    return render_template(
+    "sky/search.html",
+    items=items,
+    keyword=keyword,
+    log_id=session.get("search_log_id")
+)
+
+# 검색 로그 설정
+logging.basicConfig(
+    filename="search.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+# ------------------------------
+# 검색 - POST (검색 로그 수집)
+# ------------------------------
+@sky_bp.route("/search", methods=["POST"])
+def search_log():
+    user_id = get_user_id()
+    keyword = request.form.get("keyword", "").strip()
+    items = []
+    tags = []
+
+    if user_id and keyword:
+        dao = SkyDAO()
+        
+        # 1. 검색 로그 저장
+        log_id = dao.save_search_log(user_id, keyword)
+        session["search_log_id"] = log_id
+
+        # 2. 검색 결과 가져오기
+        items = dao.item_search(keyword)
+
+        # 3. fuzzy 기반 유사 태그 저장
+        tags = dao.save_search_tag_fuzzy(keyword, threshold=70)
+
+        dao.close()
+
+    # 4. 검색 결과 페이지 렌더링
+    return render_template("sky/search.html", keyword=keyword, items=items, tags=tags)
+
+# ------------------------------
+# 상품 상세보기 GET
+# ------------------------------
+@sky_bp.route("/item/<int:item_id>", methods=["GET"])
+def item_detail_page(item_id):
+    print("item_detail_page() called..")
+
+    dao = SkyDAO()
+    item = dao.item_detail_by_id(item_id)  # category 필요 없음
+    tags = dao.get_item_tag(item_id)  # item_name 또는 item_id 기준
+
+    if not item:
+        flash("존재하지 않는 상품입니다.")
+        return redirect(url_for("sky.search"))
+
+    log_id = session.get("search_log_id")  # 검색에서 온 경우 존재
+
+    # 검색 로그가 없으면 임시 로그 생성
+    if not log_id:
+        user_id = get_user_id()
+        log_id = dao.save_search_log(user_id, keyword="")  # keyword 없으면 빈 문자열
+        session["search_log_id"] = log_id
+
+    # dao.save_search_click(log_id, item_id)
+    dao.close()
+
+    return render_template("woo/item.html", ie=item, tags=tags)
+
+
+# ------------------------------
+# 상품 상세보기 POST (클릭 로그 수집)
+# ------------------------------
+@sky_bp.route("/log/click", methods=["POST"])
+def click_log():
+    print("click_log() called..")
+
+    log_id = session.get("search_log_id")  # 검색에서 온 경우 존재
+    data = request.get_json()
+    item_id = data.get("item_id")
+    
+    if not item_id:
+        return "", 204
+
+    dao = SkyDAO()
+    
+    # 검색 로그가 없으면 임시 로그 생성
+    if not log_id:
+        user_id = get_user_id()
+        log_id = dao.save_search_log(user_id, keyword="")  # keyword 없으면 빈 문자열
+        session["search_log_id"] = log_id
+
+    dao.save_search_click(log_id, item_id)
+    dao.close()
+    return "", 204
 
 # ------------------------------
 # 상품 상세보기 - (화면)
 # ------------------------------
-"""
-@sky_bp.route("/<int:item_category>/<int:item_id>")
-def item_detail_page(item_category, item_id):
-    #print("item_category:" + str(item_category))
-    #print("item_id:" + str(item_id))
+# """
+# @sky_bp.route("/<int:item_category>/<int:item_id>")
+# def item_detail_page(item_category, item_id):
+#     #print("item_category:" + str(item_category))
+#     #print("item_id:" + str(item_id))
 
-    dao = SkyDAO()
-    item = dao.item_detail(item_category, item_id)
-    print(item)
-    return render_template("item.html", item=item)
-"""
+#     dao = SkyDAO()
+#     item = dao.item_detail(item_category, item_id)
+#     print(item)
+#     return render_template("item.html", item=item)
+# """
 # ------------------------------
 # 알고리즘 - GET (화면)
 # ------------------------------

@@ -20,6 +20,7 @@
         {% include "includes/_header.html" %}
         {% include "includes/_catenav.html" %}
     </header>
+        {% include "includes/_click_log.html" %}
     <main>
         <nav class="cart-tabs">
             <ul>
@@ -55,8 +56,10 @@
                         상품 상세 정보<br>
                         <span class="cart-item-detail-context">{{ item.item_name }}입니다.</span>
                     </p>
-                    <div class="cart-item-tags_cartonly">
-                        <p>#특징A #특징B #특징C</p>
+                    <div class="cart-item-tags">
+                        {% for tag in item.tags %}
+                            <span>#{{ tag }}</span>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="cart-item-price">
@@ -103,7 +106,11 @@
                             <div class="recommend-info">
                                 <h3 class="recommend-name">상품명 {{item.item_name}}</h3>
                                 <p class="recommend-price">{{'{:,}'.format(item.item_price)}} 원</p>
-                                <p class="recommend-tags">#특징A #특징B #특징C</p>
+                                <div class="cart-item-tags">
+                                    {% for tag in item.tags %}
+                                        <span>#{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
                             </div>
                             <button class="add-btn" type="submit">담기</button>
                         </div>
