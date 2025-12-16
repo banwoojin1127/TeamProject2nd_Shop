@@ -3,6 +3,7 @@
 
 from flask import Blueprint, render_template, request, redirect, session, flash, url_for, jsonify
 from flask_dao.sky_dao import SkyDAO
+from service.recommend_purchase import recommend_purchase
 
 #Blueprint 생성
 sky_bp = Blueprint("sky", __name__)
@@ -129,7 +130,31 @@ def history_page() :
     dao = SkyDAO()
     items = dao.history_check(user_id)
     dao.close()
-    return render_template("sky/history.html", datas=items)
+
+    #추천 상품 출력
+    rec_result = recommend_purchase(
+        target_user=user_id,
+        user_top_n=5,
+        item_top_k=3
+    )
+
+    # 추천 실패 대비
+    recommended_items = []
+    chart_data = None
+    similar_users = []
+
+    if "error" not in rec_result:
+        recommended_items = rec_result["recommended_items"]
+        chart_data = rec_result["chart"]
+        similar_users = rec_result["similar_users"]
+
+    return render_template(
+        "sky/history.html",
+        datas=items,
+        rdatas=recommended_items,
+        chart=chart_data,
+        similar_users=similar_users
+    )
 
 # ------------------------------
 # 검색 - GET (화면, 검색결과)

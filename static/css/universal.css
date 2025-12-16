@@ -801,8 +801,13 @@ main {
     flex: 2; /* 오른쪽 배너가 더 많은 공간을 차지 */
     width: 500px;
     height: 400px; /* 높이 임의 지정 */
-    background-color: #e0e0e0;
+    background-color: #ffffff;
     border: 1px dashed #fdfdfd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;   /* 수평 중앙 */
+    justify-content: center;
+    padding: 20px;
 }
 
 /*===== ===== ===== ===== ===== ===== ===== ===== ===== =====

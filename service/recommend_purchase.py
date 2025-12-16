@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from flask_dao.lsh_dao import LshDAO
 
-def recommend_items_from_similar_users(target_user, user_top_n=5, item_top_k=6):
+def recommend_purchase(target_user, user_top_n=5, item_top_k=6):
 
     dao = LshDAO()
 
@@ -63,6 +63,7 @@ def recommend_items_from_similar_users(target_user, user_top_n=5, item_top_k=6):
         recommended_items.append({
             "item_id": row["item_id"],
             "item_name": row["item_name"],
+            "item_price": row["item_price"],
             "item_category": row["item_category"],
             "item_img": row["item_img"],
             "purchase_count": row["cnt"]

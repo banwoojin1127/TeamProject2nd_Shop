@@ -78,6 +78,7 @@ class LshDAO :
             SELECT 
                 ph.item_id, 
                 i.item_name,
+                i.item_price,
                 i.item_img, 
                 i.item_category,
                 COUNT(*) AS cnt
