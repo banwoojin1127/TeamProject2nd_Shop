@@ -76,11 +76,9 @@ def cart_page() :
 
         user_id = user.get("user_id")
         recommend_plan = wodel.recommend_item_in_cart(user_id)
-        print("# " + "=" * 50 + "\n" + f"{recommend_plan}" + "\n" + "# " + "=" * 50 + "\n")
 
         dao = WooDAO()
         recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan, quantity=1)
-        print("# " + "=" * 50 + "\n" + f"{recommend_item}" + "\n" + "# " + "=" * 50 + "\n")
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 # 장바구니 - API 를 활용한 추천 상품출력 End w.woo
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====

@@ -278,17 +278,17 @@ class WooGemini :
             recommend_plan = json.loads(answer.text)
 
             print("# " + "=" * 50)
-            print("Debug | Class WooGemini : 276 | recommend_cate_in_parent() : json.loads Ok")
+            print("Debug | Class WooGemini : 281 | recommend_cate_in_parent() : json.loads Ok")
             print("# " + "=" * 50)
 
         except Exception as e :
             print("# " + "=" * 50)
-            print("Debug | Class WooGemini : 281 | recommend_cate_in_parent() : !!! ERROR !!!")
+            print("Debug | Class WooGemini : 286 | recommend_cate_in_parent() : !!! ERROR !!!")
             print(f"Debug | ERROR : { e }")
             print("# " + "=" * 50)
 
         print("# " + "=" * 50)
-        print("Debug | Class WooGemini : 286 | recommend_item_in_cart() : 추천 결과")
+        print("Debug | Class WooGemini : 291 | recommend_item_in_cart() : 추천 결과")
         print(f"Debug | 추천 결과 : { recommend_plan }")
         print("# " + "=" * 50)
 
