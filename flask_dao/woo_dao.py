@@ -118,6 +118,12 @@ class WooDAO :
         # API 가 추천해준 소분류에서 가중 평점 결과가 가장 높은 상품들 조회
         """
 
+        if not recommend_plan :
+            print("# " + "=" * 50)
+            print("Debug | File woo_dao : 123 | fetch_api_recommend_items() : !!! recommend_plan None !!!")
+            print("# " + "=" * 50)
+            return []
+
         api_pick_sub_cate = [
             recommend['item_category'] for recommend in recommend_plan['추천답변']
         ]

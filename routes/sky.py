@@ -68,14 +68,15 @@ def cart_page() :
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 # 장바구니 - API 를 활용한 추천 상품출력 Start w.woo
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+    recommend_plan = None # sky.py 의 cart_page() 에서 그대로 웹으로 전달 할 것
+    recommend_item = None # sky.py 의 cart_page() 에서 line:52 함수 반환값 대체 할 것
     user = session.get("user")
     if user :
-        recommend_plan = None # sky.py 의 cart_page() 에서 그대로 웹으로 전달 할 것
-        recommend_item = None # sky.py 의 cart_page() 에서 line:52 함수 반환값 대체 할 것
         # WooGemini 및 WooDAO import 필수
 
         user_id = user.get("user_id")
         recommend_plan = wodel.recommend_item_in_cart(user_id)
+        print("# " + "=" * 50 + "\n" + f"sky.py 추천API : {recommend_plan}" + "\n" + "# " + "=" * 50 + "\n")
 
         dao = WooDAO()
         recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan, quantity=1)
