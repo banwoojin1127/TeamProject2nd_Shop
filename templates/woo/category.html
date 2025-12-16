@@ -73,6 +73,7 @@
             <p><strong>{{ plan['category_name'] }} :</strong> {{ plan['reason'] }}</p>
             {% endfor %}
         </section>
+        {% include "includes/_nologinformaintochart.html" %}
         {% endif %}
 
         <section class="product-grid" id="infinite_scroll">

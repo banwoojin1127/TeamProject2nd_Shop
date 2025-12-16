@@ -140,6 +140,7 @@ def category(category_no = 0) :
 
     recommend_plan = None
     recommend_item = None
+    column_chart_data = None
     user = session.get("user")
     if user :
 
@@ -151,11 +152,26 @@ def category(category_no = 0) :
 #        dao = WooDAO()
 #        recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan)
         #print("# " + "=" * 50 + "\n" + f"{recommend_item}" + "\n" + "# " + "=" * 50 + "\n")
+        target_keys = [
+            'item_name', 'item_rate', 'trust_score', 'item_reviewcnt'
+        ]
+        name = []
+        rate = []
+        trust = []
+        review = []
+#        for item in recommend_item :
+#            name.append(item[target_keys[0]])
+#            rate.append(item[target_keys[1]])
+#            trust.append(item[target_keys[2]])
+#            review.append(item[target_keys[3]])
+
+#        column_chart_data = [ name, rate, trust, review ]
 # ===== API 한도 도달시 주석처리 하면 에러 회피 End =====
 
         return render_template("woo/category.html",
                                 best_li = best_li, ie_li = ie_li, cate_li = cate_li
                                 , recom_pl = recommend_plan, recom_li = recommend_item
+                                , column_chart_data = column_chart_data
                             )
 
     else :

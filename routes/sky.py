@@ -93,7 +93,8 @@ def cart_page() :
 
     dao.close()
     return render_template("sky/cart.html", datas=items, rdatas=recommend_items
-                           , recom_pl=recommend_plan) # 추천 알고리즘 플랜(recommend_plan) 추가 w.woo
+                            , recom_pl=recommend_plan # 추천 알고리즘 플랜(recommend_plan) 추가 w.woo
+                        )
 
 # ------------------------------
 # 장바구니 - POST (결제)
