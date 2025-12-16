@@ -90,38 +90,40 @@
         <h2 class="section-title">함께 구매하면 좋은 상품들이에요!</h2>
         <section class="recommended-items">
             <div class="recommended-container">
-                {% for item in rdatas %}
-                <div class="recommended-list">
-                    <form action="{{ url_for('sky.add_to_cart', item_id=item.item_id) }}" method="post">
-                        <div class="recommend-item" data-item_id="{{item_id}}" data-item_name="{{item_name}}" data-item_price="{{item_price}}">
-                            <div class="cart-item-img-placeholder">
-                                {% if item.item_img.endswith(".png") %}
-                                    <!-- 이미지 파일로 받을 때 -->
-                                    <img src="{{ url_for('static', filename='img/_item/' ~ item.item_img) }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
-                                {% else %}
-                                    <!-- 이미지 링크로 받을 때 -->
-                                    <img src="{{ item.item_img }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
-                                {% endif %}
-                            </div>
-                            <div class="recommend-info">
-                                <h3 class="recommend-name">상품명 {{item.item_name}}</h3>
-                                <p class="recommend-price">{{'{:,}'.format(item.item_price)}} 원</p>
-                                <div class="cart-item-tags">
-                                    {% for tag in item.tags %}
-                                        <span>#{{ tag }}</span>
-                                    {% endfor %}
+                {% if rdatas %}
+                    {% for item in rdatas %}
+                    <div class="recommended-list">
+                        <form action="{{ url_for('sky.add_to_cart', item_id=item.item_id) }}" method="post">
+                            <div class="recommend-item" data-item_id="{{item_id}}" data-item_name="{{item_name}}" data-item_price="{{item_price}}">
+                                <div class="cart-item-img-placeholder">
+                                    {% if item.item_img.endswith(".png") %}
+                                        <!-- 이미지 파일로 받을 때 -->
+                                        <img src="{{ url_for('static', filename='img/_item/' ~ item.item_img) }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
+                                    {% else %}
+                                        <!-- 이미지 링크로 받을 때 -->
+                                        <img src="{{ item.item_img }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
+                                    {% endif %}
                                 </div>
+                                <div class="recommend-info">
+                                    <h3 class="recommend-name">상품명 {{item.item_name}}</h3>
+                                    <p class="recommend-price">{{'{:,}'.format(item.item_price)}} 원</p>
+                                    <div class="cart-item-tags">
+                                        {% for tag in item.tags %}
+                                            <span>#{{ tag }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <button class="add-btn" type="submit">담기</button>
                             </div>
-                            <button class="add-btn" type="submit">담기</button>
-                        </div>
-                    </form>
-                </div>
-                {% endfor %}
+                        </form>
+                    </div>
+                    {% endfor %}
+                {% endif %}
             </div>
             <div class="recommended_banner">
                 <!-- 추천 알고리즘 플랜 설명 w.woo -->
                 <div class="recommended-wide-banner" style="padding: 12px;">
-                {% if "user" in session and recom_li is not none %}
+                {% if "user" in session and recom_li is defined and recom_li %}
                     <h5><p><strong>* 현재 장바구니 상품 기준 추천 전략</strong></p></h5>
                     {% for plan in recom_pl['추천전략'] %}
                     <p><strong>0{{ loop.index0 + 1 }}번.</strong> {{ plan }}</p>
