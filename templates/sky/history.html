@@ -4,7 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hub - 결제내역</title>
+    <style>
+        .recommend-period-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0 25px;
+        }
 
+        .period-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .period-btn.active {
+            background: #222;
+            color: #fff;
+        }
+
+        .recommend-nav {
+            display: flex;
+            justify-content: flex-start;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .rec-arrow {
+            border: 1px solid #ccc;
+            background: #fff;
+            padding: 4px 10px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .rec-arrow:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 {% include "includes/_style.html" %}
 
@@ -29,8 +68,20 @@
         <br>
         <h2 class="section-title">비슷한 사용자들이 많이 구매한 상품들이에요!</h2>
         {% if rdatas %}
+        <!-- ===== 기간 버튼 ===== -->
+        <div class="recommend-period-tabs">
+            <button type="button" data-period="daily" class="period-btn">일간</button>
+            <button type="button" data-period="weekly" class="period-btn active">주간</button>
+            <button type="button" data-period="monthly" class="period-btn">월간</button>
+        </div>
+
+        <!-- ===== 추천 상품 페이지 네비게이션 (화살표) ===== -->
+        <div class="recommend-nav">
+            <button id="rec-prev" class="rec-arrow">◀</button>
+            <button id="rec-next" class="rec-arrow">▶</button>
+        </div>
+
         <section class="recommended-items">
-            
             <!-- ================== 추천 상품 리스트 ================== -->
             <div class="recommended-container">
                 {% for item in rdatas %}
@@ -132,89 +183,171 @@
         <p>결제 내역이 없습니다.</p>
         {% endif %}
 
-        {% if chart is not none %}
         <script id="chart-data" type="application/json">
             {{ chart | tojson }}
         </script>
-        {% endif %}
 
-        <!-- ================== Chart.js ================== -->
+        <script id="recommend-items-data" type="application/json">
+            {{ rdatas | tojson }}
+        </script>
+
         {% if chart %}
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-        <script>
-        (function () {
-            const dataTag = document.getElementById('chart-data');
-            if (!dataTag) return;
 
-            const chartData = JSON.parse(dataTag.textContent);
-            const canvas = document.getElementById('recommendChart');
+        <script>
+        let recommendChart = null;
+
+        /* ===== 추천 슬라이드 상태 ===== */
+        let allRecommendItems = [];
+        let currentPage = 0;
+        const PAGE_SIZE = 3;
+
+        /* ================== Chart 갱신 ================== */
+        function updateChart(chartData) {
+            const canvas = document.getElementById("recommendChart");
             if (!canvas) return;
 
-            /* ===== 라벨 10글자 축약 ===== */
-            const labels = (chartData.labels || []).map(label =>
-                label.length > 10 ? label.slice(0, 10) + '...' : label
+            if (recommendChart) {
+                recommendChart.destroy();
+            }
+
+            const labels = chartData.labels.map(l =>
+                l.length > 10 ? l.slice(0, 10) + "..." : l
             );
 
-            const values = chartData.values || [];
-
-            new Chart(canvas, {
-                type: 'doughnut',
+            recommendChart = new Chart(canvas, {
+                type: "doughnut",
                 data: {
                     labels: labels,
                     datasets: [{
-                        data: values,
-                        borderWidth: 1
+                        data: chartData.values
                     }]
                 },
                 options: {
                     responsive: true,
                     cutout: '30%',
-                    layout: {
-                        padding: {
-                            top: 10,
-                            bottom: 10
-                        }
-                    },
                     plugins: {
-                        /* ===== 제목 ===== */
                         title: {
                             display: true,
-                            text: '유사 사용자 구매 TOP 상품',
-                            align: 'center',      // 중앙 정렬
-                            font: {
-                                size: 16,         // 제목 크기 축소
-                                weight: 'bold'
-                            },
-                            padding: {
-                                bottom: 10
-                            }
+                            text: "유사 사용자 구매 TOP 상품",
+                            font: { size: 20 }
                         },
-
-                        /* ===== 범례 ===== */
                         legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                padding: 10,
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        },
-
-                        tooltip: {
-                            callbacks: {
-                                title: (items) => {
-                                    const idx = items[0].dataIndex;
-                                    return chartData.labels[idx]; // 원본 전체 상품명
-                                },
-                                label: (ctx) => `구매 횟수: ${ctx.raw}`
-                            }
+                            position: "bottom"
                         }
                     }
                 }
             });
-        })();
+        }
+
+        /* ================== 추천 페이지 렌더 ================== */
+        function renderRecommendPage() {
+            const container = document.querySelector(".recommended-container");
+            container.innerHTML = "";
+
+            const start = currentPage * PAGE_SIZE;
+            const pageItems = allRecommendItems.slice(start, start + PAGE_SIZE);
+
+            pageItems.forEach(item => {
+                const imgTag = item.item_img.endsWith(".png")
+                    ? `<img src="/static/img/_item/${item.item_img}"
+                        style="width:100px;height:100px;object-fit:cover;">`
+                    : `<img src="${item.item_img}"
+                        style="width:100px;height:100px;object-fit:cover;">`;
+
+                container.innerHTML += `
+                    <div class="recommended-list">
+                        <form action="/add_to_cart/${item.item_id}" method="post">
+                            <div class="recommend-item">
+                                <div class="cart-item-img-placeholder">
+                                    ${imgTag}
+                                </div>
+                                <div class="recommend-info">
+                                    <h3 class="recommend-name">${item.item_name}</h3>
+                                    <p class="recommend-price">
+                                        ${item.item_price.toLocaleString()} 원
+                                    </p>
+                                    <p class="recommend-tags">
+                                        구매 횟수 ${item.purchase_count}회
+                                    </p>
+                                </div>
+                                <button class="add-btn" type="submit">담기</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+            });
+
+            updateArrowState();
+        }
+
+        /* ================== 추천 데이터 갱신 ================== */
+        function updateRecommendList(items) {
+            allRecommendItems = items;
+            currentPage = 0;          // 기간 변경 시 첫 페이지로
+            renderRecommendPage();
+        }
+
+        /* ================== 화살표 상태 ================== */
+        function updateArrowState() {
+            document.getElementById("rec-prev").disabled = currentPage === 0;
+            document.getElementById("rec-next").disabled =
+                (currentPage + 1) * PAGE_SIZE >= allRecommendItems.length;
+        }
+
+        /* ================== 화살표 이벤트 ================== */
+        document.getElementById("rec-prev").addEventListener("click", () => {
+            if (currentPage > 0) {
+                currentPage--;
+                renderRecommendPage();
+            }
+        });
+
+        document.getElementById("rec-next").addEventListener("click", () => {
+            if ((currentPage + 1) * PAGE_SIZE < allRecommendItems.length) {
+                currentPage++;
+                renderRecommendPage();
+            }
+        });
+
+        /* ================== 최초 로드 ================== */
+        document.addEventListener("DOMContentLoaded", () => {
+            /* 차트 데이터 */
+            const chartData = JSON.parse(
+                document.getElementById("chart-data").textContent
+            );
+            updateChart(chartData);
+
+            /* 추천 상품 데이터 */
+            const itemsDataTag = document.getElementById("recommend-items-data");
+            if (itemsDataTag) {
+                allRecommendItems = JSON.parse(itemsDataTag.textContent);
+                currentPage = 0;
+                renderRecommendPage();
+            }
+        });
+
+        /* ================== 기간 버튼 AJAX ================== */
+        document.querySelectorAll(".period-btn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const period = btn.dataset.period;
+
+                document.querySelectorAll(".period-btn")
+                    .forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                const res = await fetch(`/history/recommend?period=${period}`);
+                const data = await res.json();
+
+                if (data.error) {
+                    alert("추천 데이터를 불러올 수 없습니다.");
+                    return;
+                }
+
+                updateRecommendList(data.recommended_items);
+                updateChart(data.chart);
+            });
+        });
         </script>
         {% endif %}
 

@@ -93,8 +93,7 @@ def cart_page() :
 
     dao.close()
     return render_template("sky/cart.html", datas=items, rdatas=recommend_items
-                            , recom_pl=recommend_plan # 추천 알고리즘 플랜(recommend_plan) 추가 w.woo
-                        )
+                           , recom_pl=recommend_plan) # 추천 알고리즘 플랜(recommend_plan) 추가 w.woo
 
 # ------------------------------
 # 장바구니 - POST (결제)
@@ -174,30 +173,48 @@ def history_page() :
 
     dao.close()
 
-    #추천 상품 출력
+    #추천 상품 출력 (기본 : weekly)
     rec_result = recommend_purchase(
         target_user=user_id,
+        period="weekly",
         user_top_n=5,
-        item_top_k=3
+        item_top_k=6
     )
 
     # 추천 실패 대비
     recommended_items = []
     chart_data = None
-    similar_users = []
 
     if "error" not in rec_result:
         recommended_items = rec_result["recommended_items"]
         chart_data = rec_result["chart"]
-        similar_users = rec_result["similar_users"]
 
     return render_template(
         "sky/history.html",
         datas=items,
         rdatas=recommended_items,
         chart=chart_data,
-        similar_users=similar_users
     )
+
+# ------------------------------
+# 구매내역 - GET (기간별 추천 상품 화면)
+# ------------------------------
+@sky_bp.route("/history/recommend", methods=["GET"])
+def history_recommend_ajax():
+    user_id = get_user_id()
+    if not user_id:
+        return jsonify({"error": "login_required"}), 401
+
+    period = request.args.get("period", "weekly")
+
+    result = recommend_purchase(
+        target_user=user_id,
+        period=period,
+        user_top_n=5,
+        item_top_k=6
+    )
+
+    return jsonify(result)
 
 # ------------------------------
 # 검색 - GET (화면, 검색결과 페이지)
