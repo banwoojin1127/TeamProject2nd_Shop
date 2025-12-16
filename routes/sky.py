@@ -6,6 +6,18 @@ import logging
 from flask_dao.sky_dao import SkyDAO
 from service.recommend_purchase import recommend_purchase
 
+# ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+# 장바구니 - API 활용을 위한 import Start w.woo
+# ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+from flask_dao.woo_dao import WooDAO
+# woo = WooDAO()
+
+from service.woo.for_gemini import WooGemini
+wodel = WooGemini()
+# ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+# 장바구니 - API 활용을 위한 import End w.woo
+# ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+
 #Blueprint 생성
 sky_bp = Blueprint("sky", __name__)
 
@@ -53,13 +65,34 @@ def cart_page() :
     for item in items:
         item['tags'] = dao.get_item_tag(item['item_id'])  # 기존 DAO 그대로 사용
 
+# ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+# 장바구니 - API 를 활용한 추천 상품출력 Start w.woo
+# ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+    user = session.get("user")
+    if user :
+        recommend_plan = None # sky.py 의 cart_page() 에서 그대로 웹으로 전달 할 것
+        recommend_item = None # sky.py 의 cart_page() 에서 line:52 함수 반환값 대체 할 것
+        # WooGemini 및 WooDAO import 필수
+
+        user_id = user.get("user_id")
+        recommend_plan = wodel.recommend_item_in_cart(user_id)
+        print("# " + "=" * 50 + "\n" + f"{recommend_plan}" + "\n" + "# " + "=" * 50 + "\n")
+
+        dao = WooDAO()
+        recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan, quantity=1)
+        print("# " + "=" * 50 + "\n" + f"{recommend_item}" + "\n" + "# " + "=" * 50 + "\n")
+# ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+# 장바구니 - API 를 활용한 추천 상품출력 End w.woo
+# ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+
     #장바구니 - 추천 상품출력
-    recommend_items = dao.item_recommend()
+    recommend_items = recommend_item # 추천 상품 출력 w.woo
     #화면용 객체 저장
-    session["recommend_items"] = recommend_items 
+    session["recommend_items"] = recommend_items
 
     dao.close()
-    return render_template("sky/cart.html", datas=items, rdatas=recommend_items)
+    return render_template("sky/cart.html", datas=items, rdatas=recommend_items
+                           , recom_pl=recommend_plan) # 추천 알고리즘 플랜(recommend_plan) 추가 w.woo
 
 # ------------------------------
 # 장바구니 - POST (결제)

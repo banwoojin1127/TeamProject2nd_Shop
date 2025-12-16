@@ -119,7 +119,19 @@
                 {% endfor %}
             </div>
             <div class="recommended_banner">
-                <div class="recommended-wide-banner"></div>
+                <!-- 추천 알고리즘 플랜 설명 w.woo -->
+                <div class="recommended-wide-banner" style="padding: 12px;">
+                {% if session['user'] is not none and recom_li is not none %}
+                    <h5><p><strong>* 현재 장바구니 상품 기준 추천 전략</strong></p></h5>
+                    {% for plan in recom_pl['추천전략'] %}
+                    <p><strong>0{{ loop.index0 + 1 }}번.</strong> {{ plan }}</p>
+                    {% endfor %}<br>
+                    <h5><p><strong>* 현재 장바구니 상품 기준 추천 이유</strong></p></h5>
+                    {% for plan in recom_pl['추천답변'] %}
+                    <p><strong>{{ plan['category_name'] }} :</strong> {{ plan['reason'] }}</p>
+                    {% endfor %}
+                {% endif %}
+                </div>
             </div>
         </section>
         {% endif %}
