@@ -32,6 +32,8 @@ def go_main() :
     """
     # 웹 서비스 홈페이지로 이동시키기
     """
+
+    COMMENT_CART_RECOMMEND = '''
     user = session.get("user")
     if user :
         recommend_plan = None # sky.py 의 cart_page() 에서 그대로 웹으로 전달 할 것
@@ -45,6 +47,7 @@ def go_main() :
         dao = WooDAO()
         recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan, quantity=1)
         print("# " + "=" * 50 + "\n" + f"{recommend_item}" + "\n" + "# " + "=" * 50 + "\n")
+    '''
 
     return redirect(url_for('mhi.main'))
 
