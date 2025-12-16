@@ -32,10 +32,13 @@ def go_main() :
     """
     # 웹 서비스 홈페이지로 이동시키기
     """
+
+    COMMENT_CART_RECOMMEND = '''
     user = session.get("user")
     if user :
-        recommend_plan = None
-        recommend_item = None
+        recommend_plan = None # sky.py 의 cart_page() 에서 그대로 웹으로 전달 할 것
+        recommend_item = None # sky.py 의 cart_page() 에서 line:52 함수 반환값 대체 할 것
+        # WooGemini 및 WooDAO import 필수
 
         user_id = user.get("user_id")
         recommend_plan = wodel.recommend_item_in_cart(user_id)
@@ -44,6 +47,7 @@ def go_main() :
         dao = WooDAO()
         recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan, quantity=1)
         print("# " + "=" * 50 + "\n" + f"{recommend_item}" + "\n" + "# " + "=" * 50 + "\n")
+    '''
 
     return redirect(url_for('mhi.main'))
 
@@ -277,4 +281,3 @@ def cate_nav(category_no) :
         session["parent"][parent] = "class=active"
 
         # ------------------------------
-

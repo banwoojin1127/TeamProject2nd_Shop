@@ -6,10 +6,9 @@
     <title>Hub - 카테고리</title>
     {% include "includes/_style.html" %}
     <style>
-        .tooltip-container {
+        .recommend-title {
             position: relative;
             display: inline-block;
-            cursor: pointer;
             font-weight: 600;
         }
     </style>
@@ -22,44 +21,48 @@
     
     <main>
         {% include "includes/_carousel.html" %}
-        <span class="tooltip-container">
-        {% if session['user'] is not none and recom_li is not none %}
+        <h4><span class="recommend-title">
+        {% if "user" in session and recom_li is not none %}
             {{ session["user"]["user_name"] }} 님의 구매목록 기반 맞춤 추천 상품입니다.
         {% else %}
             인기 상품 순위에 따른 추천 상품입니다.
         {% endif %}
-        </span>
+        </span></h4>
         <section class="category-thumbnails" >
-            {% if session['user'] is not none and recom_li is not none %}
+            {% if "user" in session and recom_li is not none %}
                 {% for recom in recom_li %}
                 <a href="/{{ session['cate_no'] }}/{{ recom['item_id'] }}">
-                    <div class="thumbnail-item">
+                    <div class="thumbnail-item" style="height: auto; background: none;">
                         {% if recom['item_img'].endswith(".png") %}
                         <img src="{{ url_for('static', filename='img/_item/' + recom['item_img']) }}"
                         style="width: 100%; height: 100%;">
                         {% else %}
                         <img src="{{ recom['item_img'] }}" alt="{{ recom['item_name'] }}" style="width: 100%; height: 100%;">
                         {% endif %}
+                        <span class="cate_item_name">{{ recom['item_name'] }}</span>
+                        <span class="cate_item_price">{{'{:,}'.format(recom['item_price'])}} 원</span>
                     </div>
                 </a>
                 {% endfor %}
             {% else %}
                 {% for best in best_li[8:14] %}
                 <a href="/{{ session['cate_no'] }}/{{ best['item_id'] }}">
-                    <div class="thumbnail-item">
+                    <div class="thumbnail-item" style="height: auto; background: none;">
                         {% if best['item_img'].endswith(".png") %}
                         <img src="{{ url_for('static', filename='img/_item/' + best['item_img']) }}"
                         style="width: 100%; height: 100%;">
                         {% else %}
                         <img src="{{ best['item_img'] }}" alt="{{ best['item_name'] }}" style="width: 100%; height: 100%;">
                         {% endif %}
+                        <span class="cate_item_name">{{ best['item_name'] }}</span>
+                        <span class="cate_item_price">{{'{:,}'.format(best['item_price'])}} 원</span>
                     </div>
                 </a>
                 {% endfor %}
             {% endif %}
         </section>
 
-        {% if session['user'] is not none and recom_li is not none %}
+        {% if "user" in session and recom_li is not none %}
         <section class="middle-banner-area" style="padding: 12px;">
             <h5><p><strong>* 현재 대분류 추천 전략</strong></p></h5>
             {% for plan in recom_pl['추천전략'] %}

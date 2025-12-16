@@ -222,6 +222,11 @@ class WooGemini :
 
         dao = WithAPI()
         inner_cart_li = dao.for_recommend_item_in_cart(user_id)
+        if not inner_cart_li :
+            print("# " + "=" * 50)
+            print("Debug | Class WooGemini : 227 | recommend_item_in_cart() : !!! Array None !!!")
+            print("# " + "=" * 50)
+            return []
 
         prompt = f"""
             역할 : 당신은 마트의 쇼핑 AI 분석가입니다.
