@@ -113,7 +113,17 @@ class SkyDAO :
     #상품 검색
     def item_search(self, item_name) :
         try :
-            sql = "select * from item where item_name like %s"
+            sql = """
+                    SELECT
+                        item_id,
+                        item_name,
+                        item_price,
+                        item_img,
+                        item_category AS category_no
+                    FROM item
+                    WHERE item_name LIKE %s
+                    """
+
             self.cursor.execute(sql, (f"%{item_name}%",))
             return self.cursor.fetchall()
         except Exception as e :

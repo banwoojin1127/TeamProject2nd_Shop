@@ -27,7 +27,9 @@
             <section class="cart-list">
                 {% for item in items %}
                 <form method="GET"
-                    action="{{ url_for('sky.item_detail_page', item_id=item.item_id) }}"
+                    action="{{ url_for('lsh.item',
+                   category_no=item['category_no'],
+                   item_no=item['item_id']) }}"
                     data-item-id="{{ item.item_id }}"
                     onsubmit="sendClickLog(event, this)" class="cart-item-form">
                     <input type="hidden" name="log_id" value="{{ log_id }}">

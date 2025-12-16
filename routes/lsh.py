@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, redirect, flash
+from flask import Blueprint, render_template, session, redirect, flash, url_for
 from flask_dao.lsh_dao import LshDAO
 from service.recommend_similarity import recommend_similarity
 from flask import current_app
@@ -12,8 +12,9 @@ parent_li = ["fruit", "veget", "meat", "seaf", "grnut", "bread", "snack", "bever
 #           하늘 작업 1(시작)           
 #======================================
 #임시 저장된(session) user_id 값 가져오기
-def get_user_id() :
-    return session.get("user").get("user_id")
+def get_user_id():
+    user = session.get("user")
+    return user.get("user_id") if user else None
 #======================================
 #           하늘 작업 1(끝)           
 #======================================
@@ -35,24 +36,26 @@ def item(category_no=0, item_no=0):
         #           하늘 작업 2(시작)           
         #======================================
         dao_sky = SkyDAO()
+        result = dao.load_i_info(item_no)
+        if not result:
+            flash("존재하지 않는 상품입니다.")
+            return redirect(url_for("sky.search"))
+
+        # 태그
         tags = dao_sky.get_item_tag(item_no)
+        result["tags"] = tags
 
-
-        log_id = session.get("search_log_id")  # 검색에서 온 경우 존재
-
-        # 검색 로그가 없으면 임시 로그 생성
+        # 검색 로그 처리
+        log_id = session.get("search_log_id")
         if not log_id:
             user_id = get_user_id()
-            log_id = dao_sky.save_search_log(user_id, keyword="")  # keyword 없으면 빈 문자열
+            log_id = dao_sky.save_search_log(user_id, keyword="")
             session["search_log_id"] = log_id
 
+        # 클릭 로그
         dao_sky.save_search_click(log_id, item_no)
-        
-        if result:
-            result['tags'] = tags
 
-        return render_template("woo/item.html", ie=result)
-        
+        return render_template("woo/item.html", ie=result, tags=tags)
     finally:
         dao.close()
         dao_sky.close()

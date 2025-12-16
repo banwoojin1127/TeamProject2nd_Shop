@@ -224,31 +224,6 @@ def search_log():
 # ------------------------------
 # 상품 상세보기 GET
 # ------------------------------
-@sky_bp.route("/item/<int:item_id>", methods=["GET"])
-def item_detail_page(item_id):
-    print("item_detail_page() called..")
-
-    dao = SkyDAO()
-    item = dao.item_detail_by_id(item_id)  # category 필요 없음
-    tags = dao.get_item_tag(item_id)  # item_name 또는 item_id 기준
-
-    if not item:
-        flash("존재하지 않는 상품입니다.")
-        return redirect(url_for("sky.search"))
-
-    log_id = session.get("search_log_id")  # 검색에서 온 경우 존재
-
-    # 검색 로그가 없으면 임시 로그 생성
-    if not log_id:
-        user_id = get_user_id()
-        log_id = dao.save_search_log(user_id, keyword="")  # keyword 없으면 빈 문자열
-        session["search_log_id"] = log_id
-
-    # dao.save_search_click(log_id, item_id)
-    dao.close()
-
-    return render_template("woo/item.html", ie=item, tags=tags)
-
 
 # ------------------------------
 # 상품 상세보기 POST (클릭 로그 수집)
