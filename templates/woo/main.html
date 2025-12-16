@@ -6,24 +6,128 @@
     <title>Hub - 메인 페이지</title>
     {% include "includes/_style.html" %}
 </head>
+<style>
+.content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+main {
+    flex: 1; /* 메인 영역이 남은 공간을 채움 */
+    margin-left: 25%;
+}
+
+#rank {
+    flex: 0 0 20%;       /* 컨테이너 대비 20% 너비 */
+    background-color: #16D99B;
+    width: 50px;
+    height: 800px;        /* 콘텐츠에 맞게 자동 높이 */
+    margin-top: 20px;
+    margin-left: 30px;
+    margin-right: 100px;
+    border-radius: 8px;
+}
+
+#rank_title {
+    margin-top: 20px;
+    font-size: 25px;
+    text-align: center;
+}
+
+.rank_num {
+    font-size: 20px;
+    margin-left: 30px;
+    line-height: 3;
+
+}
+
+</style>
+
 <body>
     <header>
         {% include "includes/_header.html" %}
         {% include "includes/_catenav.html" %}
     </header>
 
-    <main>
+    <div class="content-wrapper" style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <main style="flex: 1;">
         {% include "includes/_carousel.html" %}
 
-        
+            
+                <!--
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                # 문홍일 님 작업 영역 시작
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                -->
+                {% if session['user'] %}
+                    {% include "mhi/list.html" %}
+                {% endif %}
+                <!--
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                # 문홍일 님 작업 영역 끝
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                -->
+                <!-- 
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                # ujin 님 작업 영역 시작
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                -->
+                <section>
+                    {% include "mhi/list_logout.html" %}
+                </section>
+
+                <!-- 
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                # ujin 님 작업 영역 종료
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                -->
+    
             <!--
             # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
             # 문홍일 님 작업 영역 시작
             # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
             -->
-            {% if session['user'] %}
-                {% include "mhi/list.html" %}
+            <br>
+            {% if session["user"] %}
+            <h4 class="mb-3">
+                <span class="tooltip-container">
+                    📌 유사그룹의 구매횟수 기준
+                    <span class="tooltip-text">
+                        유사그룹(본인나이±5, 동일성별)이 구매한 아이템중에 구매횟수가 많은 아이템을 출력
+                    </span>
+                </span>
+            </h4>     
+
+                <div class="container mt-3">
+                    <div class="row">
+                        <div class="col-md-8">
+                            {% include "mhi/group_recommend.html" %}
+                        </div>
+
+                        <div class="col-md-4">
+                            {% include "mhi/group_g.html" %}
+                        </div>
+                    </div>
+                </div>  
+
+                {% if session['user'] %}
+                    {% include "mhi/rank.html" %}
+                    <br>
+            
+                {% endif %}        
+
+                {% if session["user"] %}
+                {% include "mhi/rank_g.html" %}
+                {% endif %}
+                {% if not session["user"] %}
+                    <div class="best-items-container">
+                        </div>
+                {% endif %}
+
             {% endif %}
+            
+            <br>
             <!--
             # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
             # 문홍일 님 작업 영역 끝
@@ -34,80 +138,31 @@
             # ujin 님 작업 영역 시작
             # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
             -->
-            <section>
-                {% include "mhi/list_logout.html" %}
-            </section>
-
+            {% if not session["user"] %}
+                {% include "includes/_nologinformaintochart.html" %}
+            {% endif %}
             <!-- 
             # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
             # ujin 님 작업 영역 종료
             # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
             -->
- 
-        <!--
-        # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-        # 문홍일 님 작업 영역 시작
-        # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-        -->
-        <br>
-        {% if session["user"] %}
-        <h4 class="mb-3">
-            <span class="tooltip-container">
-                📌 유사그룹의 구매횟수 기준
-                <span class="tooltip-text">
-                    유사그룹(본인나이±5, 동일성별)이 구매한 아이템중에 구매횟수가 많은 아이템을 출력
-                </span>
-            </span>
-        </h4>     
-
-            <div class="container mt-3">
-                <div class="row">
-                    <div class="col-md-8">
-                        {% include "mhi/group_recommend.html" %}
-                    </div>
-
-                    <div class="col-md-4">
-                        {% include "mhi/group_g.html" %}
-                    </div>
+        </main>
+        <aside id="rank">
+            <div id="rank_title">랭킹</div>
+            <div class="rank_num">
+                <div>1.
+                    <img src="">
                 </div>
-            </div>  
-
-            {% if session['user'] %}
-                {% include "mhi/rank.html" %}
-                <br>
-          
-            {% endif %}        
-
-            {% if session["user"] %}
-             {% include "mhi/rank_g.html" %}
-            {% endif %}
-            {% if not session["user"] %}
-                <div class="best-items-container">
-                    </div>
-            {% endif %}
-
-        {% endif %}
-        
-        <br>
-        <!--
-        # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-        # 문홍일 님 작업 영역 끝
-        # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-        -->
-        <!-- 
-        # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-        # ujin 님 작업 영역 시작
-        # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-        -->
-        {% if not session["user"] %}
-            {% include "includes/_nologinformaintochart.html" %}
-        {% endif %}
-        <!-- 
-        # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-        # ujin 님 작업 영역 종료
-        # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-        -->
-    </main>
-
-    </body>
+                <div>2.</div>
+                <div>3.</div>
+                <div>4.</div>
+                <div>5.</div>
+                <div>6.</div>
+                <div>7.</div>
+                <div>8.</div>
+                <div>9.</div>
+                <div>10.</div>
+            </div>
+        </aside>
+    </div>
 </html>

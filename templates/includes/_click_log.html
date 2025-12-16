@@ -1,0 +1,16 @@
+<script>
+function sendClickLog(event, form) {
+    event.preventDefault();  // 페이지 이동 막음
+
+    fetch("/log/click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            item_id: form.dataset.itemId
+        })
+    }).finally(() => {
+        // 클릭 로그 저장 후 원래 페이지 이동
+        form.submit();
+    });
+}
+</script>

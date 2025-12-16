@@ -7,6 +7,9 @@
 
 </head>
 {% include "includes/_style.html" %}
+
+<!-- 클릭 수집 로그 -->
+{% include "includes/_click_log.html" %}
 <body>
     <header>
         {% include "includes/_header.html" %}
@@ -25,7 +28,7 @@
         {% if datas %}
         <section class="cart-list">
             {% for item in datas %}
-            <div id="cart" class="cart-item" onclick='location.href="/{{ item.item_category }}/{{ item.item_id }}"'>
+            <form id="cart" class="cart-item" onclick='location.href="/{{ item.item_category }}/{{ item.item_id }}"'>
                 <div class="cart-item-img-placeholder">
                     {% if item.item_img.endswith(".png") %}
                         <!-- 이미지 파일로 받을 때 -->
@@ -48,7 +51,9 @@
                         <span class="cart-item-detail-context">{{item.item_name}}입니다.</span>
                     </p>
                     <div class="cart-item-tags">
-                        <p>#특징A #특징B #특징C</p>
+                        {% for tag in item.tags %}
+                            <span>#{{ tag }}</span>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="cart-item-price">
@@ -58,7 +63,7 @@
                         </span>
                     </p>
                 </div>
-            </div>
+            </form>
             {% endfor %}
         </section>
         {% else %}

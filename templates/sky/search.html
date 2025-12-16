@@ -6,6 +6,14 @@
     <title>Hub - 검색 결과</title>
 {% include "includes/_style.html" %}
 </head>
+<style>
+    .cart-item {
+        background-color: white; 
+        border : none;
+    }
+</style>
+<!-- 클릭 수집 로그 -->
+{% include "includes/_click_log.html" %}
 
 <body>
     <header>
@@ -18,42 +26,52 @@
             {% if items %}
             <section class="cart-list">
                 {% for item in items %}
-                <div id="cart" class="cart-item" onclick='location.href="/{{ item.item_category }}/{{ item.item_id }}"'>
-                    <div class="cart-item-img-placeholder">
-                        {% if item.item_img.endswith(".png") %}
-                            <!-- 이미지 파일로 받을 때 -->
-                            <img src="{{ url_for('static', filename='img/_item/' ~ item.item_img) }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
-                        {% else %}
-                            <!-- 이미지 링크로 받을 때 -->
-                            <img src="{{ item.item_img }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
-                        {% endif %}
-                    </div>
-                    <div class="cart-item-details">
-                        <p class="cart-item-name">상품명&nbsp
-                            <span class="cart-item-name-context">
-                                {{ item.item_name }}
-                            </span>
-                        </p>
-                    </div>
-                    <div class="cart-item-detail-area">
-                        <p class="cart-item-detail-info">
-                            상품 상세 정보<br>
-                            <span class="cart-item-detail-context">{{ item.item_name }}입니다.</span>
-                        </p>
-                        <!-- 특징 최대 공백 포함 : 144자까지... (널널하게)특징 최대 15개 -->
-                        <div class="cart-item-tags">
-                            <p>#특징A #특징B #특징C #특징C #특징C #특징C #특징C #특징C #특징C #특징C
-                            #특징A #특징B #특징C #특징C #특징C</p>
+                <form method="GET"
+                    action="{{ url_for('sky.item_detail_page', item_id=item.item_id) }}"
+                    data-item-id="{{ item.item_id }}"
+                    onsubmit="sendClickLog(event, this)" class="cart-item-form">
+                    <input type="hidden" name="log_id" value="{{ log_id }}">
+                    <input type="hidden" name="keyword" value="{{ keyword }}">
+                    <input type="hidden" name="tag" value="search_click">
+                    <input type="hidden" name="tag_count" value="1">
+                    
+                    <button type="submit" class="cart-item">
+                        <div class="cart-item-img-placeholder">
+                            {% if item.item_img.endswith(".png") %}
+                                <!-- 이미지 파일로 받을 때 -->
+                                <img src="{{ url_for('static', filename='img/_item/' ~ item.item_img) }}" alt="{{ item.item_name }}" style="width:100px; height:100px; object-fit:cover;">
+                            {% else %}
+                                <!-- 이미지 링크로 받을 때 -->
+                                <img src="{{ item.item_img }}" alt="{{ item.item_name }}" style="width:100px; height:100px; object-fit:cover;">
+                            {% endif %}
+                        </div>
+                        <div class="cart-item-details">
+                            <p class="cart-item-name">상품명&nbsp
+                                <span class="cart-item-name-context">
+                                    {{ item.item_name }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="cart-item-detail-area">
+                            <p class="cart-item-detail-info">
+                                상품 상세 정보<br>
+                                <span class="cart-item-detail-context">{{item.item_name}}입니다.</span>
+                            </p>
+                            <div class="cart-item-tags">
+                                button
+                                {% for tag in item.tags %}
+                                    <span>#{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="cart-item-price">
+                            <p>상품 가격<br><br>
+                                <span class="cart-item-price-context">
+                                    {{'{:,}'.format(item.item_price)}} 원
+                                </span>
+                            </p>
                         </div>
                     </div>
-                    <div class="cart-item-price">
-                        <p>상품 가격<br><br>
-                            <span class="cart-item-price-context">
-                                {{'{:,}'.format(item.item_price)}} 원
-                            </span>
-                        </p>
-                    </div>
-                </div>
                 {% endfor %}
             </section>
             {% else %}

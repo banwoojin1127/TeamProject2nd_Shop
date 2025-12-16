@@ -1,5 +1,7 @@
 import pymysql
 import traceback
+from rapidfuzz import fuzz
+
 class SkyDAO :
     def __init__(self) :
         self.conn = pymysql.connect(
@@ -119,6 +121,114 @@ class SkyDAO :
             print(e)
             return []
 
+    #검색 로그 수집(행위기반 로그)
+    def save_search_log(self, user_id, keyword) :
+        try :
+            sql = "insert into search_log(user_id, keyword) values(%s, %s)"
+
+            self.cursor.execute(sql, (user_id, keyword))
+            self.conn.commit()
+            return self.cursor.lastrowid
+        except Exception as e :
+            self.conn.rollback()
+            print(e)
+            return None
+    
+    #item_tag에서 태그 가져오기(DB에서 꺼내오기용)
+    def get_item_tags(self, keyword):
+        try :
+            sql = "SELECT item_tag FROM item WHERE item_tag LIKE %s"
+            self.cursor.execute(sql, ('%' + keyword + '%',))
+            rows = self.cursor.fetchall()
+            tags = []
+            for row in rows:
+                # item_tag가 여러 태그로 comma 구분되어 있다면 split
+                tags.extend([t.strip() for t in row['item_tag'].split(',')])
+            return tags
+        except Exception as e :
+            self.conn.rollback()
+            print(e)
+            return None
+        
+    #상품 item_tag 조회(출력)
+    def get_item_tag(self, item_id) :
+        try : 
+            sql = "select item_tag from item where item_id = %s "
+            self.cursor.execute(sql, (item_id,))
+            row = self.cursor.fetchone()  # item_id 기준 하나만 가져오므로 fetchone
+            if row and row['item_tag']:
+                # 콤마로 구분된 태그를 리스트로 반환
+                tags = [t.strip() for t in row['item_tag'].split(',')]
+                return tags
+            return []
+        except Exception as e:
+            print("get_item_tag error:", e)
+            return []
+
+    #검색 태그 수집(태그 등장 빈도 집계)
+    def save_search_tag(self, keyword, tag) :
+        try :
+            sql = "insert into search_keyword_tag(keyword, tag) values(%s, %s) ON DUPLICATE KEY UPDATE tag_count = tag_count + 1"
+
+            self.cursor.execute(sql, (keyword, tag))
+            self.conn.commit()
+        except Exception as e :
+            self.conn.rollback()
+            print(e)
+            return None
+        
+    #검색 클릭 로그 수집
+    def save_search_click(self, log_id, item_id) :
+        try :
+            sql = "insert into search_click_log(log_id, item_id) values(%s, %s)"
+            
+            self.cursor.execute(sql, (log_id, item_id))
+            self.conn.commit()
+            return self.cursor.lastrowid
+        except Exception as e :
+            self.conn.rollback()
+            print(e)
+            return None
+        
+
+    #RapidFuzz 유사도 기반 검색 필터
+    def save_search_tag_fuzzy(self, keyword, threshold=70):
+        """
+        검색어(keyword)를 기준으로 item_tag에서 유사한 태그만 search_keyword_tag에 저장
+        threshold: 유사도 기준 (0~100, 높을수록 stricter)
+        """
+        try:
+            # 1. 모든 item 태그 조회
+            sql = "SELECT item_tag FROM item"
+            self.cursor.execute(sql)
+            rows = self.cursor.fetchall()
+
+            tags_set = set()
+            for row in rows:
+                if row['item_tag']:
+                    for tag in row['item_tag'].split(','):
+                        tag = tag.strip()
+                        # keyword와 유사도가 threshold 이상이면 저장 대상
+                        if fuzz.partial_ratio(keyword, tag) >= threshold:
+                            tags_set.add(tag)
+
+            # 2. search_keyword_tag 테이블에 저장 (중복 시 tag_count 증가)
+            for tag in tags_set:
+                sql_insert = """
+                    INSERT INTO search_keyword_tag(keyword, tag)
+                    VALUES(%s, %s)
+                    ON DUPLICATE KEY UPDATE tag_count = tag_count + 1
+                """
+                self.cursor.execute(sql_insert, (keyword, tag))
+
+            self.conn.commit()
+            return list(tags_set)
+
+        except Exception as e:
+            self.conn.rollback()
+            print("save_search_tag_fuzzy error:", e)
+            return []
+
 
     """구매내역"""
     #구매내역 - 상품 리스트
@@ -138,19 +248,24 @@ class SkyDAO :
             return []
         
     """상품 상세보기"""
-    #상품 상세보기 조회
-    def item_detail(self, item_category, item_id) :
-        try :
+    #상품 상세보기 상품 아이디 조회
+    def item_detail_by_id(self, item_id):
+        try:
             sql = """
-                select * from item where item_category = %s and item_id = %s
+                SELECT *
+                FROM item
+                WHERE item_id = %s
             """
-            self.cursor.execute(sql, (item_category, item_id))
-            result = self.cursor.fetchone()
-            return result
-        except Exception as e :
+            self.cursor.execute(sql, (item_id,))
+            return self.cursor.fetchone()
+        except Exception:
             self.conn.rollback()
             traceback.print_exc()
-            return []
+            return None
+
+    """순위"""
+    
+
 
     #데이터베이스 연결 종료
     def close(self) :
