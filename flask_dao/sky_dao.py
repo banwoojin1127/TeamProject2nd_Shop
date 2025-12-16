@@ -263,8 +263,36 @@ class SkyDAO :
             traceback.print_exc()
             return None
 
-    """순위"""
-    
+    """랭킹"""
+    #전체 인기순위 (전체 : 1 검색 0.7: 클릭: 0.3)
+    def get_realtime_ranking(self):
+        try :
+            sql = """
+            SELECT keyword, SUM(score) AS total_score
+            FROM (
+                SELECT keyword, COUNT(*) * 7 AS score
+                FROM search_log
+                GROUP BY keyword
+
+                UNION ALL
+
+                SELECT sl.keyword, COUNT(*) * 3 AS score
+                FROM search_click_log cl
+                JOIN search_log sl ON cl.log_id = sl.log_id
+                GROUP BY sl.keyword
+            ) t
+            GROUP BY keyword
+            ORDER BY total_score DESC
+            LIMIT 10
+            """
+            self.cursor.execute(sql)
+            return self.cursor.fetchall()
+        except Exception as e :
+            self.conn.rollback()
+            traceback.print_exc()
+            return self.fetchall(sql)
+        
+    #사용자 
 
 
     #데이터베이스 연결 종료

@@ -29,7 +29,7 @@ main {
     border-radius: 8px;
 }
 
-#rank_title {
+.rank_title {
     margin-top: 20px;
     font-size: 25px;
     text-align: center;
@@ -43,6 +43,31 @@ main {
 }
 
 </style>
+
+<script>
+function loadRanking() {
+    $.ajax({
+        url: "/api/ranking",
+        method: "GET",
+        success: function(data) {
+            let html = "";
+            data.forEach((row, idx) => {
+                html += `
+                    <li>
+                        <span class="rank">${idx + 1}</span>
+                        <span class="keyword">${row.keyword}</span>
+                        <span class="score">${row.total_score}</span>
+                    </li>
+                `;
+            });
+            $("#ranking-list").html(html);
+        }
+    });
+}
+
+setInterval(loadRanking, 3000); // 3초마다
+loadRanking();
+</script>
 
 <body>
     <header>
@@ -147,22 +172,13 @@ main {
             # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
             -->
         </main>
-        <aside id="rank">
-            <div id="rank_title">랭킹</div>
-            <div class="rank_num">
-                <div>1.
+        <aside id="rank" class="ranking-box">
+            <div class="rank_title">랭킹</div>
+            <ul id="ranking-list" class="rank_num">
+                <li>1.
                     <img src="">
-                </div>
-                <div>2.</div>
-                <div>3.</div>
-                <div>4.</div>
-                <div>5.</div>
-                <div>6.</div>
-                <div>7.</div>
-                <div>8.</div>
-                <div>9.</div>
-                <div>10.</div>
-            </div>
+                </li>
+            </ul>
         </aside>
     </div>
 </html>

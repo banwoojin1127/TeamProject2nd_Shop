@@ -1,7 +1,7 @@
 # import sys
 # sys.path.append("D:\\Haneul\\Python\\project")
 
-from flask import Blueprint, render_template, request, redirect, session, flash, url_for
+from flask import Blueprint, render_template, request, redirect, session, flash, url_for, jsonify
 import logging
 from flask_dao.sky_dao import SkyDAO
 from service.recommend_purchase import recommend_purchase
@@ -302,6 +302,17 @@ def algo_page() :
         flash("로그인이 필요한 서비스입니다.") #메시지 등록
         return redirect(url_for("mhi.login_get"))
     return render_template("sky/algorithm.html")
+
+# ------------------------------
+# 랭킹 - GET (화면)
+# ------------------------------
+@sky_bp.route("/api/ranking")
+def api_ranking():
+    dao = SkyDAO()
+    rows = dao.get_realtime_ranking()
+    dao.close()
+    return jsonify(rows)
+
 
 """
 user_id = "excheck" #테스트 용 하드코딩
