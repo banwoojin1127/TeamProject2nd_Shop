@@ -298,7 +298,7 @@ class MhiDAO:
                     'weighted_list': weighted_sorted_list[:limit]
                 }
                 
-                print(f"--- 디버깅 --- 최종 추천 아이템 수: {len(final_recommendations['weighted_list'])}개")
+                print(f"--- 디버깅 ---유사그룹을 통한 최종 추천 아이템 수: {len(final_recommendations['weighted_list'])}개")
                 
                 return final_recommendations
 

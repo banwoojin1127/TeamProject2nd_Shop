@@ -81,38 +81,18 @@ loadRanking();
 
             {% if session['user'] and weighted_recommendations_list is defined and weighted_recommendations_list|length > 0 %}
 
-                <!--
-                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-                # 문홍일 님 작업 영역 시작
-                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-                -->
-                {% if session['user'] %}
-                    {% include "mhi/list.html" %}
-                {% endif %}
-                <!--
-                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-                # 문홍일 님 작업 영역 끝
-                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-                -->
-                <!-- 
-                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-                # ujin 님 작업 영역 시작
-                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-                -->
-                <section>
-                    {% include "mhi/list_logout.html" %}
-                </section>
-
-                <!-- 
-                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-                # ujin 님 작업 영역 종료
-                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-                -->
+            <!--
+            # 유사그룹 평점기준+리뷰수50개이상
+            -->
+            {% if session['user'] %}
+                {% include "mhi/list.html" %}
+            {% endif %}
+            <!--
+            # 유사그룹 평점기준+리뷰수50개이상 끝
+            -->
     
             <!--
-            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-            # 문홍일 님 작업 영역 시작
-            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            # 유사그룹의 구매횟수 기준 시작
             -->
             <br>
             {% if session["user"] %}
@@ -137,44 +117,49 @@ loadRanking();
                     </div>
                 </div>  
 
-                {% if session['user'] %}
-                    {% include "mhi/rank.html" %}
-                    <br>
-            
-                {% endif %}        
 
-                {% if session["user"] %}
-                {% include "mhi/rank_g.html" %}
-                {% endif %}
-                {% if not session["user"] %}
-                    <div class="best-items-container">
-                        </div>
-                {% endif %}
-
-            {% endif %}        
-            
-            <br>
             <!--
-            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-            # 문홍일 님 작업 영역 끝
-            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            # 유사그룹의 구매횟수 기준 끝
             -->
+
             <!-- 
-            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-            # ujin 님 작업 영역 시작
-            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            유사그룹 최종 아이템 추천 그래프 시작
             -->
+            {% if session['user'] %}
+            {% include "mhi/rank.html" %}
+             <br>
+            {% include "mhi/rank_g.html" %}
+            {% endif %}
+            <!-- 
+            유사그룹 최종 아이템 추천 그래프 끝
+            -->
+
+            <!-- 
+            로그아웃시 영역 시작
+            -->
+            {% if not session["user"] %}
+            <div class="best-items-container">
+            </div>
+            {% endif %}
+            <h3></h3>
+            {% else %}
+            {% include "mhi/nogroup.html" %}
+            {% endif %}
+            {% endif %}        
+
+            <section>
+                {% include "mhi/list_logout.html" %}
+            </section>
+            <br>
+
             {% if not session["user"] %}
                 {% include "includes/_nologinformaintochart.html" %}
             {% endif %}
             <!-- 
-            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
-            # ujin 님 작업 영역 종료
-            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            로그아웃시 영역 끝
             -->
-                <h3></h3>
-                {% endif %}
-                {% include "mhi/nogroup.html" %}
+            
+
         </main>
         <aside id="rank" class="ranking-box">
             <div class="rank_title">랭킹</div>
