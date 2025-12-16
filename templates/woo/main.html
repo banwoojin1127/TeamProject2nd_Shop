@@ -79,7 +79,8 @@ loadRanking();
         <main style="flex: 1;">
         {% include "includes/_carousel.html" %}
 
-            
+            {% if session['user'] and weighted_recommendations_list is defined and weighted_recommendations_list|length > 0 %}
+
                 <!--
                 # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
                 # 문홍일 님 작업 영역 시작
@@ -150,7 +151,7 @@ loadRanking();
                         </div>
                 {% endif %}
 
-            {% endif %}
+            {% endif %}        
             
             <br>
             <!--
@@ -171,6 +172,9 @@ loadRanking();
             # ujin 님 작업 영역 종료
             # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
             -->
+                <h3></h3>
+                {% endif %}
+                {% include "mhi/nogroup.html" %}
         </main>
         <aside id="rank" class="ranking-box">
             <div class="rank_title">랭킹</div>
