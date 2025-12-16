@@ -75,11 +75,13 @@ def cart_page() :
         # WooGemini 및 WooDAO import 필수
 
         user_id = user.get("user_id")
-        recommend_plan = wodel.recommend_item_in_cart(user_id)
-        print("# " + "=" * 50 + "\n" + f"sky.py 추천API : {recommend_plan}" + "\n" + "# " + "=" * 50 + "\n")
+# ===== API 한도 도달시 주석처리 하면 에러 회피 Start =====
+#        recommend_plan = wodel.recommend_item_in_cart(user_id)
+#        print("# " + "=" * 50 + "\n" + f"sky.py 추천API : {recommend_plan}" + "\n" + "# " + "=" * 50 + "\n")
 
-        dao = WooDAO()
-        recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan, quantity=1)
+#        dao = WooDAO()
+#        recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan, quantity=1)
+# ===== API 한도 도달시 주석처리 하면 에러 회피 End =====
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 # 장바구니 - API 를 활용한 추천 상품출력 End w.woo
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====

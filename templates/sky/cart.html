@@ -121,7 +121,7 @@
             <div class="recommended_banner">
                 <!-- 추천 알고리즘 플랜 설명 w.woo -->
                 <div class="recommended-wide-banner" style="padding: 12px;">
-                {% if session['user'] is not none and recom_li is not none %}
+                {% if "user" in session and recom_li is not none %}
                     <h5><p><strong>* 현재 장바구니 상품 기준 추천 전략</strong></p></h5>
                     {% for plan in recom_pl['추천전략'] %}
                     <p><strong>0{{ loop.index0 + 1 }}번.</strong> {{ plan }}</p>
