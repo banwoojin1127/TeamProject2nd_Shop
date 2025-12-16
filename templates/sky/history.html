@@ -25,49 +25,8 @@
         </nav>
         
         <h1 class="page-title">구매내역</h1>
-        {% if datas %}
-        <section class="cart-list">
-            {% for item in datas %}
-            <form id="cart" class="cart-item" onclick='location.href="/{{ item.item_category }}/{{ item.item_id }}"'>
-                <div class="cart-item-img-placeholder">
-                    {% if item.item_img.endswith(".png") %}
-                        <!-- 이미지 파일로 받을 때 -->
-                        <img src="{{ url_for('static', filename='img/_item/' ~ item.item_img) }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
-                    {% else %}
-                        <!-- 이미지 링크로 받을 때 -->
-                        <img src="{{ item.item_img }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
-                    {% endif %}
-                </div>
-                <div class="cart-item-details">
-                    <p class="cart-item-name">상품명&nbsp
-                        <span class="cart-item-name-context">
-                            {{item.item_name}}
-                        </span>
-                    </p>
-                </div>
-                <div class="cart-item-detail-area">
-                    <p class="cart-item-detail-info">
-                        상품 상세 정보<br>
-                        <span class="cart-item-detail-context">{{item.item_name}}입니다.</span>
-                    </p>
-                    <div class="cart-item-tags">
-                        {% for tag in item.tags %}
-                            <span>#{{ tag }}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="cart-item-price">
-                    <p>상품 가격<br><br>
-                        <span class="cart-item-price-context">
-                            {{'{:,}'.format(item.item_price)}} 원
-                        </span>
-                    </p>
-                </div>
-            </form>
-            {% endfor %}
-        </section>
-        <br><br>
 
+        <br>
         <h2 class="section-title">비슷한 사용자들이 많이 구매한 상품들이에요!</h2>
         {% if rdatas %}
         <section class="recommended-items">
@@ -115,8 +74,55 @@
                 </div>
             </div>
             {% endif %}
-
         </section>
+        <br><hr><br>
+
+        {% if datas %}
+        <section class="cart-list">
+            {% for item in datas %}
+            <form id="cart" class="cart-item" onclick='location.href="/{{ item.item_category }}/{{ item.item_id }}"'>
+                <div class="cart-item-img-placeholder">
+                    {% if item.item_img.endswith(".png") %}
+                        <!-- 이미지 파일로 받을 때 -->
+                        <img src="{{ url_for('static', filename='img/_item/' ~ item.item_img) }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
+                    {% else %}
+                        <!-- 이미지 링크로 받을 때 -->
+                        <img src="{{ item.item_img }}" alt="{{ item.item_name }}" style="width: 100px; height: 100px; object-fit:cover;">
+                    {% endif %}
+                </div>
+                <div class="cart-item-details">
+                    <p class="cart-item-name">상품명&nbsp
+                        <span class="cart-item-name-context">
+                            {{item.item_name}}
+                        </span>
+                    </p>
+                </div>
+                <div class="cart-item-detail-area">
+                    <p class="cart-item-detail-info">
+                        상품 상세 정보<br>
+                        <span class="cart-item-detail-context">{{item.item_name}}입니다.</span>
+                    </p>
+                    <div class="cart-item-tags">
+                        {% for tag in item.tags %}
+                            <span>#{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="cart-item-price">
+                    <p>상품 가격<br><br>
+                        <span class="cart-item-price-context">
+                            {{'{:,}'.format(item.item_price)}} 원
+                        </span>
+                    </p>
+                </div>
+            </form>
+            {% endfor %}
+        </section>
+        <br><br>
+
+        <button id="pop" class="top-btn">TOP</button>
+            <div id="scroll-trigger" style="height: 50px;"></div>
+
         <br><br>
         {% else %}
         <p>추천 상품이 없습니다.</p>
