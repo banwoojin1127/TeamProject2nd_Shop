@@ -59,7 +59,7 @@ loadRanking();
         {% include "includes/_catenav.html" %}
     </header>
 
-    <div class="content-wrapper" style="display: flex; justify-content: space-between; align-items: flex-start;">
+    <div class="content-wrapper layout-anchor" style="display: flex; justify-content: space-between; align-items: flex-start;">
         <main style="flex: 1;">
 
 {% include "includes/_carousel.html" %}
@@ -131,6 +131,7 @@ loadRanking();
             <div class="rank_center">
                 <div class="rank_title">👑전체 인기 태그 랭킹</div>
                 <ul id="ranking-tag" class="rank_container"></ul>
+
                 {% if session['user'] %}
                 <div class="rank_title">👑개인 태그 랭킹</div>
                 <ul id="ranking-user-tag" class="rank_container"></ul>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub - 메인 페이지</title>
+    {% include "includes/_style.html" %}
+</head>
+
+<script>
+function renderRanking(ulId, data) {
+    let html = "";
+
+    data.forEach((row, idx) => {
+        let imgSrc = row.item_img 
+            ? (row.item_img.endsWith(".png") || row.item_img.endsWith(".jpg") || row.item_img.endsWith(".jpeg")
+                ? "/static/img/_item/" + row.item_img
+                : row.item_img)
+            : "/static/img/default.png";
+
+        html += `
+            <li class="rank_list">
+                <span class="rank_img">
+                    <img src="${imgSrc}" style="width:30px; height:30px; object-fit:cover;">
+                </span>
+                <span class="rank">${idx + 1}</span>
+                <span class="keyword">${row.keyword}</span>
+                <span class="score">${row.total_score}</span>
+            </li>
+        `;
+    });
+
+    $(`#${ulId}`).html(html);
+}
+
+function loadRanking() {
+    const IS_LOGIN = document.body.dataset.isLogin === "True";
+
+    //전체 키워드 랭킹
+    $.get("/api/tag_ranking/all", function(data) {
+        renderRanking("ranking-tag", data);
+    });
+
+    //개인 키워드 랭킹(로그인한 상태에서 만)
+    if (IS_LOGIN) {
+        $.get("/api/tag_ranking/user", function(res) {
+            renderRanking("ranking-user-tag", res.rows);
+        });
+    }
+}
+
+
+setInterval(loadRanking, 3000);
+loadRanking();
+</script>
+<body data-is-login="{{ 'True' if session['user'] else 'False' }}">
+    <header>
+        {% include "includes/_header.html" %}
+        {% include "includes/_catenav.html" %}
+    </header>
+
+        <div class="content-wrapper layout-anchor" style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <main>
+        {% include "includes/_carousel.html" %}
+
+            
+                <!--
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                # 문홍일 님 작업 영역 시작
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                -->
+                {% if session['user'] %}
+                    {% include "mhi/list.html" %}
+                {% endif %}
+                <!--
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                # 문홍일 님 작업 영역 끝
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                -->
+                <!-- 
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                # ujin 님 작업 영역 시작
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                -->
+                <section>
+                    {% include "mhi/list_logout.html" %}
+                </section>
+
+                <!-- 
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                # ujin 님 작업 영역 종료
+                # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+                -->
+    
+            <!--
+            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            # 문홍일 님 작업 영역 시작
+            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            -->
+            <br>
+            {% if session["user"] %}
+            <h4 class="mb-3">
+                <span class="tooltip-container">
+                    📌 유사그룹의 구매횟수 기준
+                    <span class="tooltip-text">
+                        유사그룹(본인나이±5, 동일성별)이 구매한 아이템중에 구매횟수가 많은 아이템을 출력
+                    </span>
+                </span>
+            </h4>     
+
+                <div class="container mt-3">
+                    <div class="row">
+                        <div class="col-md-8">
+                            {% include "mhi/group_recommend.html" %}
+                        </div>
+
+                        <div class="col-md-4">
+                            {% include "mhi/group_g.html" %}
+                        </div>
+                    </div>
+                </div>  
+
+                {% if session['user'] %}
+                    {% include "mhi/rank.html" %}
+                    <br>
+            
+                {% endif %}        
+
+                {% if session["user"] %}
+                {% include "mhi/rank_g.html" %}
+                {% endif %}
+                {% if not session["user"] %}
+                    <div class="best-items-container">
+                        </div>
+                {% endif %}
+
+            {% endif %}
+            
+            <br>
+            <!--
+            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            # 문홍일 님 작업 영역 끝
+            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            -->
+            <!-- 
+            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            # ujin 님 작업 영역 시작
+            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            -->
+            {% if not session["user"] %}
+                {% include "includes/_nologinformaintochart.html" %}
+            {% endif %}
+            <!-- 
+            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            # ujin 님 작업 영역 종료
+            # ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+            -->
+        </main>
+        <aside id="rank" class="ranking-box">
+            <div class="rank_align">
+                <img class="rank_logo" src="/static/img/hub_logo.png">
+            </div>
+            <div class="rank_center">
+                <div class="rank_title">👑전체 인기 태그 랭킹</div>
+                <ul id="ranking-tag" class="rank_container"></ul>
+                {% if session['user'] %}
+                <div class="rank_title">👑개인 태그 랭킹</div>
+                <ul id="ranking-user-tag" class="rank_container"></ul>
+                {% endif %}
+            </div>
+        </aside>
+    </div>
+</html>
