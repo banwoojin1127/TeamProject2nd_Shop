@@ -53,7 +53,7 @@ function loadRanking() {
 setInterval(loadRanking, 3000);
 loadRanking();
 </script>
-<body>
+<body data-is-login="{{ 'True' if session['user'] else 'False' }}">
     <header>
         {% include "includes/_header.html" %}
         {% include "includes/_catenav.html" %}
