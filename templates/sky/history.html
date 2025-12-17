@@ -211,14 +211,15 @@
                 recommendChart.destroy();
             }
 
-            const labels = chartData.labels.map(l =>
+            const fullLabels = chartData.labels;
+            const shortLabels = fullLabels.map(l =>
                 l.length > 10 ? l.slice(0, 10) + "..." : l
             );
 
             recommendChart = new Chart(canvas, {
                 type: "doughnut",
                 data: {
-                    labels: labels,
+                    labels: shortLabels,
                     datasets: [{
                         data: chartData.values
                     }]
@@ -230,10 +231,34 @@
                         title: {
                             display: true,
                             text: "유사 사용자 구매 TOP 상품",
-                            font: { size: 20 }
+                            font: { size: 25 },
+                            padding: {
+                                bottom: 25
+                            }
                         },
                         legend: {
                             position: "bottom"
+                        },
+                        tooltip: {
+                            callbacks: {
+                                // 기본 title 제거 (잘린 라벨 방지)
+                                title: () => '',
+
+                                // 커스텀 툴팁
+                                label: function (context) {
+                                    const index = context.dataIndex;
+                                    const fullName = fullLabels[index];
+                                    const count = context.parsed;
+
+                                    // 상품명 자동 줄바꿈 (20자 기준)
+                                    const wrappedName = fullName.match(/.{1,20}/g);
+
+                                    return [
+                                        ...wrappedName,
+                                        `구매 횟수 ${count}회`
+                                    ];
+                                }
+                            }
                         }
                     }
                 }
