@@ -333,12 +333,24 @@ def algo_page() :
 # ------------------------------
 # 랭킹 - GET (화면)
 # ------------------------------
-@sky_bp.route("/api/ranking")
-def api_ranking():
+@sky_bp.route("/api/tag_ranking/all")
+def api_ranking() :
     dao = SkyDAO()
-    rows = dao.get_realtime_ranking()
+    rows = dao.get_all_ranking()
     dao.close()
     return jsonify(rows)
+
+@sky_bp.route("/api/tag_ranking/user")
+def api_user_tag_ranking() :
+    # user_id = get_user_id()
+    user_id = session['user']['user_id'] 
+    dao = SkyDAO()
+    rows = dao.get_personal_ranking(user_id)
+    dao.close()
+    return jsonify({
+        "rows": rows,
+        "user_id": user_id
+    })
 
 
 """

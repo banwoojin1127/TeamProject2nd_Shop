@@ -24,7 +24,51 @@ async function fetchData() {
     isLoading = false;
 }
 
-// 상품 리스트 출력
+// // 상품 리스트 출력
+// function renderItems(items) {
+//     const list = document.getElementById('infinite_scroll');
+
+//     items.forEach(item => {
+//         const a = document.createElement('a');
+//         a.href = `/${sessionCateNo}/${item.item_id}`;
+
+//         const wrapper = document.createElement('div');
+//         wrapper.classList.add('product-item');
+
+//         const imgBox = document.createElement('div');
+//         imgBox.classList.add('img-box');
+
+//         const img = document.createElement('img');
+
+//         // ★ DB의 값에 따라 경로 분기 (HTML과 동일한 로직)
+//         if (item.item_img.endsWith(".png")) {
+//             img.src = `/static/img/_item/${item.item_img}`;
+//         } else {
+//             img.src = item.item_img;
+//         }
+
+//         img.style.width = '100%';
+//         img.style.height = '100%';
+
+//         imgBox.appendChild(img);
+
+//         const name = document.createElement('span');
+//         name.classList.add('cate_item_name');
+//         name.textContent = item.item_name;
+
+//         const price = document.createElement('span');
+//         price.classList.add('cate_item_price');
+//         price.textContent = `${item.item_price.toLocaleString()} 원`;
+
+//         wrapper.appendChild(imgBox);
+//         wrapper.appendChild(name);
+//         wrapper.appendChild(price);
+
+//         a.appendChild(wrapper);
+//         list.appendChild(a);
+//     });
+// }
+
 function renderItems(items) {
     const list = document.getElementById('infinite_scroll');
 
@@ -35,48 +79,49 @@ function renderItems(items) {
         const wrapper = document.createElement('div');
         wrapper.classList.add('product-item');
 
+        // 이미지
         const imgBox = document.createElement('div');
         imgBox.classList.add('img-box');
-
         const img = document.createElement('img');
-
-        // ★ DB의 값에 따라 경로 분기 (HTML과 동일한 로직)
-        if (item.item_img.endsWith(".png")) {
-            img.src = `/static/img/_item/${item.item_img}`;
-        } else {
-            img.src = item.item_img;
-        }
-
-        img.style.width = '100%';
-        img.style.height = '100%';
-
+        img.src = item.item_img.endsWith(".png") ? `/static/img/_item/${item.item_img}` : item.item_img;
         imgBox.appendChild(img);
+        wrapper.appendChild(imgBox);
 
+        // 이름 & 가격
         const name = document.createElement('span');
         name.classList.add('cate_item_name');
         name.textContent = item.item_name;
-
         const price = document.createElement('span');
         price.classList.add('cate_item_price');
         price.textContent = `${item.item_price.toLocaleString()} 원`;
-
-        wrapper.appendChild(imgBox);
         wrapper.appendChild(name);
         wrapper.appendChild(price);
+
+        // 태그
+        if (item.tags && item.tags.length > 0) {
+            const tagDiv = document.createElement('div');
+            tagDiv.classList.add('cart-item-tags');
+            item.tags.forEach(tag => {
+                const tagLink = document.createElement('a');
+                tagLink.href = `/search?keyword=${encodeURIComponent(tag)}`;
+                const span = document.createElement('span');
+                span.textContent = `#${tag}`;
+                tagLink.appendChild(span);
+                tagDiv.appendChild(tagLink);
+            });
+            wrapper.appendChild(tagDiv);
+        }
 
         a.appendChild(wrapper);
         list.appendChild(a);
     });
 }
 
-
-// IntersectionObserver 생성
+// IntersectionObserver
 const observer = new IntersectionObserver(async entries => {
     if (entries[0].isIntersecting) {
         await fetchData();
     }
 });
-
-// 관찰 시작
 observer.observe(document.getElementById('scroll-trigger'));
 </script>

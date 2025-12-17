@@ -10,6 +10,7 @@ from flask import Blueprint, render_template, redirect, session, url_for, reques
 # request,
 from flask_dao.woo_dao import WooDAO
 # woo = WooDAO()
+from flask_dao.sky_dao import SkyDAO
 
 from service.woo.for_gemini import WooGemini
 wodel = WooGemini()
@@ -256,6 +257,9 @@ def api_scroll(category_no):
     }
     parent_id = url_index_to_parent_id.get(category_no, 1)  # 기본값 1
 
+#======================================
+#           하늘 작업 (시작)           
+#======================================
     page = int(request.args.get("page", 1))
     per_page = 20
     offset = (page - 1) * per_page
@@ -263,7 +267,22 @@ def api_scroll(category_no):
     dao = WooDAO()
     items = dao.get_items_by_parent(parent_id, offset, per_page)
 
-    return jsonify(items)
+    sky_dao = SkyDAO()
+    try:
+        items = sky_dao.get_items_by_category(category_no, per_page=per_page, offset=offset)
+
+        # 각 아이템에 tags 추가
+        for item in items:
+            item_tags = sky_dao.get_item_tag(item['item_id'])
+            item['tags'] = item_tags if item_tags else []
+            
+        return jsonify(items)
+    finally:
+        sky_dao.close()
+
+#======================================
+#           하늘 작업 (끝)           
+#======================================
 
 
 # ===== ===== ===== ===== ===== ===== ===== ===== ===== =====

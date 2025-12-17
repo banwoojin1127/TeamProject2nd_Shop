@@ -31,7 +31,6 @@ def item(category_no=0, item_no=0):
     # DAO 생성 및 사용
     dao = LshDAO()
     try:
-        result = dao.load_i_info(item_no)
         #======================================
         #           하늘 작업 2(시작)           
         #======================================

@@ -1,0 +1,76 @@
+#rank {
+    background-color: rgb(255, 255, 255);
+    width: 300px;
+    height: fit-content;        /* 콘텐츠에 맞게 자동 높이 1700px*/
+    margin-top: 20px;
+    margin-right: 100px;
+    border-radius: 8px;
+    border: #16D99B solid 1px;
+    position: sticky;
+}
+
+#rank_body {
+    display: flex;
+    flex-direction: column; /* 세로로 쌓기 */
+    gap: 10px; /* 랭킹 간 간격 */
+}
+
+.rank_title {
+    margin-top: 30px;
+    font-size: 18px;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    background-color: #16D99B;
+    width: 200px;
+    height: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+
+    display: flex;               /* Flex 컨테이너로 변경 */
+    justify-content: center;     /* 가로 중앙 */
+    align-items: center;         /* 세로 중앙 */
+    font-weight: bold;
+    text-align: center;       /* 혹시 텍스트가 여러 줄이면 중앙 */
+}
+
+.rank_container {
+    font-size: 20px;
+    line-height: 3;
+    color: #333;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.rank_logo {
+    margin-top: 40px;
+    margin-bottom: 5px;
+    /* margin-left: 117px; */
+    width: 150px;
+    height: 50px;
+    justify-content: center;
+}
+
+.rank_align {
+    display: flex;
+    justify-content: center;
+}
+
+.rank_list {
+    margin-top: 10px;
+    text-align: center;
+    justify-content: center;
+}
+
+.rank_center {
+    display: flex;           /* flex 컨테이너 */
+    flex-direction: column;  /* 위아래로 쌓기 */
+    align-items: center;     /* 좌우 중앙 정렬 */
+}
+
+.layout-anchor {
+  width: 1200px;      /* 디자인 기준 폭 */
+  margin: 0 auto;     /* viewport 기준 중앙 */
+  position: relative;
+  left: calc(3.5%);
+}
