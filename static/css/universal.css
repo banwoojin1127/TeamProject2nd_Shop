@@ -60,6 +60,7 @@ header {
     height: 50px;
     max-height: 50px;
     margin: 15px;
+    width: 475px;
 }
 .search-bar input#search {
     border: none;
