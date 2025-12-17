@@ -77,87 +77,66 @@ loadRanking();
 
     <div class="content-wrapper" style="display: flex; justify-content: space-between; align-items: flex-start;">
         <main style="flex: 1;">
-        {% include "includes/_carousel.html" %}
 
-            {% if session['user'] and weighted_recommendations_list is defined and weighted_recommendations_list|length > 0 %}
+{% include "includes/_carousel.html" %}
 
-            <!--
-            # 유사그룹 평점기준+리뷰수50개이상
-            -->
-            {% if session['user'] %}
-                {% include "mhi/list.html" %}
-            {% endif %}
-            <!--
-            # 유사그룹 평점기준+리뷰수50개이상 끝
-            -->
-    
-            <!--
-            # 유사그룹의 구매횟수 기준 시작
-            -->
-            <br>
-            {% if session["user"] %}
-            <h4 class="mb-3">
-                <span class="tooltip-container">
-                    📌 유사그룹의 구매횟수 기준
-                    <span class="tooltip-text">
-                        유사그룹(본인나이±5, 동일성별)이 구매한 아이템중에 구매횟수가 많은 아이템을 출력
-                    </span>
+{# ============================
+   로그인 사용자
+============================ #}
+{% if session["user"] %}
+
+    {# 유사그룹 데이터 있음 #}
+    {% if weighted_recommendations_list is defined and weighted_recommendations_list|length > 0 %}
+
+        <!-- 유사그룹 평점 기준 -->
+        {% include "mhi/list.html" %}
+
+        <br>
+
+        <!-- 유사그룹 구매횟수 기준 -->
+        <h4 class="mb-3">
+            <span class="tooltip-container">
+                📌 유사그룹의 구매횟수 기준
+                <span class="tooltip-text">
+                    유사그룹(본인나이±5, 동일성별)이 구매한 아이템 중
+                    구매횟수가 많은 아이템을 출력
                 </span>
-            </h4>     
+            </span>
+        </h4>
 
-                <div class="container mt-3">
-                    <div class="row">
-                        <div class="col-md-8">
-                            {% include "mhi/group_recommend.html" %}
-                        </div>
-
-                        <div class="col-md-4">
-                            {% include "mhi/group_g.html" %}
-                        </div>
-                    </div>
-                </div>  
-
-
-            <!--
-            # 유사그룹의 구매횟수 기준 끝
-            -->
-
-            <!-- 
-            유사그룹 최종 아이템 추천 그래프 시작
-            -->
-            {% if session['user'] %}
-            {% include "mhi/rank.html" %}
-             <br>
-            {% include "mhi/rank_g.html" %}
-            {% endif %}
-            <!-- 
-            유사그룹 최종 아이템 추천 그래프 끝
-            -->
-
-            <!-- 
-            로그아웃시 영역 시작
-            -->
-            {% if not session["user"] %}
-            <div class="best-items-container">
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-md-8">
+                    {% include "mhi/group_recommend.html" %}
+                </div>
+                <div class="col-md-4">
+                    {% include "mhi/group_g.html" %}
+                </div>
             </div>
-            {% endif %}
-            <h3></h3>
-            {% else %}
+        </div>
+
+        <br><br>
+
+        <!-- 최종 추천 그래프 -->
+        {% include "mhi/rank.html" %}
+        {% include "mhi/rank_g.html" %}
+
+        {# 유사그룹 데이터 없음 #}
+        {% else %}
             {% include "mhi/nogroup.html" %}
-            {% endif %}
-            {% endif %}        
+        {% endif %}
 
-            <section>
-                {% include "mhi/list_logout.html" %}
-            </section>
+        {# ============================
+        로그아웃 사용자
+        ============================ #}
+        {% else %}
+
+            {% include "mhi/list_logout.html" %}
             <br>
+            {% include "includes/_nologinformaintochart.html" %}
 
-            {% if not session["user"] %}
-                {% include "includes/_nologinformaintochart.html" %}
-            {% endif %}
-            <!-- 
-            로그아웃시 영역 끝
-            -->
+        {% endif %}
+
             
 
         </main>
