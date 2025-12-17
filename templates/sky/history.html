@@ -86,7 +86,7 @@
             <div class="recommended-container">
                 {% for item in rdatas %}
                 <div class="recommended-list">
-                    <form action="{{ url_for('sky.add_to_cart', item_id=item.item_id) }}" method="post">
+                    <form action="/cart/add/${item.item_id}" method="post">
                         <div class="recommend-item">
                             <div class="cart-item-img-placeholder">
                                 {% if item.item_img.endswith(".png") %}
@@ -282,7 +282,7 @@
 
                 container.innerHTML += `
                     <div class="recommended-list">
-                        <form action="/add_to_cart/${item.item_id}" method="post">
+                        <form action="/cart/add/${item.item_id}" method="post">
                             <div class="recommend-item">
                                 <div class="cart-item-img-placeholder">
                                     ${imgTag}
