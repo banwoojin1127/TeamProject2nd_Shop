@@ -31,7 +31,9 @@
                     <h1 class="product-name"> {{ ie["item_name"] }} </h1>
                     <div class="cart-item-tags">
                         {% for tag in ie.tags %}
-                            <span>#{{ tag }}</span>
+                            <a href="{{ url_for('sky.search', keyword=tag) }}">
+                                <span>#{{ tag }}</span>
+                            </a>
                         {% endfor %}
                     </div>
                 </div>

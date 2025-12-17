@@ -89,6 +89,12 @@
                         </div>
                         <span class="cate_item_name">{{ ie['item_name'] }}</span>
                         <span class="cate_item_price">{{'{:,}'.format(ie['item_price'])}} 원</span>
+                        <div class="cart-item-tags">
+                        {% for tag in ie.tags %}
+                            <a href="{{ url_for('sky.search') }}?keyword={{ tag }}">
+                                <span>#{{ tag }}</span>
+                            </a>
+                        {% endfor %}
                     </div>
                 </a>
             {% endfor %}
