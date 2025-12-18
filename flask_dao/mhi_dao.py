@@ -161,7 +161,7 @@ class MhiDAO:
             WHERE ph.user_id IN ({format_strings})
             GROUP BY ph.item_id, i.item_name, i.item_rate, i.item_reviewcnt, 
                      i.item_img, i.item_price, i.item_category
-            ORDER BY purchase_count DESC -- ✅ 이 줄을 완전히 지우고 다시 입력합니다.
+            ORDER BY purchase_count DESC --
                     """
         cursor.execute(sql, tuple(user_list))
         return cursor.fetchall()
