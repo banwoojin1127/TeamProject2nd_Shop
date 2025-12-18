@@ -274,37 +274,103 @@ class SkyDAO :
             return None
 
     """랭킹"""
-    #전체 인기순위 (전체 : 1 검색 0.7: 클릭: 0.3)
-    def get_realtime_ranking(self):
-        try :
+    #전체 인기 태그 순위 (전체 : 1 검색 0.7: 클릭: 0.3)
+    def get_all_ranking(self):
+        try:
             sql = """
-            SELECT keyword, SUM(score) AS total_score
-            FROM (
-                SELECT keyword, COUNT(*) * 7 AS score
-                FROM search_log
-                GROUP BY keyword
+                SELECT 
+                    r.keyword,
+                    r.total_score,
+                    i.item_id,
+                    i.item_name,
+                    i.item_price,
+                    i.item_img
+                FROM (
+                    SELECT keyword, SUM(score) AS total_score
+                    FROM (
+                        SELECT keyword, COUNT(*) * 7 AS score
+                        FROM search_log
+                        GROUP BY keyword
 
-                UNION ALL
+                        UNION ALL
 
-                SELECT sl.keyword, COUNT(*) * 3 AS score
-                FROM search_click_log cl
-                JOIN search_log sl ON cl.log_id = sl.log_id
-                GROUP BY sl.keyword
-            ) t
-            GROUP BY keyword
-            ORDER BY total_score DESC
-            LIMIT 10
+                        SELECT sl.keyword, COUNT(*) * 3 AS score
+                        FROM search_click_log cl
+                        JOIN search_log sl ON cl.log_id = sl.log_id
+                        GROUP BY sl.keyword
+                    ) t
+                    WHERE keyword <> ''
+                    GROUP BY keyword
+                    ORDER BY total_score DESC
+                    LIMIT 10
+                ) r
+                LEFT JOIN item i
+                ON i.item_id = (
+                    SELECT item_id
+                    FROM item
+                    WHERE item_name LIKE CONCAT('%', r.keyword, '%')
+                    LIMIT 1
+                );
             """
             self.cursor.execute(sql)
             return self.cursor.fetchall()
-        except Exception as e :
+        except Exception:
             self.conn.rollback()
             traceback.print_exc()
-            return self.fetchall(sql)
+            return []
+    #개인 사용자 인기 태그 순위 (전체 : 1 검색 0.7: 클릭: 0.3)
+    def get_personal_ranking(self, user_id):
+        """
+        개인 사용자 인기 태그 순위 (검색 7 : 클릭 3)
+        검색 로그와 클릭 로그 합산 후 item 정보 JOIN
+        """
+        try:
+            sql = """
+            SELECT r.keyword,
+                r.total_score,
+                i.item_id,
+                i.item_name,
+                i.item_price,
+                i.item_img
+            FROM (
+                SELECT keyword, SUM(score) AS total_score
+                FROM (
+                    -- 검색 로그 점수
+                    SELECT keyword, 7 AS score
+                    FROM search_log
+                    WHERE user_id = %s
+                    AND TRIM(keyword) <> ''
+
+                    UNION ALL
+
+                    -- 클릭 로그 점수
+                    SELECT sl.keyword, 3 AS score
+                    FROM search_click_log cl
+                    JOIN search_log sl ON cl.log_id = sl.log_id
+                    WHERE sl.user_id = %s
+                    AND TRIM(sl.keyword) <> ''
+                ) combined
+                GROUP BY keyword
+                ORDER BY total_score DESC
+                LIMIT 10
+            ) r
+            LEFT JOIN item i
+                ON i.item_id = (
+                    SELECT item_id
+                    FROM item
+                    WHERE item_name LIKE CONCAT('%%', r.keyword, '%%')
+                    LIMIT 1
+                );
+            """
+            # execute에 user_id를 두 번 전달 (검색/클릭)
+            self.cursor.execute(sql, (user_id, user_id))
+            return self.cursor.fetchall()
+        except Exception as e:
+            print("Error in get_personal_ranking:", e)
+            self.conn.rollback()
+            return []
+
         
-    #사용자 
-
-
     #데이터베이스 연결 종료
     def close(self) :
         self.cursor.close()

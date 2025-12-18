@@ -103,12 +103,12 @@ class LshDAO :
         if not user_ids:
             return []
 
-        if period == "daily":
-            condition = "p.purchase_date >= CURDATE()"
-        elif period == "weekly":
+        if period == "weekly":
             condition = "p.purchase_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)"
         elif period == "monthly":
             condition = "p.purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)"
+        elif period == "yearly":
+            condition = "p.purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)"
         else:
             condition = "1=1"
 

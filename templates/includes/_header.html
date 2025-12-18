@@ -14,8 +14,8 @@
     </form>
     <div class="user-menu">
         {% if session["user"] %}
-        <span>{{ session["user"]["user_name"] }} 님</span>
-        <form action="/algo">
+        <span>🎅{{ session["user"]["user_name"] }} 님</span>
+        <form action="/cart">
             <input type="submit" class="mypage-link" value="마이페이지">
         </form>
         <form action="/logout" method="post">

@@ -1,4 +1,5 @@
 import numpy as np
+from collections import defaultdict
 from scipy.sparse import csr_matrix
 from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import normalize
@@ -15,17 +16,13 @@ def recommend_purchase(
 ):
     dao = LshDAO()
 
-    # ================== 1. 기간별 구매 이력 조회 ==================
+    # ================== 1. 기간별 구매 이력 ==================
     history_rows = dao.get_purchase_history_all_by_period(period)
 
     if not history_rows:
         dao.close()
         return {"error": "구매 이력이 없습니다."}
 
-    # item 정보
-    item_rows = dao.get_items_all()
-
-    # 사용자 / 상품 목록
     user_list = sorted({r["user_id"] for r in history_rows})
     item_list = sorted({r["item_id"] for r in history_rows})
 
@@ -59,16 +56,45 @@ def recommend_purchase(
     top_indices = sims.argsort()[::-1][:user_top_n]
     similar_users = [user_list[i] for i in top_indices]
 
+    # ================== 4-1. 타겟 유저 구매 상품 ==================
+    target_user_items = {
+        r["item_id"] for r in history_rows
+        if r["user_id"] == target_user
+    }
+
     # ================== 5. 유사 사용자 TOP 상품 ==================
     top_items = dao.get_top_items_from_users_by_period(
         similar_users,
         period,
-        top_n=item_top_k
+        top_n=item_top_k * 2   # ← 여유 있게 더 가져옴
     )
 
     dao.close()
 
-    # ================== 6. 추천 상품 ==================
+    # ================== 6. 타겟 유저 구매 상품 제외 ==================
+    filtered_items = [
+        r for r in top_items
+        if r["item_id"] not in target_user_items
+    ]
+
+    # ================== 6-1. 카테고리 과다 추천 방지 ==================
+    MAX_PER_CATEGORY = 2
+    category_count = defaultdict(int)
+    diversified_items = []
+
+    for r in filtered_items:
+        cat = r["item_category"]
+
+        if category_count[cat] >= MAX_PER_CATEGORY:
+            continue
+
+        diversified_items.append(r)
+        category_count[cat] += 1
+
+        if len(diversified_items) >= item_top_k:
+            break
+
+    # ================== 7. 추천 상품 ==================
     recommended_items = [{
         "item_id": r["item_id"],
         "item_name": r["item_name"],
@@ -76,9 +102,9 @@ def recommend_purchase(
         "item_category": r["item_category"],
         "item_img": r["item_img"],
         "purchase_count": r["cnt"]
-    } for r in top_items]
+    } for r in diversified_items]
 
-    # ================== 7. Chart 데이터 ==================
+    # ================== 8. Chart 데이터 ==================
     return {
         "target_user": target_user,
         "similar_users": similar_users,
@@ -88,3 +114,4 @@ def recommend_purchase(
             "values": [i["purchase_count"] for i in recommended_items]
         }
     }
+

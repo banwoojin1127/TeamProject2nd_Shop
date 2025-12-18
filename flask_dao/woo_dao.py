@@ -325,14 +325,15 @@ class WooDAO :
 
         except Exception as e :
             print("# " + "=" * 50)
-            print(f"데이터베이스 오류 발생: {e}")
+            print("Debug | Class WooDAO : 328 | Exception")
+            print(f"Debug | ERROR | {e}")
             print("# " + "=" * 50)
 
             return []
 
         if df.empty :
             print("# " + "=" * 50)
-            print("데이터프레임 오류 발생")
+            print("Debug | Class WooDAO : 336 | 데이터프레임 오류 발생")
             print("# " + "=" * 50)
 
             return []
@@ -344,13 +345,13 @@ class WooDAO :
         rate_mean = df['item_rate'].mean()
 
         # m_vote (Minimum Votes): 순위에 진입하기 위한 최소 리뷰 수 기준
-        # 여기서는 리뷰 수 분포의 상위 80% (Q80) 지점을 m_vote 으로 설정하여,
+        # 여기서는 리뷰 수 분포의 상위 70% (Q70) 지점을 m_vote 으로 설정하여,
         # 리뷰 수가 충분히 많은 상품에 높은 가중치를 부여합니다.
-        # m_vote = df['item_reviewcnt'].quantile(0.8) # 리뷰 수 상위 20%의 최소값
+        # m_vote = df['item_reviewcnt'].quantile(0.7) # 리뷰 수 상위 30%의 최소값
         # 또는 고정값 사용 (예: 50개)
-        m_vote = m_vote = df['item_reviewcnt'].quantile(0.7)
+        m_vote = df['item_reviewcnt'].quantile(0.7)
 
-        # 3. Weighted Rating (WR) 공식 적용
+        # Weighted Rating (WR) 공식 적용
         def weighted_rating(row, m_vote, rate_mean):
             re_cnt = row['item_reviewcnt'] # v: 해당 상품의 리뷰 수
             s_rate = row['item_rate']     # R: 해당 상품의 별점
@@ -366,10 +367,10 @@ class WooDAO :
         # DataFrame의 각 행에 공식 적용하여 'trust_score' 열 생성
         df['trust_score'] = df.apply(lambda row: weighted_rating(row, m_vote, rate_mean), axis=1)
 
-        # 4. 'trust_score' 기준으로 내림차순 정렬
+        # 'trust_score' 기준으로 내림차순 정렬
         df = df.sort_values(by='trust_score', ascending=False)
 
-        # 5. 순위(Rank) 추가
+        # 순위(Rank) 추가
         df['rank'] = range(1, len(df) + 1)
 
         # Flask 템플릿으로 넘기기 쉽도록 딕셔너리 리스트로 변환
