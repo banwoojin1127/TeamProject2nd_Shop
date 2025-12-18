@@ -49,7 +49,6 @@ function loadRanking() {
     }
 }
 
-
 setInterval(loadRanking, 3000);
 loadRanking();
 </script>
@@ -75,19 +74,19 @@ loadRanking();
         <!-- 유사그룹 평점 기준 -->
         {% include "mhi/list.html" %}
 
-        <br>
+        <br><br>
 
         <!-- 유사그룹 구매횟수 기준 -->
         <h4 class="mb-3">
             <span class="tooltip-container">
-                📌 유사그룹의 구매횟수 기준
+                &nbsp; 📌 유사그룹의 구매횟수 기준
                 <span class="tooltip-text">
                     유사그룹(본인나이±5, 동일성별)이 구매한 아이템 중
                     구매횟수가 많은 아이템을 출력
                 </span>
             </span>
         </h4>
-
+        
         <div class="container mt-3">
             <div class="row">
                 <div class="col-md-8">
@@ -98,8 +97,6 @@ loadRanking();
                 </div>
             </div>
         </div>
-
-        <br><br>
 
         <!-- 최종 추천 그래프 -->
         {% include "mhi/rank.html" %}
