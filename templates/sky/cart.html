@@ -76,8 +76,8 @@
             </div>
             {% endfor %}
             <form action="{{ url_for('sky.payok') }}" method="post">
-                <div class="checkout-area">
-                    <button class="payment-btn" type="submit">결제</button>
+                <div class="checkout-area" style="background-color:white">
+                    <button style="background-color: #D53538;" class="payment-btn" type="submit">결제</button>
                 </div>
             </form>
             {% else %}
@@ -122,7 +122,7 @@
             <div class="recommended_banner">
                 <!-- 추천 알고리즘 플랜 설명 w.woo -->
                 <div class="recommended-wide-banner" style="padding: 12px;">
-                {% if "user" in session and recom_li is defined and recom_li %}
+                {% if "user" in session and recom_pl is defined and recom_pl %}
                     <h5><p><strong>* 현재 장바구니 상품 기준 추천 전략</strong></p></h5>
                     {% for plan in recom_pl['추천전략'] %}
                     <p><strong>0{{ loop.index0 + 1 }}번.</strong> {{ plan }}</p>
