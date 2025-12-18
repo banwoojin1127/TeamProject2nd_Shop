@@ -15,6 +15,20 @@
 <!-- 클릭 수집 로그 -->
 {% include "includes/_click_log.html" %}
 
+<script>
+    function sendClickLogLink(el) {
+    const itemId = el.dataset.itemId;
+
+    fetch("/log/click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ item_id: itemId })
+    });
+    // return false 하지 않음 → 정상 이동
+}
+
+</script>
+
 <body>
     <header>
         {% include "includes/_header.html" %}
@@ -26,8 +40,8 @@
             {% if items %}
             <section class="cart-list">
                 {% for item in items %}
-                <form method="GET"
-                    action="{{ url_for('lsh.item',
+                <div>
+                <a href="{{ url_for('lsh.item',
                    category_no=item['category_no'],
                    item_no=item['item_id']) }}"
                     data-item-id="{{ item.item_id }}"
@@ -74,6 +88,7 @@
                             </p>
                         </div>
                     </div>
+                </div>
                 {% endfor %}
             </section>
             {% else %}

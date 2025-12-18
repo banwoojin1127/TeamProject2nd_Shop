@@ -114,20 +114,14 @@ def payok() :
     items_in_cart = dao.cart_check(user_id)
 
     #결제처리
-    paid_items = []
     for item in items_in_cart :
-        obj = dao.item_pay(user_id, item["item_id"])
+        dao.item_pay(user_id, item["item_id"])
         #결제 > 결제내역으로 추가
-        if obj :
-            paid_items.append(obj)
-                #item["item_name"],
-                #item["item_price"]
+        
     #결제완료 > 장바구니 초기화(비우기)
     dao.item_payok(user_id)
     #session["키"] = 값
     dao.close()
-    #화면용 객체 저장
-    session["paid_items"] = paid_items 
     return redirect("/history")
 
 #추천 상품 담기
@@ -224,17 +218,30 @@ def search() :
     #검색
     keyword = request.args.get("keyword", "").strip()
     dao = SkyDAO()
-    items = dao.item_search(keyword) if keyword else []
+    
+    items = []
+    tags = []
 
     # 최소 변경: 각 item에 'tags' 속성 추가
     for item in items:
         item['tags'] = dao.get_item_tag(item['item_id'])  # 기존 DAO 그대로 사용
 
-    #검색 결과가 없으면 결과없음
+    if keyword :
+        # 2. 검색 결과 가져오기
+        items = dao.item_search(keyword)
+
+        # 3. fuzzy 기반 유사 태그 저장
+        tags = dao.save_search_tag_fuzzy(keyword, threshold=70)
+
+        # 최소 변경: 각 item에 'tags' 속성 추가
+        for item in items:
+            item['tags'] = dao.get_item_tag(item['item_id'])  # 기존 DAO 그대로 사용
     dao.close()
+
     return render_template(
     "sky/search.html",
     items=items,
+    tags=tags,
     keyword=keyword,
     log_id=session.get("search_log_id")
 )
@@ -252,30 +259,18 @@ logging.basicConfig(
 def search_log():
     user_id = get_user_id()
     keyword = request.form.get("keyword", "").strip()
-    items = []
-    tags = []
 
-    if user_id and keyword:
+    if keyword:
         dao = SkyDAO()
         
         # 1. 검색 로그 저장
         log_id = dao.save_search_log(user_id, keyword)
         session["search_log_id"] = log_id
 
-        # 2. 검색 결과 가져오기
-        items = dao.item_search(keyword)
-
-        # 3. fuzzy 기반 유사 태그 저장
-        tags = dao.save_search_tag_fuzzy(keyword, threshold=70)
-
-        # 최소 변경: 각 item에 'tags' 속성 추가
-        for item in items:
-            item['tags'] = dao.get_item_tag(item['item_id'])  # 기존 DAO 그대로 사용
-
         dao.close()
 
     # 4. 검색 결과 페이지 렌더링
-    return render_template("sky/search.html", keyword=keyword, items=items, tags=tags)
+    return redirect(url_for("sky.search", keyword=keyword))
 
 # ------------------------------
 # 상품 상세보기 GET
