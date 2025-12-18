@@ -246,12 +246,12 @@ def search() :
     log_id=session.get("search_log_id")
 )
 
-# 검색 로그 설정
-logging.basicConfig(
-    filename="search.log",
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
+# # 검색 로그 설정
+# logging.basicConfig(
+#     filename="search.log",
+#     level=logging.INFO,
+#     format="%(asctime)s - %(levelname)s - %(message)s"
+# )
 # ------------------------------
 # 검색 - POST (검색 로그 수집)
 # ------------------------------
