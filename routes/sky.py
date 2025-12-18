@@ -226,7 +226,7 @@ def search() :
     dao = SkyDAO()
     items = dao.item_search(keyword) if keyword else []
 
-     # 최소 변경: 각 item에 'tags' 속성 추가
+    # 최소 변경: 각 item에 'tags' 속성 추가
     for item in items:
         item['tags'] = dao.get_item_tag(item['item_id'])  # 기존 DAO 그대로 사용
 
@@ -267,6 +267,10 @@ def search_log():
 
         # 3. fuzzy 기반 유사 태그 저장
         tags = dao.save_search_tag_fuzzy(keyword, threshold=70)
+
+        # 최소 변경: 각 item에 'tags' 속성 추가
+        for item in items:
+            item['tags'] = dao.get_item_tag(item['item_id'])  # 기존 DAO 그대로 사용
 
         dao.close()
 

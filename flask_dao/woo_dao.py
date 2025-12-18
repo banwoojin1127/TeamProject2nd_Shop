@@ -230,7 +230,6 @@ class WooDAO :
         params = sub_categories + [limit, offset]
         self.cursor.execute(sql_items, params)
         result = self.cursor.fetchall()
-        self.close()
         return result
 
 

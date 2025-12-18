@@ -24,8 +24,12 @@
             },
             
             title: {
-                text: '상품별 신뢰 평점 및 실제 평점 비교', // 제목
-                align: 'left'
+                text: '📌상품별 신뢰 평점 및 실제 평점 비교', // 제목
+                align: 'left',
+                style: {
+                    color: '#00000',
+                    fontSize: '24px'
+                }
             },
             
             subtitle: {
@@ -81,7 +85,8 @@
                 },
                 labels: {
                     style: {
-                        fontSize: '12px'
+                        fontSize: '12px',
+                        color: '#00000'
                     }
                 }
             },
@@ -91,7 +96,10 @@
                 min: 3,
                 max: 5.0, // 평점 최대값 5.0 고정
                 title: {
-                    text: '평점 (★)'
+                    text: '평점 (★)',
+                        style: {
+                            color: '#00000'
+                        }
                 }
             },
             
@@ -99,13 +107,13 @@
                 // 첫 번째 시리즈: 실제 평점
                 name: '실제 평점 (Item Rate)',
                 data: rateData,
-                color: '#544FC599', // 연보라색
+                color: '#419c72', // 연보라색
                 pointPlacement: -0.2 // 막대를 약간 왼쪽으로 이동하여 겹치지 않게 함
             }, {
                 // 두 번째 시리즈: 신뢰 평점
                 name: '신뢰 평점 (Trust Score)',
                 data: trustData,
-                color: '#2CAFFE' // 하늘색
+                color: '#D53538' // 하늘색
             }]
 
         });

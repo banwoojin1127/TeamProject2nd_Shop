@@ -7,7 +7,32 @@
     {% include "includes/_style.html" %}
 </head>
 
+<style>
+/* 산타 이모지 */
+body {
+    margin: 0;
+}
+
+.santa {
+    position: absolute;
+    top: -10px;
+    color: white;
+    font-size: 1em;
+    user-select: none;
+    pointer-events: none;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fall {
+    0% { transform: translateY(0) translateX(0); }
+    100% { transform: translateY(100vh) translateX(50px); }
+}
+</style>
+
 <script>
+//랭킹 시스템
 function renderRanking(ulId, data) {
     let html = "";
 
@@ -23,8 +48,10 @@ function renderRanking(ulId, data) {
                 <span class="rank_img">
                     <img src="${imgSrc}" style="width:30px; height:30px; object-fit:cover;">
                 </span>
-                <span class="rank">${idx + 1}</span>
-                <span class="keyword">${row.keyword}</span>
+                <span class="rank">${idx + 1}.</span>
+                <a href="/search?keyword=${encodeURIComponent(row.keyword)}">
+                    ${row.keyword}
+                </a>
                 <span class="score">${row.total_score}</span>
             </li>
         `;
@@ -52,6 +79,7 @@ function loadRanking() {
 setInterval(loadRanking, 3000);
 loadRanking();
 </script>
+
 <body data-is-login="{{ 'True' if session['user'] else 'False' }}">
     <header>
         {% include "includes/_header.html" %}
@@ -126,14 +154,37 @@ loadRanking();
                 <img class="rank_logo" src="/static/img/hub_logo.png">
             </div>
             <div class="rank_center">
-                <div class="rank_title">👑전체 인기 태그 랭킹</div>
+                <div id="tooltip_all_rank" class="rank_title">👑전체 인기 태그 순위
+                    <span class="tooltip-text">
+                        전체 유저를 대상으로 가중치(검색=0.7 + 클릭=0.3)을 점수로 환산해 인기 태그 순위를 나타냈습니다.
+                    </span>
+                </div>
                 <ul id="ranking-tag" class="rank_container"></ul>
 
                 {% if session['user'] %}
-                <div class="rank_title">👑개인 태그 랭킹</div>
+                <div id="tooltip_user_rank" class="rank_title">👑개인 태그 순위
+                    <span class="tooltip-text">
+                        현재 로그인한 유저를 대상으로 가중치(검색=0.7 + 클릭=0.3)을 점수로 환산해 인기 태그 순위를 나타냈습니다.
+                    </span>
+                </div>
                 <ul id="ranking-user-tag" class="rank_container"></ul>
                 {% endif %}
             </div>
         </aside>
     </div>
+    <script>
+        const santasCount = 50;
+
+        for(let i = 0; i < santasCount; i++) {
+            const santa = document.createElement('div');
+            santa.classList.add('santa');
+            santa.textContent = '🎅';
+            santa.style.left = Math.random() * window.innerWidth + 'px';
+            santa.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            santa.style.opacity = Math.random();
+            santa.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            santa.style.animationDelay = Math.random() * 5 + 's';
+            document.body.appendChild(santa);
+        }
+    </script>
 </html>

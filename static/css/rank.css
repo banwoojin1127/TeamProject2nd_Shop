@@ -23,15 +23,14 @@
     border-radius: 8px;
     background-color: #16D99B;
     width: 200px;
-    height: 50px;
+    height: auto; 
+    min-height: 50px;
     margin-left: 20px;
     margin-right: 20px;
-
     display: flex;               /* Flex 컨테이너로 변경 */
     justify-content: center;     /* 가로 중앙 */
     align-items: center;         /* 세로 중앙 */
     font-weight: bold;
-    text-align: center;       /* 혹시 텍스트가 여러 줄이면 중앙 */
 }
 
 .rank_container {
@@ -58,14 +57,14 @@
 
 .rank_list {
     margin-top: 10px;
-    text-align: center;
+    text-align: left;
     justify-content: center;
 }
 
 .rank_center {
     display: flex;           /* flex 컨테이너 */
     flex-direction: column;  /* 위아래로 쌓기 */
-    align-items: center;     /* 좌우 중앙 정렬 */
+    align-items: center; /*좌우 중앙 정렬 */
 }
 
 .layout-anchor {
@@ -73,4 +72,60 @@
   margin: 0 auto;     /* viewport 기준 중앙 */
   position: relative;
   left: calc(3.5%);
+}
+.rank_title {
+    background-color: #16D99B;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 8px;
+    width: 200px;
+    min-height: 50px;         /* 최소 높이 */
+    
+    display: flex;             /* flex 컨테이너 */
+    justify-content: center;   /* 가로 중앙 */
+    align-items: center;       /* 세로 중앙 */
+    
+    position: relative;        /* tooltip 기준 */
+    text-align: center;
+    padding: 0 10px;
+}
+
+/* 툴팁 span */
+.tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    width: 240px;
+    background: #212529;
+    color: #fff;
+    text-align: left;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+
+    position: absolute;       /* 부모 flex 영향 없음 */
+    top: 120%;                /* title 아래 */
+    left: 50%;
+    transform: translateX(-50%);
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent #212529 transparent;
+}
+
+/* Hover 시 보임 */
+#tooltip_all_rank:hover .tooltip-text,
+#tooltip_user_rank:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
 }

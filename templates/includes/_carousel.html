@@ -1,6 +1,7 @@
 <style>
 .slide_img {
-    display: flex;
+    position: relative;
+    z-index: 2;
     align-items: center;
     width: 300px;
     height: 300px;
@@ -9,6 +10,8 @@
 }
 
 .slide_item_name {
+    position: relative;
+    z-index: 3;
     width: 400px;
     text-align: left;
     margin-left: 320px;
@@ -23,6 +26,16 @@
     text-overflow: ellipsis;
 }
 
+.tree_img {
+    position: absolute;      /* 배경처럼 위치 */
+    bottom: 0;               /* 슬라이드 아래쪽 */
+    right: 20px;             /* 원하는 위치 조정 */
+    width: 100px;            /* 크기 조정 */
+    height: 200px;
+    width: 140px;
+    z-index: 1;              /* 배경 역할 */
+    pointer-events: none;    /* 클릭 방해 안 함 */
+}
 
 </style>
 
@@ -43,7 +56,7 @@
             {% endfor %}
         {% endif %}
     </div>
-    <div class="carousel-inner" style="width: 100%; height: 100%; background-color: #aa2020;">
+    <div class="carousel-inner" style="width: 100%; height: 100%; background-color: #aa2020; position: relative;">
         <a href="/{{ (best_li[0]['item_category'] - 9) // 10 }}/{{ best_li[0]['item_id'] }}">
             <div class="carousel-item active" style="width: 100%; height: 100%;">
                 {% if best_li[0]['item_img'].endswith(".png") %}
@@ -51,6 +64,9 @@
                 {% else %}
                 <img class="slide_img" src="{{ best_li[0]['item_img'] }}" alt="{{ best_li[0]['item_name'] }}">
                 {% endif %}
+                <!-- 크리스마스 트리 이미지 -->
+                <img class="tree_img" src="/static/img/pixel_christmas_tree.png" alt="tree">
+                
                 <div class="carousel-caption d-none d-md-block">
                     <p class="slide_item_name"> {{ best_li[0]['item_name'] }} </p>
                 </div>
@@ -67,6 +83,8 @@
                 <img class="slide_img" src="{{ casel['item_img'] }}" alt="{{ casel['item_name'] }}"
                 style="height: 100%; object-fit: cover; display: flex;" alt="...">
                 {% endif %}
+                <!-- 크리스마스 트리 이미지 -->
+                <img class="tree_img" src="/static/img/pixel_christmas_tree.png" alt="tree">
                 <div class="carousel-caption d-none d-md-block">
                     <p class="slide_item_name"> {{ casel['item_name'] }} </p>
                 </div>

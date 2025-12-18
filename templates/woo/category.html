@@ -75,7 +75,6 @@
         </section>
         {% include "includes/_nologinformaintochart.html" %}
         {% endif %}
-
         <section class="product-grid" id="infinite_scroll">
             {% for ie in ie_li %}
                 <a href="/{{ session['cate_no'] }}/{{ ie['item_id'] }}">
@@ -93,7 +92,7 @@
                 </a>
             {% endfor %}
         </section>
-
+        
         <button id="pop" class="top-btn">TOP</button>
         <div id="scroll-trigger" style="height: 50px;"></div>
     </main>

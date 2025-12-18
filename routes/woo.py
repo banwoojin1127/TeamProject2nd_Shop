@@ -265,20 +265,11 @@ def api_scroll(category_no):
     offset = (page - 1) * per_page
 
     dao = WooDAO()
-    items = dao.get_items_by_parent(parent_id, offset, per_page)
-
-    sky_dao = SkyDAO()
     try:
-        items = sky_dao.get_items_by_category(category_no, per_page=per_page, offset=offset)
-
-        # 각 아이템에 tags 추가
-        for item in items:
-            item_tags = sky_dao.get_item_tag(item['item_id'])
-            item['tags'] = item_tags if item_tags else []
-            
+        items = dao.get_items_by_parent(parent_id, offset, per_page)
         return jsonify(items)
     finally:
-        sky_dao.close()
+        dao.close()
 
 #======================================
 #           하늘 작업 (끝)           

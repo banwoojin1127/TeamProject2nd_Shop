@@ -304,7 +304,7 @@ class SkyDAO :
                     ORDER BY total_score DESC
                     LIMIT 10
                 ) r
-                LEFT JOIN item i
+                JOIN item i
                 ON i.item_id = (
                     SELECT item_id
                     FROM item
@@ -354,7 +354,7 @@ class SkyDAO :
                 ORDER BY total_score DESC
                 LIMIT 10
             ) r
-            LEFT JOIN item i
+            JOIN item i
                 ON i.item_id = (
                     SELECT item_id
                     FROM item
