@@ -23,9 +23,9 @@
         {% include "includes/_carousel.html" %}
         <h4><span class="recommend-title">
         {% if "user" in session and recom_li is defined and recom_li %}
-            {{ session["user"]["user_name"] }} 님의 구매목록 기반 맞춤 추천 상품입니다.
+            📌{{ session["user"]["user_name"] }} 님의 구매목록 기반 맞춤 추천 상품입니다.
         {% else %}
-            인기 상품 순위에 따른 추천 상품입니다.
+            📌인기 상품 순위에 따른 추천 상품입니다.
         {% endif %}
         </span></h4>
         <section class="category-thumbnails" >
@@ -64,11 +64,11 @@
 
         {% if "user" in session and recom_li is defined and recom_li %}
         <section class="middle-banner-area" style="padding: 12px;">
-            <h5><p><strong>* 현재 대분류 추천 전략</strong></p></h5>
+            <h5><p><strong>✔ 현재 대분류 추천 전략</strong></p></h5>
             {% for plan in recom_pl['추천전략'] %}
             <p><strong>0{{ loop.index0 + 1 }}번.</strong> {{ plan }}</p>
             {% endfor %}<br>
-            <h5><p><strong>* 현재 소분류 추천 이유</strong></p></h5>
+            <h5><p><strong>✔ 현재 소분류 추천 이유</strong></p></h5>
             {% for plan in recom_pl['추천답변'] %}
             <p><strong>{{ plan['category_name'] }} :</strong> {{ plan['reason'] }}</p>
             {% endfor %}

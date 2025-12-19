@@ -148,10 +148,10 @@ def category(category_no = 0) :
         user_id = user.get("user_id")
 
 # ===== API 한도 도달시 주석처리 하면 에러 회피 Start =====
-#        recommend_plan = wodel.recommend_cate_in_parent(user_id, category_no)
+        recommend_plan = wodel.recommend_cate_in_parent(user_id, category_no)
 
-#        dao = WooDAO()
-#        recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan)
+        dao = WooDAO()
+        recommend_item = dao.fetch_api_recommend_items(recommend_plan=recommend_plan)
         #print("# " + "=" * 50 + "\n" + f"{recommend_item}" + "\n" + "# " + "=" * 50 + "\n")
         target_keys = [
             'item_name', 'item_rate', 'trust_score', 'item_reviewcnt'
@@ -160,13 +160,13 @@ def category(category_no = 0) :
         rate = []
         trust = []
         review = []
-#        for item in recommend_item :
-#            name.append(item[target_keys[0]])
-#            rate.append(item[target_keys[1]])
-#            trust.append(item[target_keys[2]])
-#            review.append(item[target_keys[3]])
+        for item in recommend_item :
+            name.append(item[target_keys[0]])
+            rate.append(item[target_keys[1]])
+            trust.append(item[target_keys[2]])
+            review.append(item[target_keys[3]])
 
-#        column_chart_data = [ name, rate, trust, review ]
+        column_chart_data = [ name, rate, trust, review ]
 # ===== API 한도 도달시 주석처리 하면 에러 회피 End =====
 
         return render_template("woo/category.html",

@@ -26,10 +26,11 @@ app.register_blueprint(mhi_bp)
 app.register_blueprint(lsh_bp)
 
 
+# debug=True
 # 디버그 모드로 Flask 실행
 # 디버그 모드 : .py 나 .html 등등이 변경되었을때,
 # 서버를 재시작 할 필요 없이 변경 사항이 반영됨
-app.run(debug=True)
+app.run(host = "0.0.0.0")
 # 서버에 다른 PC 가 접근하려면
 # host = "0.0.0.0"
 # 을 매개변수 ( 파라미터 ) 로 넣어야함
